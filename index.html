@@ -1,0 +1,2242 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>ADLINK AI Agent Engineering Dashboard</title>
+  <style>
+    :root {
+      --adlink-red: #c8102e;
+      --page: #080d14;
+      --panel: #101824;
+      --panel-2: #141f2c;
+      --line: rgba(157, 175, 196, .24);
+      --text: #eef5ff;
+      --muted: #a9b8ca;
+      --soft: #d7e2ef;
+      --green: #28c28f;
+      --amber: #f4b942;
+      --cyan: #6fd3ff;
+      --red-soft: #ff6a7d;
+      --shadow: 0 18px 44px rgba(0, 0, 0, .26);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
+        radial-gradient(circle at 18% 10%, rgba(200,16,46,.18), transparent 32%),
+        radial-gradient(circle at 82% 8%, rgba(80,190,255,.14), transparent 30%),
+        var(--page);
+      background-size: 36px 36px, 36px 36px, auto, auto, auto;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+    }
+
+    header {
+      background: rgba(8, 13, 20, .95);
+      border-bottom: 1px solid rgba(200,16,46,.72);
+      box-shadow: 0 18px 42px rgba(0,0,0,.34);
+    }
+
+    .topbar {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 18px 26px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 22px;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 318px;
+      max-width: 34vw;
+      height: 76px;
+      object-fit: contain;
+      object-position: left center;
+      display: block;
+      border-radius: 3px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      color: #fff;
+      font-size: 28px;
+      line-height: 1.18;
+      font-weight: 850;
+    }
+
+    .brand p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: 10px 15px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-weight: 800;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+
+    .btn:hover,
+    .tab:hover,
+    .kpi:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.36);
+    }
+
+    .btn.primary {
+      background: var(--adlink-red);
+      border-color: var(--adlink-red);
+      color: #fff;
+    }
+
+    .btn.small {
+      min-height: 36px;
+      padding: 7px 11px;
+      font-size: 15px;
+    }
+
+    main {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 24px 26px 48px;
+    }
+
+    .executive-hero {
+      display: grid;
+      grid-template-columns: 1.1fr .95fr .95fr;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 16px;
+    }
+
+    .panel,
+    .hero-card,
+    .kpi,
+    .dept-card,
+    .track-card,
+    .modal-box {
+      background: linear-gradient(180deg, rgba(20,29,42,.96), rgba(11,17,27,.96));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .panel,
+    .hero-card {
+      padding: 20px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 850;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .hero-value {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-top: 12px;
+      color: #fff;
+      font-size: 66px;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .hero-value span {
+      color: var(--muted);
+      font-size: 20px;
+      font-weight: 850;
+    }
+
+    .hero-caption {
+      margin-top: 12px;
+      color: var(--soft);
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .progress {
+      height: 12px;
+      background: rgba(255,255,255,.1);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress.large {
+      height: 16px;
+      margin-top: 16px;
+    }
+
+    .bar {
+      height: 100%;
+      width: var(--w);
+      min-width: 0;
+      background: linear-gradient(90deg, var(--adlink-red), #ff4c65);
+      border-radius: inherit;
+      box-shadow: 0 0 16px rgba(200,16,46,.4);
+    }
+
+    .rank-list,
+    .support-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .rank-row {
+      display: grid;
+      grid-template-columns: 150px 1fr 66px;
+      align-items: center;
+      gap: 14px;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .support-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .support-item:last-child {
+      border-bottom: 0;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 13px rgba(40,194,143,.48);
+    }
+
+    .status-dot.warn {
+      background: var(--amber);
+      box-shadow: 0 0 13px rgba(244,185,66,.45);
+    }
+
+    .status-dot.danger {
+      background: var(--red-soft);
+      box-shadow: 0 0 13px rgba(255,106,125,.45);
+    }
+
+    .support-main strong {
+      display: block;
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .support-main span {
+      display: block;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.45;
+      margin-top: 4px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      color: #dbe7f4;
+      font-size: 15px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .badge.red {
+      background: rgba(200,16,46,.18);
+      color: #ff9aa6;
+    }
+
+    .badge.green {
+      background: rgba(40,194,143,.16);
+      color: #8ae4c4;
+    }
+
+    .badge.amber {
+      background: rgba(244,185,66,.16);
+      color: #ffd47a;
+    }
+
+    .badge.blue {
+      background: rgba(111,211,255,.14);
+      color: #9ee3ff;
+    }
+
+    .badge-stack {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin: 0 0 16px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      min-height: 48px;
+      padding: 11px 18px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.055);
+      color: var(--text);
+      font-weight: 850;
+      font-size: 18px;
+    }
+
+    .tab.active {
+      background: var(--adlink-red);
+      border-color: var(--adlink-red);
+      color: #fff;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .kpi {
+      min-height: 156px;
+      padding: 20px;
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      gap: 12px;
+      color: var(--text);
+      text-align: center;
+    }
+
+    .kpi-icon svg,
+    .indicator svg {
+      width: 25px;
+      height: 25px;
+      color: var(--cyan);
+      stroke-width: 2;
+    }
+
+    .kpi .kpi-label {
+      color: var(--muted);
+      font-size: 18px;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .kpi .kpi-value {
+      color: #fff;
+      font-size: 54px;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .kpi .kpi-note {
+      color: var(--soft);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .section-head h2,
+    .panel h2 {
+      margin: 0;
+      color: #fff;
+      font-size: 28px;
+      line-height: 1.25;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.5;
+      margin-top: 6px;
+    }
+
+    .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .dept-card {
+      padding: 20px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .dept-top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .dept-title {
+      margin: 0;
+      color: #fff;
+      font-size: 26px;
+      line-height: 1.25;
+      font-weight: 900;
+      word-break: break-word;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.5;
+    }
+
+    .meta.compact {
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .copy {
+      color: var(--soft);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      position: relative;
+      min-height: 72px;
+      padding: 11px 10px;
+      border-radius: 7px;
+      border: 1px solid rgba(111,211,255,.22);
+      background: rgba(111,211,255,.065);
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 5px;
+      text-align: center;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: ">";
+      position: absolute;
+      right: -9px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--cyan);
+      font-weight: 900;
+      z-index: 1;
+    }
+
+    .flow-step span {
+      color: var(--cyan);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .flow-step strong {
+      color: #fff;
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .readiness-row {
+      display: grid;
+      grid-template-columns: 116px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .readiness-number {
+      color: #fff;
+      font-size: 48px;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .indicator-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .indicator {
+      min-height: 106px;
+      padding: 12px;
+      border-radius: 7px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.09);
+      display: grid;
+      gap: 7px;
+      align-content: start;
+    }
+
+    .indicator span {
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    .indicator strong {
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.28;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .detail-box {
+      padding: 12px;
+      border-radius: 7px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .detail-box strong {
+      display: block;
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.35;
+      margin-bottom: 5px;
+    }
+
+    .support-strip {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 13px;
+      border-radius: 7px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .track-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .track-card {
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 1.05fr 1.4fr 1.35fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .track-card h3 {
+      margin: 0;
+      color: #fff;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    .track-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .track-metric {
+      padding: 10px;
+      border-radius: 7px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .track-metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 850;
+      margin-bottom: 4px;
+    }
+
+    .track-metric strong {
+      color: #fff;
+      font-size: 21px;
+      line-height: 1.25;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 850;
+    }
+
+    .field-help {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+      min-height: 20px;
+    }
+
+    select,
+    input,
+    textarea {
+      width: 100%;
+      min-height: 45px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(157,175,196,.28);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      outline: none;
+    }
+
+    select option {
+      color: #101720;
+    }
+
+    textarea {
+      min-height: 98px;
+      resize: vertical;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .form-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .score-inputs {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .edit-dept-picker {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .dept-pick {
+      min-height: 64px;
+      padding: 9px 10px;
+      border-radius: 7px;
+      border: 1px solid rgba(157,175,196,.28);
+      background: rgba(255,255,255,.045);
+      color: var(--text);
+      display: grid;
+      gap: 4px;
+      justify-items: start;
+      text-align: left;
+      font-weight: 850;
+    }
+
+    .dept-pick span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.25;
+      font-weight: 800;
+    }
+
+    .dept-pick.active {
+      border-color: var(--adlink-red);
+      background: rgba(200,16,46,.22);
+      box-shadow: 0 0 0 1px rgba(200,16,46,.18) inset;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .save-status {
+      color: #8ae4c4;
+      font-size: 17px;
+      font-weight: 850;
+      min-height: 26px;
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    .management-only,
+    body:not(.management-mode) .management-only {
+      display: none;
+    }
+
+    body.management-mode .management-only {
+      display: block;
+    }
+
+    body.management-mode .filters.management-only,
+    body.management-mode .form-grid.management-only,
+    body.management-mode .score-inputs.management-only {
+      display: grid;
+    }
+
+    body.management-mode label.management-only,
+    body.management-mode button.management-only {
+      display: inline-flex;
+    }
+
+    .hidden-input {
+      display: none;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(0,0,0,.62);
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-box {
+      width: min(860px, 100%);
+      max-height: min(760px, 88vh);
+      overflow: auto;
+      padding: 22px;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      color: #fff;
+      font-size: 28px;
+      line-height: 1.25;
+    }
+
+    .modal-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .modal-item {
+      padding: 14px;
+      border-radius: 7px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.045);
+    }
+
+    .modal-item strong {
+      display: block;
+      color: #fff;
+      font-size: 21px;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+
+    .empty-state {
+      padding: 18px;
+      border-radius: 8px;
+      border: 1px dashed rgba(255,255,255,.18);
+      color: var(--soft);
+      font-size: 18px;
+      line-height: 1.5;
+      background: rgba(255,255,255,.035);
+    }
+
+    @media (max-width: 1180px) {
+      .executive-hero,
+      .track-card {
+        grid-template-columns: 1fr;
+      }
+
+      .dept-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .kpis,
+      .filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 820px) {
+      body {
+        font-size: 17px;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+      }
+
+      .brand {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .brand-logo {
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+      }
+
+      .toolbar {
+        justify-content: flex-start;
+      }
+
+      main {
+        padding: 18px 14px 36px;
+      }
+
+      .hero-value {
+        font-size: 52px;
+      }
+
+      .kpis,
+      .filters,
+      .form-grid,
+      .score-inputs,
+      .edit-dept-picker,
+      .detail-grid,
+      .track-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .indicator-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow-steps {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-step:not(:last-child)::after {
+        content: "v";
+        right: auto;
+        top: auto;
+        bottom: -17px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .readiness-row,
+      .dept-top,
+      .support-item {
+        grid-template-columns: 1fr;
+      }
+
+      .btn,
+      .tab {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .indicator-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dept-title,
+      .section-head h2,
+      .panel h2,
+      .modal-head h2 {
+        font-size: 24px;
+      }
+
+      .kpi .kpi-value {
+        font-size: 46px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <img class="brand-logo" src="adlink-ai-agent-assets/adlink-leading-edge-ai-computing.jpeg" alt="ADLINK Leading Edge AI Computing">
+          <div>
+            <h1>ADLINK AI Agent Engineering Program Dashboard</h1>
+            <p>以部門為主管報告單位，追蹤完成度、Pilot、課/部日常導入與中心擴展。</p>
+          </div>
+        </div>
+        <div></div>
+        <div class="toolbar">
+          <button class="btn" id="modeBtn">管理模式</button>
+          <button class="btn management-only" id="exportBtn">下載資料</button>
+          <label class="btn management-only" for="importFile">匯入資料</label>
+          <input class="hidden-input" id="importFile" type="file" accept="application/json">
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="executive-hero" aria-label="主管總覽">
+        <div class="hero-card" id="overallReadiness"></div>
+        <div class="panel" id="centerRanking"></div>
+        <div class="panel" id="supportOverview"></div>
+      </section>
+
+      <nav class="tabs" aria-label="dashboard 分頁">
+        <button class="tab active" data-view="overview">主管總覽</button>
+        <button class="tab" data-view="departments">部門 Agent 進度</button>
+        <button class="tab" data-view="tracking">主管追蹤表</button>
+      </nav>
+
+      <section class="filters management-only" aria-label="filters">
+        <div class="field">
+          <label for="centerFilter">部門</label>
+          <select id="centerFilter"></select>
+        </div>
+        <div class="field">
+          <label for="levelFilter">擴展層級</label>
+          <select id="levelFilter"></select>
+        </div>
+        <div class="field">
+          <label for="stageFilter">成熟度</label>
+          <select id="stageFilter"></select>
+        </div>
+        <div class="field">
+          <label for="searchInput">快速搜尋</label>
+          <input id="searchInput" placeholder="部門、負責人、Agent 方向">
+        </div>
+      </section>
+
+      <section class="view active" id="view-overview">
+        <section class="kpis" id="kpis"></section>
+      </section>
+
+      <section class="view" id="view-departments">
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <h2>部門 Agent 進度</h2>
+              <div class="hint">每張卡代表一個部門；卡內保留 Agent 方向、簡介、負責人、本週進度與下週動作。</div>
+            </div>
+            <span class="badge red" id="todayBadge"></span>
+          </div>
+          <div class="dept-grid" id="projectCards"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-tracking">
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <h2>主管追蹤表</h2>
+              <div class="hint">用較大的卡片取代表格，方便投影或給主管快速掃描。</div>
+            </div>
+          </div>
+          <div class="track-list" id="trackingCards"></div>
+        </section>
+      </section>
+
+      <section class="panel management-only" id="updatePanel">
+        <div class="section-head">
+          <div>
+            <h2>每週更新</h2>
+            <div class="hint">目前先由 Michael 維護；之後可交給部門 owner 或窗口每週更新。</div>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field full">
+            <label for="projectSelect">部門</label>
+            <select id="projectSelect"></select>
+          </div>
+          <div class="field full">
+            <label>快速選擇部門</label>
+            <div class="edit-dept-picker" id="editDeptPicker"></div>
+          </div>
+          <div class="field">
+            <label for="titleInput">Agent 方向</label>
+            <input id="titleInput">
+          </div>
+          <div class="field">
+            <label for="ownerInput">負責人</label>
+            <input id="ownerInput">
+          </div>
+          <div class="field">
+            <label for="agentOwnerInput">Agent Owner / 題目窗口</label>
+            <input id="agentOwnerInput">
+          </div>
+          <div class="field">
+            <label for="agentTypeInput">技術型態</label>
+            <select id="agentTypeInput"></select>
+          </div>
+          <div class="field full">
+            <label for="sourceInput">資料來源</label>
+            <input id="sourceInput">
+          </div>
+          <div class="field full">
+            <label for="agentTypeNoteInput">自動化 / Agent 判定說明</label>
+            <textarea id="agentTypeNoteInput"></textarea>
+          </div>
+          <div class="field full">
+            <label for="summaryInput">功能簡介 / 痛點</label>
+            <textarea id="summaryInput"></textarea>
+          </div>
+          <div class="field full">
+            <label for="flowInput">流程圖步驟（用 -> 分隔）</label>
+            <textarea id="flowInput"></textarea>
+          </div>
+          <div class="field full">
+            <label for="architectureInput">架構</label>
+            <textarea id="architectureInput"></textarea>
+          </div>
+          <div class="field">
+            <label for="stageInput">成熟度</label>
+            <select id="stageInput"></select>
+          </div>
+          <div class="field">
+            <label for="progressInput">完成度 %（1最高25 / 2最高50 / 3最高75 / 4最高100）</label>
+            <input id="progressInput" type="number" min="0" max="100">
+            <div class="field-help" id="progressCapHint"></div>
+          </div>
+          <div class="field">
+            <label for="frequencyInput">使用頻率</label>
+            <select id="frequencyInput"></select>
+          </div>
+          <div class="field">
+            <label for="weeklyUsersInput">每週使用人數</label>
+            <input id="weeklyUsersInput" type="number" min="0">
+          </div>
+          <div class="field">
+            <label for="scaleInput">擴展層級</label>
+            <select id="scaleInput"></select>
+          </div>
+          <div class="field">
+            <label for="sizeInput">計畫大小</label>
+            <select id="sizeInput"></select>
+          </div>
+          <div class="field">
+            <label for="targetUsersInput">目標使用人數</label>
+            <input id="targetUsersInput" type="number" min="0">
+          </div>
+          <div class="field full">
+            <label>效益評分 0-5</label>
+            <div class="score-inputs">
+              <div class="field">
+                <label for="necessityInput">必要性</label>
+                <input id="necessityInput" type="number" min="0" max="5">
+              </div>
+              <div class="field">
+                <label for="practicalityInput">實用性</label>
+                <input id="practicalityInput" type="number" min="0" max="5">
+              </div>
+              <div class="field">
+                <label for="generalityInput">通用性</label>
+                <input id="generalityInput" type="number" min="0" max="5">
+              </div>
+              <div class="field">
+                <label for="timeSavingInput">節省時間</label>
+                <input id="timeSavingInput" type="number" min="0" max="5">
+              </div>
+              <div class="field">
+                <label for="addedValueInput">附加價值</label>
+                <input id="addedValueInput" type="number" min="0" max="5">
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="governanceInput">治理/權限 %</label>
+            <input id="governanceInput" type="number" min="0" max="100">
+          </div>
+          <div class="field">
+            <label for="dataReadinessInput">資料準備 %</label>
+            <input id="dataReadinessInput" type="number" min="0" max="100">
+          </div>
+          <div class="field">
+            <label for="validationInput">驗證程度 %</label>
+            <input id="validationInput" type="number" min="0" max="100">
+          </div>
+          <div class="field">
+            <label for="supportStatusInput">主管協助狀態</label>
+            <select id="supportStatusInput"></select>
+          </div>
+          <div class="field">
+            <label for="supportTypeInput">主管協助類型</label>
+            <select id="supportTypeInput"></select>
+          </div>
+          <div class="field full">
+            <label for="currentProgressInput">目前做到什麼進度</label>
+            <textarea id="currentProgressInput"></textarea>
+          </div>
+          <div class="field full">
+            <label for="nextStepInput">下週進度 / Action</label>
+            <textarea id="nextStepInput"></textarea>
+          </div>
+          <div class="field full">
+            <label for="supportDescriptionInput">主管協助說明 / Blocker</label>
+            <textarea id="supportDescriptionInput"></textarea>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn" id="resetBtn">清空回預設部門</button>
+          <button class="btn primary" id="saveBtn">儲存更新</button>
+        </div>
+        <div class="save-status" id="saveStatus" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div>
+          <h2 id="modalTitle">指標明細</h2>
+          <div class="hint" id="modalHint"></div>
+        </div>
+        <button class="btn small" id="closeModal">關閉</button>
+      </div>
+      <div class="modal-list" id="modalList"></div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "adlink-ai-agent-dashboard-v10";
+    const SERVER_PROJECTS_ENDPOINT = "/api/projects";
+    const STATIC_PROJECTS_ENDPOINT = "adlink-dashboard-data.json";
+
+    const today = "2026-07-08";
+
+    const stageLabels = {
+      0: "尚未填寫",
+      1: "個人建立測試中",
+      2: "Pilot / 跨部門測試",
+      3: "課/部日常工作流程",
+      4: "已擴及中心/公司級"
+    };
+
+    const frequencyLabels = ["尚未使用", "每天", "每週", "每月", "偶爾"];
+    const scaleLabels = ["未定", "個人", "課級", "部級", "中心", "公司"];
+    const sizeLabels = ["未定", "S", "M", "L", "XL"];
+    const agentTypeLabels = ["待評估", "自動化程式", "Agent 化中", "AI Agent"];
+    const supportStatusLabels = ["無", "需注意", "需主管決策"];
+    const supportTypeLabels = ["無", "資料權限", "跨部門協調", "資源人力", "試用者指定", "擴大導入決策", "其他"];
+    const editDepartmentOrder = ["PEC-SE", "BEC", "PEC-EMC/RF", "PEC-ME", "PEC-Thermal", "DQAC", "SEC"];
+
+    const scaleWeights = {
+      "未定": 0,
+      "個人": 25,
+      "課級": 45,
+      "部級": 65,
+      "中心": 82,
+      "公司": 100
+    };
+
+    const frequencyWeights = {
+      "尚未使用": 0,
+      "偶爾": 20,
+      "每月": 42,
+      "每週": 72,
+      "每天": 100
+    };
+
+    const sizeWeights = {
+      "未定": 1,
+      "S": 1,
+      "M": 1.15,
+      "L": 1.35,
+      "XL": 1.6
+    };
+
+    const defaultProjects = [
+      makeDepartment("pec-emc-rf", "PEC", "PEC-EMC/RF", "Frankie", {
+        agentOwner: "待確認",
+        title: "使用 AI Agent 加速 EU DoC 產出流程",
+        summary: "自動監測 DoC 需求，巡檢內網報告資料夾，解析 EMC/RF/Safety/EC 技術報告，回到內網系統完成標準勾選並匯出 EU DoC。",
+        flow: ["DoC 需求", "內網巡檢", "PDF 解析", "系統勾選", "EU DoC 輸出"],
+        architecture: "需求感測 -> 內網報告資料夾巡檢 -> LLM 解析 PDF 標準名稱與版本 -> ANYDOOR/內網系統自動勾選 -> 匯出 EU DoC 文件。",
+        agentType: "Agent 化中",
+        agentTypeNote: "方案包含需求監測、PDF 解析與系統勾選，已有 Agent 化方向；仍需確認工具調用、驗證閉環與內網權限後才能視為完整 AI Agent。",
+        stage: 1,
+        progress: 10,
+        size: "L",
+        frequency: "尚未使用",
+        scale: "個人",
+        weeklyUsers: 0,
+        activeUsers: 0,
+        targetUsers: 12,
+        necessity: 4,
+        practicality: 4,
+        generality: 5,
+        timeSaving: 5,
+        addedValue: 4,
+        governance: 30,
+        dataReadiness: 35,
+        validation: 10,
+        supportStatus: "需注意",
+        supportType: "跨部門協調",
+        supportDescription: "需要 EMC/RF/Safety/EC 與內網系統權限協調，並確認 PDF 解析與自動勾選驗證方式。",
+        currentProgress: "PPT 已定義端到端方案；7/10 Kick-off，7 月底完成架構與流程設計。",
+        nextStep: "完成技術需求對齊與系統架構評估，確認內網資料夾、報告格式與 ANYDOOR 自動勾選流程。",
+        source: "使用 AI Agent 加速 EU DoC 產出流程.pptx"
+      }),
+      makeDepartment("pec-se", "PEC", "PEC-SE", "Michael", {
+        agentOwner: "Andy PK Yang",
+        title: "PLM 申請料號 Agent 自動化流程",
+        summary: "從 Excel 到 PLM 草稿，讓 Agent 處理重複複製、填欄位、上傳、建立 Part / PN 與 Save，人保留送簽與核准判斷。",
+        flow: ["Excel / 附件", "資料驗證", "登入 PLM", "建立 PN", "人工確認"],
+        architecture: "HTML 入口上傳 Excel 範本與附件 -> 資料驗證 -> 本機 Agent 登入 PLM -> 填寫欄位/上傳附件/建立 PN -> Save -> 人工確認送簽。",
+        agentType: "Agent 化中",
+        agentTypeNote: "目前已把 Excel 到 PLM 的固定工作流工具化，進入個人使用與跨部門測試；需補足可擴充工具、驗證與決策邊界後，才算完整 AI Agent。",
+        stage: 2,
+        progress: 45,
+        size: "M",
+        frequency: "每週",
+        scale: "部級",
+        weeklyUsers: 2,
+        activeUsers: 2,
+        targetUsers: 10,
+        necessity: 3,
+        practicality: 4,
+        generality: 4,
+        timeSaving: 4,
+        addedValue: 3,
+        governance: 40,
+        dataReadiness: 55,
+        validation: 40,
+        supportStatus: "需注意",
+        supportType: "資料權限",
+        supportDescription: "需要確認 PLM 帳密/權限、Save 後人工送簽邊界，以及資料驗證規則。",
+        currentProgress: "已完成 PLM 料號申請自動化流程規劃，進入個人使用與跨部門測試；本週 7/10 前新增 Manufacturers 寫入 PN Agent。",
+        nextStep: "導入線材編碼原則到 PN Agent，推進 ME 試用、部門使用與跨 BU 導入。",
+        source: "PLM申請料號Agent自動化流程_Andy0703.pptx"
+      }),
+      makeDepartment("pec-me", "PEC", "PEC-ME", "Tyler", {
+        agentOwner: "待確認",
+        title: "Footprint 讀取與圖面產生 Agent",
+        summary: "機構計畫先架設主機作為執行環境，後續讓 Agent 讀取 Footprint 資料，自動產生或輔助產出機構圖面。",
+        flow: ["主機架設", "Footprint 讀取", "資料解析", "圖面產生", "人工確認"],
+        architecture: "主機環境 -> Footprint 檔案/資料來源 -> Agent 解析尺寸、孔位與外形 -> 產出圖面草稿 -> ME 人工確認與修正。",
+        agentType: "Agent 化中",
+        agentTypeNote: "目前是主機與資料讀取規劃階段，目標是讓 Agent 解析 Footprint 並產生圖面；完成工具調用、輸出驗證與人工確認前，仍屬 Agent 化中。",
+        stage: 1,
+        progress: 5,
+        size: "M",
+        frequency: "尚未使用",
+        scale: "個人",
+        weeklyUsers: 0,
+        activeUsers: 0,
+        targetUsers: 8,
+        necessity: 3,
+        practicality: 3,
+        generality: 4,
+        timeSaving: 4,
+        addedValue: 3,
+        governance: 20,
+        dataReadiness: 20,
+        validation: 5,
+        supportStatus: "需注意",
+        supportType: "資源人力",
+        supportDescription: "需要確認主機資源、Footprint 檔案格式/存取權限，以及圖面輸出工具與人工確認流程。",
+        currentProgress: "機構已提出計畫：先架設主機，作為後續 Footprint 讀取與圖面產生 Agent 的執行環境。",
+        nextStep: "確認主機環境、Footprint 格式/來源、圖面輸出格式與人工確認流程，開始建立讀取 Footprint 的 Agent prototype。",
+        source: "機構提供計畫（使用者口述）"
+      }),
+      makeDepartment("pec-thermal", "PEC", "PEC-Thermal", "Eric", {
+        agentOwner: "待確認",
+        title: "Thermal 設計架構相似案例搜尋 Agent",
+        summary: "當 PM 詢問某專案設計架構是否可能通過時，系統先用 Data Search 從 FS1 或其他 Database 找出相似專案、前幾代設計架構與相關熱設計資料，提供 Thermo 工程師快速判斷與回覆 PM 的參考依據；精確數值仍需透過模擬確認。",
+        flow: ["PM 提問", "Data Search", "相似案例比對", "前代架構回傳", "Thermo 判斷"],
+        architecture: "PM 問題/專案條件 -> Data Search 查詢 FS1/Database -> 擷取相似專案與前幾代 Thermal 設計架構 -> 彙整比較重點與參考資料 -> Thermo 工程師判斷初步風險與回覆 PM -> 必要時再進入模擬取得精確數值。",
+        agentType: "Agent 化中",
+        agentTypeNote: "目前是資料搜尋與設計架構比對的 Agent 題目定義階段；核心價值是用歷史案例輔助初步判斷，不取代 Thermal simulation 的精確 Pass/Fail 結果。",
+        stage: 1,
+        progress: 10,
+        size: "M",
+        frequency: "尚未使用",
+        scale: "個人",
+        weeklyUsers: 0,
+        activeUsers: 0,
+        targetUsers: 8,
+        necessity: 4,
+        practicality: 4,
+        generality: 4,
+        timeSaving: 4,
+        addedValue: 4,
+        governance: 25,
+        dataReadiness: 20,
+        validation: 5,
+        supportStatus: "需注意",
+        supportType: "資料權限",
+        supportDescription: "需要確認 FS1/Database 存取權限、歷史專案資料欄位、相似案例比對條件，以及回傳資料是否可用於 PM 溝通。",
+        currentProgress: "已定義 Thermal 題目方向：針對 PM 詢問設計架構是否可能通過，先用 Data Search 找相似專案與前幾代設計架構，提供 Thermo 工程師初步判斷參考。",
+        nextStep: "盤點 FS1 與其他 Database 可查詢欄位，定義相似案例比對條件、回傳格式與 Thermo 工程師驗證方式。",
+        source: "PEC-Thermal 題目說明（使用者口述）"
+      }),
+      makeDepartment("dqac", "DQAC", "DQAC", "Vincent chu"),
+      makeDepartment("bec", "BEC", "BEC", "Miles", {
+        agentOwner: "Chih-Fu Hsu",
+        title: "BEC 跨 APP 工作流自動化 / Agent 化導入",
+        summary: "以可執行批次檔與 Python 環境檢查啟動跨 APP 自動化流程，先把固定流程串起來，減少瑣碎操作，讓工程師把時間留給設計與驗證。",
+        flow: ["批次啟動", "Python 檢查", "跨 APP 操作", "流程自動跑", "Agent 化擴充"],
+        architecture: "批次檔啟動 -> 檢查 Python 環境 -> 執行跨 APP 操作腳本 -> 自動完成固定工作流 -> 後續補 agent 記憶、工具調用、MCP/應用程式串接與導入追蹤。",
+        agentType: "自動化程式",
+        agentTypeNote: "目前 demo 主要是批次檔與 Python 腳本串接固定跨 APP 流程，效益明確但仍偏自動化程式；下一步才是加入記憶、工具調用、MCP/應用串接與可擴充 agent 架構。",
+        stage: 2,
+        progress: 35,
+        size: "L",
+        frequency: "每週",
+        scale: "部級",
+        weeklyUsers: 2,
+        activeUsers: 2,
+        targetUsers: 30,
+        necessity: 3,
+        practicality: 4,
+        generality: 5,
+        timeSaving: 4,
+        addedValue: 4,
+        governance: 25,
+        dataReadiness: 30,
+        validation: 35,
+        supportStatus: "需注意",
+        supportType: "資源人力",
+        supportDescription: "需要盤點導入到 team/BEC 全面使用時所需 account、工具、支援資源、獎勵機制與 review 節奏。",
+        currentProgress: "Chih-Fu 已完成 demo，可由批次檔啟動並自動執行跨 APP 操作；已進入個人使用與跨 team 評估，但仍需從固定 script automation 升級成可擴充 agent 架構。",
+        nextStep: "Miles 將納入 BEC 推動項目；與 Michael 討論如何把起點整合成 BEC 工具，建立開發/導入進程追蹤，並定期 review 後彙整給 Stephen。",
+        source: "BEC 昨日會議逐字稿（使用者貼上）"
+      }),
+      makeDepartment("sec", "SEC", "SEC", "Fencer")
+    ];
+
+    let projects = loadProjects();
+
+    function makeDepartment(id, center, department, owner, overrides = {}) {
+      return {
+        id,
+        center,
+        department,
+        owner,
+        agentOwner: "",
+        title: "待填寫 Agent 方向",
+        summary: "待填寫功能簡介與主要痛點。",
+        flow: [],
+        architecture: "待填寫架構。",
+        stage: 0,
+        progress: 0,
+        size: "未定",
+        frequency: "尚未使用",
+        scale: "未定",
+        agentType: "待評估",
+        agentTypeNote: "",
+        weeklyUsers: 0,
+        activeUsers: 0,
+        targetUsers: 0,
+        necessity: 0,
+        practicality: 0,
+        generality: 0,
+        timeSaving: 0,
+        addedValue: 0,
+        governance: 0,
+        dataReadiness: 0,
+        validation: 0,
+        supportStatus: "無",
+        supportType: "無",
+        supportDescription: "",
+        currentProgress: "尚未填寫本週進度。",
+        nextStep: "待填寫下週進度 / Action。",
+        source: "",
+        lastUpdate: today,
+        ...overrides
+      };
+    }
+
+    function readStoredProjects() {
+      try {
+        const raw = window.localStorage ? window.localStorage.getItem(STORAGE_KEY) : null;
+        return raw ? parseProjectPayload(JSON.parse(raw)) : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function writeStoredProjects(value) {
+      try {
+        if (window.localStorage) {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(value, null, 2));
+        }
+      } catch (error) {
+        console.warn("Dashboard storage is unavailable; updates remain in this session only.");
+      }
+    }
+
+    function loadProjects() {
+      const stored = readStoredProjects();
+      return mergeProjects(stored);
+    }
+
+    function parseProjectPayload(parsed) {
+      if (Array.isArray(parsed)) return parsed;
+      if (parsed && Array.isArray(parsed.projects)) return parsed.projects;
+      return null;
+    }
+
+    function mergeProjects(incomingProjects) {
+      if (!Array.isArray(incomingProjects)) return structuredClone(defaultProjects);
+      return defaultProjects.map(defaultProject => {
+        const incoming = incomingProjects.find(project => project.id === defaultProject.id);
+        if (!incoming) return structuredClone(defaultProject);
+        return normalizeProject({ ...defaultProject, ...incoming });
+      });
+    }
+
+    function canUseServerSync() {
+      return window.location.protocol === "http:" || window.location.protocol === "https:";
+    }
+
+    async function loadServerProjects() {
+      if (!canUseServerSync()) return;
+      for (const endpoint of [SERVER_PROJECTS_ENDPOINT, STATIC_PROJECTS_ENDPOINT]) {
+        try {
+          const response = await fetch(`${endpoint}?t=${Date.now()}`, { cache: "no-store" });
+          if (response.status === 404) continue;
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const incoming = parseProjectPayload(await response.json());
+          if (!Array.isArray(incoming)) continue;
+          projects = mergeProjects(incoming);
+          saveProjects();
+          renderFilters();
+          render();
+          return;
+        } catch (error) {
+          // Try the next source, then fall back to local browser data.
+        }
+      }
+      console.warn("Shared dashboard data could not be loaded; using local browser data.");
+    }
+
+    async function saveProjectsToServer() {
+      if (!canUseServerSync()) return false;
+      try {
+        const response = await fetch(SERVER_PROJECTS_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ savedAt: new Date().toISOString(), projects })
+        });
+        return response.ok;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function normalizeProject(project) {
+      return {
+        ...project,
+        stage: clampNumber(project.stage, 0, 4),
+        progress: Math.min(clampNumber(project.progress, 0, 100), stageProgressCap(project.stage)),
+        weeklyUsers: clampNumber(project.weeklyUsers, 0, 9999),
+        activeUsers: clampNumber(project.activeUsers || project.weeklyUsers, 0, 9999),
+        targetUsers: clampNumber(project.targetUsers, 0, 9999),
+        necessity: clampNumber(project.necessity, 0, 5),
+        practicality: clampNumber(project.practicality, 0, 5),
+        generality: clampNumber(project.generality, 0, 5),
+        timeSaving: clampNumber(project.timeSaving, 0, 5),
+        addedValue: clampNumber(project.addedValue, 0, 5),
+        governance: clampNumber(project.governance, 0, 100),
+        dataReadiness: clampNumber(project.dataReadiness, 0, 100),
+        validation: clampNumber(project.validation, 0, 100),
+        frequency: frequencyLabels.includes(project.frequency) ? project.frequency : "尚未使用",
+        scale: scaleLabels.includes(project.scale) ? project.scale : "未定",
+        size: sizeLabels.includes(project.size) ? project.size : "未定",
+        agentType: agentTypeLabels.includes(project.agentType) ? project.agentType : "待評估",
+        agentTypeNote: project.agentTypeNote || "",
+        agentOwner: project.agentOwner || "",
+        source: project.source || "",
+        flow: Array.isArray(project.flow) ? project.flow : [],
+        supportStatus: supportStatusLabels.includes(project.supportStatus) ? project.supportStatus : "無",
+        supportType: supportTypeLabels.includes(project.supportType) ? project.supportType : "無"
+      };
+    }
+
+    function saveProjects() {
+      writeStoredProjects(projects);
+    }
+
+    function valueScore(project) {
+      const total = project.necessity + project.practicality + project.generality + project.timeSaving + project.addedValue;
+      if (total <= 0) return 0;
+      return Math.round(total / 25 * 100);
+    }
+
+    function adoptionScore(project) {
+      const userRatio = project.targetUsers ? Math.min(100, Math.round(project.weeklyUsers / project.targetUsers * 100)) : 0;
+      return Math.round((frequencyWeights[project.frequency] * .6) + (userRatio * .4));
+    }
+
+    function governanceScore(project) {
+      return Math.round((project.governance + project.dataReadiness + project.validation) / 3);
+    }
+
+    function completionScore(project) {
+      return progressScore(project);
+    }
+
+    function stageProgressCap(stage) {
+      return Math.max(0, Math.min(100, clampNumber(stage, 0, 4) * 25));
+    }
+
+    function stageForProgress(progress) {
+      const value = clampNumber(progress, 0, 100);
+      if (value <= 0) return 0;
+      return Math.max(1, Math.min(4, Math.ceil(value / 25)));
+    }
+
+    function progressScore(project) {
+      return Math.min(clampNumber(project.progress, 0, 100), stageProgressCap(project.stage));
+    }
+
+    function readinessLabel(score) {
+      if (score >= 76) return "已擴及中心/公司級";
+      if (score >= 51) return "課/部日常工作流程";
+      if (score >= 26) return "Pilot / 跨部門測試";
+      if (score >= 1) return "個人建立測試中";
+      if (score > 0) return "準備中";
+      return "尚未填寫";
+    }
+
+    function projectStatusLabel(project) {
+      if (project.stage > 0) return stageLabels[project.stage];
+      if (hasData(project)) return "準備中";
+      return "尚未填寫";
+    }
+
+    function filteredProjects() {
+      const department = document.getElementById("centerFilter").value || "全部";
+      const level = document.getElementById("levelFilter").value || "全部";
+      const stage = document.getElementById("stageFilter").value || "全部";
+      const query = (document.getElementById("searchInput").value || "").trim().toLowerCase();
+
+      return projects.filter(project => {
+        const text = `${project.center} ${project.department} ${project.owner} ${project.agentOwner} ${project.title} ${project.summary} ${project.source}`.toLowerCase();
+        return (department === "全部" || project.department === department) &&
+          (level === "全部" || project.scale === level) &&
+          (stage === "全部" || String(project.stage) === stage) &&
+          (!query || text.includes(query));
+      });
+    }
+
+    function average(values) {
+      if (!values.length) return 0;
+      return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
+    }
+
+    function departmentRankings(items) {
+      return [...items].map(project => ({
+        department: project.department,
+        readiness: completionScore(project)
+      })).sort((a, b) => {
+        if (b.readiness !== a.readiness) return b.readiness - a.readiness;
+        return editDepartmentOrder.indexOf(a.department) - editDepartmentOrder.indexOf(b.department);
+      });
+    }
+
+    function kpiDefinitions(items) {
+      return {
+        personal: {
+          title: "個人建立測試中",
+          note: "成熟度 1：個人已建立或測試中的 Agent / 自動化",
+          icon: "personal",
+          items: items.filter(project => project.stage === 1)
+        },
+        pilot: {
+          title: "Pilot 以上 / 跨部門測試",
+          note: "成熟度 2 以上：已進入 Pilot 或跨部門測試",
+          icon: "pilot",
+          items: items.filter(project => project.stage >= 2)
+        },
+        workflow: {
+          title: "進入課/部日常工作流程",
+          note: "成熟度 3 以上：已進入課/部日常工作流程",
+          icon: "workflow",
+          items: items.filter(project => project.stage >= 3)
+        },
+        center: {
+          title: "已擴及中心/公司級",
+          note: "成熟度 4：已擴及其他研發中心或公司級",
+          icon: "center",
+          items: items.filter(project => project.stage >= 4)
+        }
+      };
+    }
+
+    function renderFilters() {
+      const departments = ["全部", ...editOrderedProjects().map(project => project.department)];
+      fillSelect("centerFilter", departments.map(value => [value, value]));
+      fillSelect("levelFilter", ["全部", ...scaleLabels].map(value => [value, value]));
+      fillSelect("stageFilter", [["全部", "全部"], ...Object.entries(stageLabels).map(([value, label]) => [value, `${value} ${label}`])]);
+      fillSelect("projectSelect", editOrderedProjects().map(project => [project.id, `${project.department} - ${project.owner}`]));
+      fillSelect("stageInput", Object.entries(stageLabels).map(([value, label]) => [value, `${value} ${label}`]));
+      fillSelect("frequencyInput", frequencyLabels.map(value => [value, value]));
+      fillSelect("scaleInput", scaleLabels.map(value => [value, value]));
+      fillSelect("sizeInput", sizeLabels.map(value => [value, value]));
+      fillSelect("agentTypeInput", agentTypeLabels.map(value => [value, value]));
+      fillSelect("supportStatusInput", supportStatusLabels.map(value => [value, value]));
+      fillSelect("supportTypeInput", supportTypeLabels.map(value => [value, value]));
+      renderEditDeptPicker();
+    }
+
+    function editOrderedProjects() {
+      return [...projects].sort((a, b) => editDepartmentOrder.indexOf(a.department) - editDepartmentOrder.indexOf(b.department));
+    }
+
+    function fillSelect(id, options) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const current = el.value;
+      el.innerHTML = options.map(([value, label]) => `<option value="${escapeHtml(value)}">${escapeHtml(label)}</option>`).join("");
+      if ([...el.options].some(option => option.value === current)) {
+        el.value = current;
+      }
+    }
+
+    function renderExecutiveSummary(items) {
+      const readiness = average(items.map(completionScore));
+      const filled = items.filter(hasData).length;
+      const supportItems = items
+        .filter(project => project.supportStatus !== "無")
+        .sort((a, b) => supportStatusLabels.indexOf(b.supportStatus) - supportStatusLabels.indexOf(a.supportStatus));
+
+      document.getElementById("overallReadiness").innerHTML = `
+        <div class="eyebrow">Company Completion</div>
+        <div class="hero-value">${readiness}<span>%</span></div>
+        <div class="progress large"><div class="bar" style="--w:${readiness}%"></div></div>
+        <div class="hero-caption">${items.length} 個部門 · ${filled} 個已填寫資料 · ${readinessLabel(readiness)}</div>
+      `;
+
+      document.getElementById("centerRanking").innerHTML = `
+        <h2>部門完成度排名</h2>
+        <div class="rank-list">
+          ${departmentRankings(items).map(row => `
+            <div class="rank-row">
+              <span>${escapeHtml(row.department)}</span>
+              <div class="progress"><div class="bar" style="--w:${row.readiness}%"></div></div>
+              <strong>${row.readiness}%</strong>
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      document.getElementById("supportOverview").innerHTML = `
+        <h2>主管協助需求</h2>
+        <div class="support-list">
+          ${supportItems.length ? supportItems.map(project => `
+            <div class="support-item">
+              <span class="status-dot ${supportClass(project.supportStatus)}"></span>
+              <div class="support-main">
+                <strong>${escapeHtml(project.department)}</strong>
+                <span>${escapeHtml(project.supportType)} · ${escapeHtml(project.supportDescription || "待補充說明")}</span>
+              </div>
+              <span class="badge ${supportBadge(project.supportStatus)}">${escapeHtml(project.supportStatus)}</span>
+            </div>
+          `).join("") : `
+            <div class="support-item">
+              <span class="status-dot"></span>
+              <div class="support-main">
+                <strong>目前 0 件</strong>
+                <span>尚未填寫主管協助需求。</span>
+              </div>
+              <span class="badge green">OK</span>
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function renderKpis(items) {
+      const definitions = kpiDefinitions(items);
+      document.getElementById("kpis").innerHTML = Object.entries(definitions).map(([key, definition]) => `
+        <button class="kpi" data-kpi="${key}" type="button">
+          <span class="kpi-icon">${iconSvg(definition.icon)}</span>
+          <span class="kpi-label">${escapeHtml(definition.title)}</span>
+          <span class="kpi-value">${definition.items.length}</span>
+          <span class="kpi-note">${escapeHtml(definition.note)}，點擊看部門與題目明細</span>
+        </button>
+      `).join("");
+
+      document.querySelectorAll("[data-kpi]").forEach(button => {
+        button.addEventListener("click", () => openKpiDetail(button.dataset.kpi));
+      });
+    }
+
+    function renderCards(items) {
+      document.getElementById("projectCards").innerHTML = items.map(project => {
+        const completion = completionScore(project);
+        const progress = progressScore(project);
+        const usage = adoptionScore(project);
+        const benefit = valueScore(project);
+        const scaleScore = scaleWeights[project.scale] || 0;
+        const statusLabel = projectStatusLabel(project);
+        return `
+          <article class="dept-card">
+            <div class="dept-top">
+              <div>
+                <h3 class="dept-title">${escapeHtml(project.department)}</h3>
+                <div class="meta compact">部門負責人：${escapeHtml(project.owner)} · 研究中心：${escapeHtml(project.center)}${project.agentOwner ? ` · Agent Owner：${escapeHtml(project.agentOwner)}` : ""}</div>
+              </div>
+              <div class="badge-stack">
+                <span class="badge ${project.stage >= 3 ? "green" : project.stage >= 1 ? "amber" : "red"}">${escapeHtml(statusLabel)}</span>
+                <span class="badge ${agentTypeBadge(project.agentType)}">${escapeHtml(project.agentType)}</span>
+              </div>
+            </div>
+
+            <div class="copy">${escapeHtml(project.title)}</div>
+            ${renderFlow(project)}
+
+            <div class="readiness-row">
+              <div class="readiness-number">${completion}%</div>
+              <div>
+                <div class="label">部門完成度</div>
+                <div class="progress large"><div class="bar" style="--w:${completion}%"></div></div>
+                <div class="meta compact">四階段：個人 25% / Pilot 50% / 課部 75% / 中心或公司 100%</div>
+              </div>
+            </div>
+
+            <div class="indicator-grid">
+              <div class="indicator">${iconSvg("progress")}<span>完成度</span><strong>${progress}%</strong></div>
+              <div class="indicator">${iconSvg("usage")}<span>使用</span><strong>${escapeHtml(project.frequency)} · ${usage}%</strong></div>
+              <div class="indicator">${iconSvg("benefit")}<span>效益</span><strong>${benefit}%</strong></div>
+              <div class="indicator">${iconSvg("center")}<span>擴展</span><strong>${escapeHtml(project.scale)} · ${scaleScore}%</strong></div>
+            </div>
+
+            <div class="detail-grid">
+              <div class="detail-box">
+                <strong>目前進度</strong>
+                <div class="meta">${escapeHtml(project.currentProgress)}</div>
+              </div>
+              <div class="detail-box">
+                <strong>下週進度</strong>
+                <div class="meta">${escapeHtml(project.nextStep)}</div>
+              </div>
+              <div class="detail-box">
+                <strong>架構</strong>
+                <div class="meta">${escapeHtml(project.architecture)}</div>
+              </div>
+              <div class="detail-box">
+                <strong>技術型態</strong>
+                <div class="meta">${escapeHtml(project.agentType)}${project.agentTypeNote ? ` · ${escapeHtml(project.agentTypeNote)}` : ""}</div>
+              </div>
+              <div class="detail-box">
+                <strong>主管協助</strong>
+                <div class="meta">${escapeHtml(project.supportStatus)}${project.supportType !== "無" ? ` · ${escapeHtml(project.supportType)}` : ""}${project.supportDescription ? ` · ${escapeHtml(project.supportDescription)}` : ""}</div>
+              </div>
+              <div class="detail-box">
+                <strong>資料來源</strong>
+                <div class="meta">${escapeHtml(project.source || "尚未填寫")}</div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderFlow(project) {
+      const steps = Array.isArray(project.flow) && project.flow.length
+        ? project.flow
+        : String(project.architecture || project.summary || "")
+          .split(/\s*->\s*/)
+          .map(step => step.trim())
+          .filter(Boolean)
+          .slice(0, 5);
+
+      if (!steps.length || steps[0] === "待填寫架構。") {
+        return `<div class="copy">${escapeHtml(project.summary)}</div>`;
+      }
+
+      return `
+        <div class="flow-steps" aria-label="${escapeHtml(project.department)} flow">
+          ${steps.map((step, index) => `
+            <div class="flow-step">
+              <span>${index + 1}</span>
+              <strong>${escapeHtml(step)}</strong>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderTrackingCards(items) {
+      document.getElementById("trackingCards").innerHTML = items.map(project => {
+        const completion = completionScore(project);
+        return `
+          <article class="track-card">
+            <div>
+              <h3>${escapeHtml(project.department)}</h3>
+              <div class="meta">部門負責人：${escapeHtml(project.owner)}</div>
+              <div class="meta">Agent Owner：${escapeHtml(project.agentOwner || "待確認")}</div>
+              <div class="meta">Agent：${escapeHtml(project.title)}</div>
+            </div>
+            <div class="track-metrics">
+              <div class="track-metric"><span>完成度</span><strong>${completion}%</strong></div>
+              <div class="track-metric"><span>成熟度</span><strong>${project.stage} ${stageLabels[project.stage]}</strong></div>
+              <div class="track-metric"><span>技術型態</span><strong>${escapeHtml(project.agentType)}</strong></div>
+              <div class="track-metric"><span>使用頻率</span><strong>${escapeHtml(project.frequency)}</strong></div>
+              <div class="track-metric"><span>效益</span><strong>${valueScore(project)}%</strong></div>
+              <div class="track-metric"><span>擴展</span><strong>${escapeHtml(project.scale)}</strong></div>
+              <div class="track-metric"><span>主管協助</span><strong>${escapeHtml(project.supportStatus)}</strong></div>
+            </div>
+            <div>
+              <div class="copy"><strong>目前：</strong>${escapeHtml(project.currentProgress)}</div>
+              <div class="copy"><strong>下週：</strong>${escapeHtml(project.nextStep)}</div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function openKpiDetail(key) {
+      const items = filteredProjects();
+      const definition = kpiDefinitions(items)[key];
+      if (!definition) return;
+
+      document.getElementById("modalTitle").textContent = definition.title;
+      document.getElementById("modalHint").textContent = definition.note;
+      document.getElementById("modalList").innerHTML = definition.items.length ? definition.items.map(project => `
+        <div class="modal-item">
+          <strong>${escapeHtml(project.department)} · ${escapeHtml(project.title)}</strong>
+          <div class="meta">部門負責人：${escapeHtml(project.owner)}${project.agentOwner ? ` · Agent Owner：${escapeHtml(project.agentOwner)}` : ""} · 技術型態 ${escapeHtml(project.agentType)} · 完成度 ${completionScore(project)}% · 成熟度 ${project.stage} ${stageLabels[project.stage]}</div>
+          <div class="meta">目前：${escapeHtml(project.currentProgress)}</div>
+          <div class="meta">下週：${escapeHtml(project.nextStep)}</div>
+        </div>
+      `).join("") : `
+        <div class="empty-state">目前 0 個部門符合此指標，尚未填入可列入明細的資料。</div>
+      `;
+      document.getElementById("detailModal").classList.add("open");
+    }
+
+    function loadForm() {
+      const id = document.getElementById("projectSelect").value;
+      const project = projects.find(item => item.id === id) || projects[0];
+      if (!project) return;
+
+      setValue("titleInput", project.title);
+      setValue("ownerInput", project.owner);
+      setValue("agentOwnerInput", project.agentOwner || "");
+      setValue("agentTypeInput", project.agentType || "待評估");
+      setValue("sourceInput", project.source || "");
+      setValue("agentTypeNoteInput", project.agentTypeNote || "");
+      setValue("summaryInput", project.summary);
+      setValue("flowInput", Array.isArray(project.flow) ? project.flow.join(" -> ") : "");
+      setValue("architectureInput", project.architecture);
+      setValue("stageInput", String(project.stage));
+      setValue("progressInput", project.progress);
+      setValue("frequencyInput", project.frequency);
+      setValue("weeklyUsersInput", project.weeklyUsers);
+      setValue("scaleInput", project.scale);
+      setValue("sizeInput", project.size);
+      setValue("targetUsersInput", project.targetUsers);
+      setValue("necessityInput", project.necessity);
+      setValue("practicalityInput", project.practicality);
+      setValue("generalityInput", project.generality);
+      setValue("timeSavingInput", project.timeSaving);
+      setValue("addedValueInput", project.addedValue);
+      setValue("governanceInput", project.governance);
+      setValue("dataReadinessInput", project.dataReadiness);
+      setValue("validationInput", project.validation);
+      setValue("supportStatusInput", project.supportStatus);
+      setValue("supportTypeInput", project.supportType);
+      setValue("currentProgressInput", project.currentProgress);
+      setValue("nextStepInput", project.nextStep);
+      setValue("supportDescriptionInput", project.supportDescription);
+      updateEditDeptPicker();
+      updateProgressCapHint();
+    }
+
+    function updateProgressCapHint() {
+      const hint = document.getElementById("progressCapHint");
+      const progressInput = document.getElementById("progressInput");
+      const stageInput = document.getElementById("stageInput");
+      if (!hint || !progressInput || !stageInput) return;
+
+      const requestedProgress = clampNumber(progressInput.value, 0, 100);
+      const selectedStage = clampNumber(stageInput.value, 0, 4);
+      const cap = stageProgressCap(selectedStage);
+      const requiredStage = stageForProgress(requestedProgress);
+
+      if (requestedProgress > cap) {
+        hint.textContent = `儲存時會同步成熟度為 ${requiredStage} ${stageLabels[requiredStage]}，完成度顯示 ${requestedProgress}%。`;
+        return;
+      }
+
+      hint.textContent = selectedStage === 0
+        ? "成熟度 0 代表尚未填寫，完成度會維持 0%。"
+        : `目前成熟度上限 ${cap}%。`;
+    }
+
+    function renderEditDeptPicker() {
+      const picker = document.getElementById("editDeptPicker");
+      if (!picker) return;
+      picker.innerHTML = editOrderedProjects().map(project => `
+        <button class="dept-pick" type="button" data-edit-project="${escapeHtml(project.id)}">
+          ${escapeHtml(project.department)}
+          <span>${escapeHtml(projectStatusLabel(project))} · ${completionScore(project)}%</span>
+        </button>
+      `).join("");
+      picker.querySelectorAll("[data-edit-project]").forEach(button => {
+        button.addEventListener("click", () => {
+          document.getElementById("projectSelect").value = button.dataset.editProject;
+          loadForm();
+          document.getElementById("updatePanel").scrollIntoView({ block: "start", behavior: "smooth" });
+        });
+      });
+      updateEditDeptPicker();
+    }
+
+    function updateEditDeptPicker() {
+      const current = document.getElementById("projectSelect")?.value;
+      document.querySelectorAll("[data-edit-project]").forEach(button => {
+        button.classList.toggle("active", button.dataset.editProject === current);
+      });
+    }
+
+    async function saveForm() {
+      const id = document.getElementById("projectSelect").value;
+      const project = projects.find(item => item.id === id);
+      if (!project) return;
+
+      project.title = textValue("titleInput") || "待填寫 Agent 方向";
+      project.owner = textValue("ownerInput") || project.owner;
+      project.agentOwner = textValue("agentOwnerInput");
+      project.agentType = valueOf("agentTypeInput");
+      project.source = textValue("sourceInput");
+      project.agentTypeNote = textValue("agentTypeNoteInput");
+      project.summary = textValue("summaryInput") || "待填寫功能簡介與主要痛點。";
+      project.flow = textValue("flowInput")
+        .split(/\s*->\s*/)
+        .map(step => step.trim())
+        .filter(Boolean);
+      project.architecture = textValue("architectureInput") || "待填寫架構。";
+      const requestedProgress = clampNumber(valueOf("progressInput"), 0, 100);
+      const selectedStage = clampNumber(valueOf("stageInput"), 0, 4);
+      const syncedStage = requestedProgress > stageProgressCap(selectedStage)
+        ? stageForProgress(requestedProgress)
+        : selectedStage;
+      const maturityWasSynced = syncedStage !== selectedStage;
+      project.stage = syncedStage;
+      project.progress = Math.min(requestedProgress, stageProgressCap(project.stage));
+      project.frequency = valueOf("frequencyInput");
+      project.weeklyUsers = clampNumber(valueOf("weeklyUsersInput"), 0, 9999);
+      project.activeUsers = project.weeklyUsers;
+      project.scale = valueOf("scaleInput");
+      project.size = valueOf("sizeInput");
+      project.targetUsers = clampNumber(valueOf("targetUsersInput"), 0, 9999);
+      project.necessity = clampNumber(valueOf("necessityInput"), 0, 5);
+      project.practicality = clampNumber(valueOf("practicalityInput"), 0, 5);
+      project.generality = clampNumber(valueOf("generalityInput"), 0, 5);
+      project.timeSaving = clampNumber(valueOf("timeSavingInput"), 0, 5);
+      project.addedValue = clampNumber(valueOf("addedValueInput"), 0, 5);
+      project.governance = clampNumber(valueOf("governanceInput"), 0, 100);
+      project.dataReadiness = clampNumber(valueOf("dataReadinessInput"), 0, 100);
+      project.validation = clampNumber(valueOf("validationInput"), 0, 100);
+      project.supportStatus = valueOf("supportStatusInput");
+      project.supportType = project.supportStatus === "無" ? "無" : valueOf("supportTypeInput");
+      project.supportDescription = textValue("supportDescriptionInput");
+      project.currentProgress = textValue("currentProgressInput") || "尚未填寫本週進度。";
+      project.nextStep = textValue("nextStepInput") || "待填寫下週進度 / Action。";
+      project.lastUpdate = new Date().toISOString().slice(0, 10);
+
+      saveProjects();
+      renderFilters();
+      document.getElementById("projectSelect").value = id;
+      render();
+      document.getElementById("projectSelect").value = id;
+      loadForm();
+      const maturityDetail = maturityWasSynced ? `完成度已同步成熟度為 ${project.stage} ${stageLabels[project.stage]}` : "";
+      showSavedStatus(project.department, maturityDetail);
+      const serverSynced = await saveProjectsToServer();
+      if (serverSynced) {
+        showSavedStatus(project.department, [maturityDetail, "已同步到分享網址"].filter(Boolean).join("；"));
+      } else if (canUseServerSync()) {
+        showSavedStatus(project.department, [maturityDetail, "已儲存在此瀏覽器，分享網址同步失敗"].filter(Boolean).join("；"));
+      }
+    }
+
+    let saveStatusTimer = null;
+
+    function showSavedStatus(department, detail = "") {
+      const status = document.getElementById("saveStatus");
+      const button = document.getElementById("saveBtn");
+      if (!status || !button) return;
+      status.textContent = `${department} 已儲存，畫面已更新${detail ? `；${detail}` : ""}`;
+      button.textContent = "已儲存";
+      clearTimeout(saveStatusTimer);
+      saveStatusTimer = setTimeout(() => {
+        status.textContent = "";
+        button.textContent = "儲存更新";
+      }, 2200);
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), projects }, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `adlink-ai-agent-dashboard-${new Date().toISOString().slice(0, 10)}.json`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importData(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          const incoming = Array.isArray(parsed) ? parsed : parsed.projects;
+          if (!Array.isArray(incoming)) throw new Error("missing projects");
+          projects = incoming.map(normalizeProject);
+          saveProjects();
+          renderFilters();
+          render();
+        } catch (error) {
+          alert("匯入失敗：JSON 格式不符合 dashboard 資料。");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function render() {
+      const items = filteredProjects();
+      document.getElementById("todayBadge").textContent = `更新日 ${new Date().toLocaleDateString("zh-TW")}`;
+      renderExecutiveSummary(items);
+      renderKpis(items);
+      renderCards(items);
+      renderTrackingCards(items);
+      loadForm();
+    }
+
+    function showView(view) {
+      document.querySelectorAll(".view").forEach(section => {
+        section.classList.toggle("active", section.id === `view-${view}`);
+      });
+      document.querySelectorAll("[data-view]").forEach(button => {
+        button.classList.toggle("active", button.dataset.view === view);
+      });
+    }
+
+    function hasData(project) {
+      return completionScore(project) > 0 ||
+        project.stage > 0 ||
+        project.progress > 0 ||
+        project.frequency !== "尚未使用" ||
+        project.scale !== "未定" ||
+        project.agentType !== "待評估" ||
+        project.title !== "待填寫 Agent 方向";
+    }
+
+    function agentTypeBadge(type) {
+      if (type === "AI Agent") return "green";
+      if (type === "Agent 化中") return "blue";
+      if (type === "自動化程式") return "amber";
+      return "";
+    }
+
+    function supportClass(status) {
+      if (status === "需主管決策") return "danger";
+      if (status === "需注意") return "warn";
+      return "";
+    }
+
+    function supportBadge(status) {
+      if (status === "需主管決策") return "red";
+      if (status === "需注意") return "amber";
+      return "green";
+    }
+
+    function iconSvg(name) {
+      const icons = {
+        workflow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V5"/><path d="M4 7h13l-2.5 4L17 15H4"/><path d="M20 19H4"/></svg>',
+        pilot: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20"/><path d="M5 7h14"/><path d="m7 7 5-5 5 5"/><path d="M8 17h8"/></svg>',
+        center: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M10.5 7.6 6.5 16.4"/><path d="m13.5 7.6 4 8.8"/></svg>',
+        personal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/><path d="M18 4h3v3"/><path d="m21 4-4 4"/></svg>',
+        progress: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 19V5"/><path d="M5 5h11l-2 4 2 4H5"/></svg>',
+        usage: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+        benefit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>'
+      };
+      return icons[name] || "";
+    }
+
+    function setValue(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.value = value ?? "";
+    }
+
+    function valueOf(id) {
+      const el = document.getElementById(id);
+      return el ? el.value : "";
+    }
+
+    function textValue(id) {
+      return valueOf(id).trim();
+    }
+
+    function clampNumber(value, min, max) {
+      const parsed = Number(value);
+      if (!Number.isFinite(parsed)) return min;
+      return Math.max(min, Math.min(max, Math.round(parsed)));
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    renderFilters();
+    render();
+    loadServerProjects();
+
+    ["centerFilter", "levelFilter", "stageFilter", "searchInput"].forEach(id => {
+      document.getElementById(id).addEventListener("input", render);
+    });
+
+    document.querySelectorAll("[data-view]").forEach(button => {
+      button.addEventListener("click", () => showView(button.dataset.view));
+    });
+
+    document.getElementById("projectSelect").addEventListener("change", loadForm);
+    ["stageInput", "progressInput"].forEach(id => {
+      document.getElementById(id).addEventListener("input", updateProgressCapHint);
+    });
+    document.getElementById("modeBtn").addEventListener("click", () => {
+      document.body.classList.toggle("management-mode");
+      document.getElementById("modeBtn").textContent = document.body.classList.contains("management-mode") ? "關閉管理模式" : "管理模式";
+    });
+    document.getElementById("saveBtn").addEventListener("click", saveForm);
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      if (!confirm("確定清空回預設部門清單？")) return;
+      projects = structuredClone(defaultProjects);
+      saveProjects();
+      renderFilters();
+      render();
+    });
+    document.getElementById("exportBtn").addEventListener("click", exportData);
+    document.getElementById("importFile").addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0];
+      if (file) importData(file);
+      event.target.value = "";
+    });
+    document.getElementById("closeModal").addEventListener("click", () => {
+      document.getElementById("detailModal").classList.remove("open");
+    });
+    document.getElementById("detailModal").addEventListener("click", event => {
+      if (event.target.id === "detailModal") {
+        document.getElementById("detailModal").classList.remove("open");
+      }
+    });
+  </script>
+</body>
+</html>
