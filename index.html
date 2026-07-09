@@ -377,6 +377,178 @@
       margin-bottom: 16px;
     }
 
+    .org-panel {
+      display: grid;
+      gap: 18px;
+    }
+
+    .org-chart {
+      display: grid;
+      gap: 16px;
+    }
+
+    .org-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      align-items: stretch;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    .org-card {
+      min-width: 250px;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(111,211,255,.24);
+      background: rgba(255,255,255,.045);
+      text-align: center;
+    }
+
+    .org-card.primary {
+      border-color: rgba(200,16,46,.55);
+      background: linear-gradient(180deg, rgba(200,16,46,.23), rgba(255,255,255,.05));
+    }
+
+    .org-card.secondary {
+      min-width: 310px;
+    }
+
+    .org-card strong {
+      display: block;
+      color: #fff;
+      font-size: 25px;
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+
+    .org-card span {
+      display: block;
+      color: var(--soft);
+      font-size: 17px;
+      line-height: 1.45;
+      font-weight: 800;
+    }
+
+    .org-card em {
+      display: block;
+      color: var(--cyan);
+      font-style: normal;
+      font-size: 16px;
+      line-height: 1.45;
+      margin-top: 5px;
+      font-weight: 850;
+    }
+
+    .org-connector {
+      width: 2px;
+      height: 24px;
+      margin: -4px auto;
+      background: rgba(111,211,255,.35);
+    }
+
+    .slide-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .slide-card {
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 180px 1fr auto;
+      gap: 18px;
+      align-items: center;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.045);
+    }
+
+    .slide-card h3 {
+      margin: 0;
+      color: #fff;
+      font-size: 23px;
+      line-height: 1.25;
+    }
+
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .roadmap-step {
+      min-height: 112px;
+      padding: 12px 10px;
+      border-radius: 7px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.045);
+      display: grid;
+      align-content: start;
+      gap: 6px;
+    }
+
+    .roadmap-step.done {
+      border-color: rgba(40,194,143,.34);
+      background: rgba(40,194,143,.09);
+    }
+
+    .roadmap-step.active {
+      border-color: rgba(111,211,255,.48);
+      background: rgba(111,211,255,.09);
+    }
+
+    .roadmap-step.help {
+      border-color: rgba(244,185,66,.5);
+      background: rgba(244,185,66,.1);
+    }
+
+    .roadmap-step .step-name {
+      color: #fff;
+      font-size: 16px;
+      line-height: 1.25;
+      font-weight: 900;
+    }
+
+    .roadmap-step .step-state,
+    .roadmap-step .step-owner {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+      font-weight: 850;
+    }
+
+    .roadmap-editor {
+      display: grid;
+      gap: 10px;
+    }
+
+    .roadmap-edit-row {
+      display: grid;
+      grid-template-columns: 170px 150px 160px 1fr;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .benefit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .slide-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 9px 13px;
+      border-radius: 6px;
+      border: 1px solid rgba(111,211,255,.34);
+      color: #dff5ff;
+      background: rgba(111,211,255,.08);
+      text-decoration: none;
+      font-weight: 850;
+    }
+
     .kpi {
       min-height: 156px;
       padding: 20px;
@@ -909,7 +1081,11 @@
       .score-inputs,
       .edit-dept-picker,
       .detail-grid,
-      .track-metrics {
+      .track-metrics,
+      .roadmap,
+      .roadmap-edit-row,
+      .benefit-grid,
+      .slide-card {
         grid-template-columns: 1fr;
       }
 
@@ -989,8 +1165,9 @@
       </section>
 
       <nav class="tabs" aria-label="dashboard 分頁">
-        <button class="tab active" data-view="overview">主管總覽</button>
+        <button class="tab active" data-view="overview">組織架構</button>
         <button class="tab" data-view="departments">部門 Agent 進度</button>
+        <button class="tab" data-view="slides">投影片</button>
         <button class="tab" data-view="tracking">主管追蹤表</button>
       </nav>
 
@@ -1014,6 +1191,68 @@
       </section>
 
       <section class="view active" id="view-overview">
+        <section class="panel org-panel">
+          <div class="section-head">
+            <div>
+              <h2>AI Agent Program 組織架構</h2>
+              <div class="hint">首頁只呈現責任分工與管理線，完成度與 Agent 細節放在其他分頁。</div>
+            </div>
+          </div>
+          <div class="org-chart">
+            <div class="org-row">
+              <div class="org-card primary">
+                <strong>John Chien</strong>
+                <span>AI Agent Program Sponsor</span>
+              </div>
+            </div>
+            <div class="org-connector"></div>
+            <div class="org-row">
+              <div class="org-card secondary">
+                <strong>Michael Chuang</strong>
+                <span>AI Agent Program Lead</span>
+                <em>PEC / BEC / DQAC</em>
+              </div>
+              <div class="org-card secondary">
+                <strong>Fencer Kao</strong>
+                <span>AI Code & Software Process Lead</span>
+                <em>SEC</em>
+              </div>
+            </div>
+            <div class="org-connector"></div>
+            <div class="org-row">
+              <div class="org-card">
+                <strong>PEC</strong>
+                <span>Michael Chuang</span>
+              </div>
+              <div class="org-card">
+                <strong>BEC</strong>
+                <span>Miles Shih</span>
+              </div>
+              <div class="org-card">
+                <strong>DQAC</strong>
+                <span>Diya Tseng</span>
+              </div>
+            </div>
+            <div class="org-row">
+              <div class="org-card">
+                <strong>PEC-SE</strong>
+                <span>Andy Yang</span>
+              </div>
+              <div class="org-card">
+                <strong>PEC-Thermal</strong>
+                <span>Eric Lin</span>
+              </div>
+              <div class="org-card">
+                <strong>PEC-ME</strong>
+                <span>Ray Hsu</span>
+              </div>
+              <div class="org-card">
+                <strong>PEC-EMC/RF</strong>
+                <span>Frankie Chuang</span>
+              </div>
+            </div>
+          </div>
+        </section>
         <section class="kpis" id="kpis"></section>
       </section>
 
@@ -1027,6 +1266,18 @@
             <span class="badge red" id="todayBadge"></span>
           </div>
           <div class="dept-grid" id="projectCards"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-slides">
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <h2>投影片</h2>
+              <div class="hint">集中放各部門提供的簡報；按鈕會另開或下載檔案。</div>
+            </div>
+          </div>
+          <div class="slide-grid" id="slideCards"></div>
         </section>
       </section>
 
@@ -1099,9 +1350,13 @@
             <select id="stageInput"></select>
           </div>
           <div class="field">
-            <label for="progressInput">完成度 %（1最高25 / 2最高50 / 3最高75 / 4最高100）</label>
+            <label for="progressInput">完成度 %（手動填寫）</label>
             <input id="progressInput" type="number" min="0" max="100">
             <div class="field-help" id="progressCapHint"></div>
+          </div>
+          <div class="field full">
+            <label for="progressReasonInput">完成度判斷說明</label>
+            <textarea id="progressReasonInput"></textarea>
           </div>
           <div class="field">
             <label for="frequencyInput">使用頻率</label>
@@ -1122,6 +1377,35 @@
           <div class="field">
             <label for="targetUsersInput">目標使用人數</label>
             <input id="targetUsersInput" type="number" min="0">
+          </div>
+          <div class="field full">
+            <label>Agent 推進路徑</label>
+            <div class="roadmap-editor" id="roadmapEditor"></div>
+          </div>
+          <div class="field full">
+            <label>效益說明</label>
+            <div class="benefit-grid">
+              <div class="field">
+                <label for="benefitTimeInput">節省時間</label>
+                <textarea id="benefitTimeInput"></textarea>
+              </div>
+              <div class="field">
+                <label for="benefitManpowerInput">節省人力</label>
+                <textarea id="benefitManpowerInput"></textarea>
+              </div>
+              <div class="field">
+                <label for="benefitRiskInput">降低風險</label>
+                <textarea id="benefitRiskInput"></textarea>
+              </div>
+              <div class="field">
+                <label for="benefitScaleInput">擴展價值</label>
+                <textarea id="benefitScaleInput"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="field full">
+            <label for="slidesInput">投影片連結（每行：名稱 | 路徑）</label>
+            <textarea id="slidesInput"></textarea>
           </div>
           <div class="field full">
             <label>效益評分 0-5</label>
@@ -1221,10 +1505,12 @@
     const frequencyLabels = ["尚未使用", "每天", "每週", "每月", "偶爾"];
     const scaleLabels = ["未定", "個人", "課級", "部級", "中心", "公司"];
     const sizeLabels = ["未定", "S", "M", "L", "XL"];
-    const agentTypeLabels = ["待評估", "自動化程式", "Agent 化中", "AI Agent"];
+    const agentTypeLabels = ["待評估", "自動化流程", "Agent 化中", "AI Agent"];
     const supportStatusLabels = ["無", "需注意", "需主管決策"];
     const supportTypeLabels = ["無", "資料權限", "跨部門協調", "資源人力", "試用者指定", "擴大導入決策", "其他"];
     const editDepartmentOrder = ["PEC-SE", "BEC", "PEC-EMC/RF", "PEC-ME", "PEC-Thermal", "DQAC", "SEC"];
+    const roadmapStepNames = ["需求確認", "資料/權限", "架構設計", "Prototype", "Pilot 測試", "導入/擴展"];
+    const roadmapStatusLabels = ["未開始", "進行中", "已完成", "需協助"];
 
     const scaleWeights = {
       "未定": 0,
@@ -1260,6 +1546,15 @@
         architecture: "需求感測 -> 內網報告資料夾巡檢 -> LLM 解析 PDF 標準名稱與版本 -> ANYDOOR/內網系統自動勾選 -> 匯出 EU DoC 文件。",
         agentType: "Agent 化中",
         agentTypeNote: "方案包含需求監測、PDF 解析與系統勾選，已有 Agent 化方向；仍需確認工具調用、驗證閉環與內網權限後才能視為完整 AI Agent。",
+        progressReason: "已完成題目與端到端流程定義，尚未進入可使用 prototype，因此先以 10% 呈現。",
+        roadmap: makeRoadmap(1, "Frankie"),
+        benefits: {
+          time: "減少工程師人工查找報告、逐一勾選標準與匯出文件時間。",
+          manpower: "降低 EMC/RF/Safety/EC 多窗口重複確認與人工整理工作。",
+          risk: "減少標準版本漏選、錯選與 DoC 文件一致性問題。",
+          scale: "若完成，可擴展到其他需要技術報告解析與標準勾選的合規流程。"
+        },
+        slides: [{ name: "使用 AI Agent 加速 EU DoC 產出流程", url: "slides/2026-07-09/PEC-EMC-RF-EU-DoC-Agent.pptx" }],
         stage: 1,
         progress: 10,
         size: "L",
@@ -1291,6 +1586,15 @@
         architecture: "HTML 入口上傳 Excel 範本與附件 -> 資料驗證 -> 本機 Agent 登入 PLM -> 填寫欄位/上傳附件/建立 PN -> Save -> 人工確認送簽。",
         agentType: "Agent 化中",
         agentTypeNote: "目前已把 Excel 到 PLM 的固定工作流工具化，進入個人使用與跨部門測試；需補足可擴充工具、驗證與決策邊界後，才算完整 AI Agent。",
+        progressReason: "已完成流程規劃並進入個人使用與跨部門測試，完成度由 Michael 手動判斷為 45%。",
+        roadmap: makeRoadmap(3, "Andy PK Yang"),
+        benefits: {
+          time: "降低 Excel 資料搬移、PLM 欄位填寫、附件上傳與 Save 的人工時間。",
+          manpower: "讓工程師只保留資料確認與送簽判斷，減少重複操作人力。",
+          risk: "減少欄位漏填、附件漏傳與資料複製錯誤。",
+          scale: "可推進到 SIE/ME/Thermal 或跨 BU 料號申請流程。"
+        },
+        slides: [{ name: "PLM 申請料號 Agent 自動化流程", url: "slides/2026-07-09/PEC-SE-PLM-Part-Number-Agent.pptx" }],
         stage: 2,
         progress: 45,
         size: "M",
@@ -1322,6 +1626,15 @@
         architecture: "主機環境 -> Footprint 檔案/資料來源 -> Agent 解析尺寸、孔位與外形 -> 產出圖面草稿 -> ME 人工確認與修正。",
         agentType: "Agent 化中",
         agentTypeNote: "目前是主機與資料讀取規劃階段，目標是讓 Agent 解析 Footprint 並產生圖面；完成工具調用、輸出驗證與人工確認前，仍屬 Agent 化中。",
+        progressReason: "已確認題目方向與主機需求，尚未完成 prototype，因此以早期進度呈現。",
+        roadmap: makeRoadmap(1, "Ray Hsu"),
+        benefits: {
+          time: "減少 Footprint 資料轉圖面與初稿整理時間。",
+          manpower: "讓 ME 工程師把時間放在確認與修正，而不是重複產圖。",
+          risk: "降低尺寸、孔位、外形轉換時的人為漏判風險。",
+          scale: "若輸出格式穩定，可複用到其他機構圖面產生流程。"
+        },
+        slides: [{ name: "機構圖 DXF 載入 Allegro 亂碼解決方案", url: "slides/2026-07-09/PEC-ME-DXF-Allegro-Footprint-Agent.pptx" }],
         stage: 1,
         progress: 5,
         size: "M",
@@ -1353,6 +1666,14 @@
         architecture: "PM 問題/專案條件 -> Data Search 查詢 FS1/Database -> 擷取相似專案與前幾代 Thermal 設計架構 -> 彙整比較重點與參考資料 -> Thermo 工程師判斷初步風險與回覆 PM -> 必要時再進入模擬取得精確數值。",
         agentType: "Agent 化中",
         agentTypeNote: "目前是資料搜尋與設計架構比對的 Agent 題目定義階段；核心價值是用歷史案例輔助初步判斷，不取代 Thermal simulation 的精確 Pass/Fail 結果。",
+        progressReason: "已完成題目與應用場景定義，待資料來源、欄位與相似案例規則確認。",
+        roadmap: makeRoadmap(1, "Eric"),
+        benefits: {
+          time: "PM 初步詢問時可快速取得相似案例，減少重新搜尋與等待時間。",
+          manpower: "Thermal 工程師先用歷史資料回覆方向，精確判斷再進入模擬。",
+          risk: "避免只靠記憶判斷，保留可追溯的前代設計資料依據。",
+          scale: "可擴展到其他以歷史設計案例輔助初判的工程領域。"
+        },
         stage: 1,
         progress: 10,
         size: "M",
@@ -1383,8 +1704,16 @@
         summary: "以可執行批次檔與 Python 環境檢查啟動跨 APP 自動化流程，先把固定流程串起來，減少瑣碎操作，讓工程師把時間留給設計與驗證。",
         flow: ["批次啟動", "Python 檢查", "跨 APP 操作", "流程自動跑", "Agent 化擴充"],
         architecture: "批次檔啟動 -> 檢查 Python 環境 -> 執行跨 APP 操作腳本 -> 自動完成固定工作流 -> 後續補 agent 記憶、工具調用、MCP/應用程式串接與導入追蹤。",
-        agentType: "自動化程式",
-        agentTypeNote: "目前 demo 主要是批次檔與 Python 腳本串接固定跨 APP 流程，效益明確但仍偏自動化程式；下一步才是加入記憶、工具調用、MCP/應用串接與可擴充 agent 架構。",
+        agentType: "自動化流程",
+        agentTypeNote: "目前 demo 主要是批次檔與 Python 腳本串接固定跨 APP 流程，效益明確但仍偏自動化流程；下一步才是加入記憶、工具調用、MCP/應用串接與可擴充 agent 架構。",
+        progressReason: "已有可 demo 的固定流程自動化，正在評估跨 team 導入與 Agent 化架構。",
+        roadmap: makeRoadmap(3, "Chih-Fu Hsu"),
+        benefits: {
+          time: "減少跨 APP 瑣碎操作與固定流程執行時間。",
+          manpower: "讓工程師把時間移回設計、驗證與問題判斷。",
+          risk: "降低重複操作造成的步驟遺漏，後續可補上記錄與追蹤。",
+          scale: "若架構化完成，可從 BEC 擴展到其他 team 或 TPDC RD 類似流程。"
+        },
         stage: 2,
         progress: 35,
         size: "L",
@@ -1413,6 +1742,20 @@
 
     let projects = loadProjects();
 
+    function makeRoadmap(activeIndex = 0, owner = "") {
+      return roadmapStepNames.map((name, index) => {
+        let status = "未開始";
+        if (activeIndex > 0 && index < activeIndex - 1) status = "已完成";
+        if (activeIndex > 0 && index === activeIndex - 1) status = "進行中";
+        return {
+          name,
+          status,
+          owner,
+          note: ""
+        };
+      });
+    }
+
     function makeDepartment(id, center, department, owner, overrides = {}) {
       return {
         id,
@@ -1431,6 +1774,15 @@
         scale: "未定",
         agentType: "待評估",
         agentTypeNote: "",
+        progressReason: "",
+        roadmap: makeRoadmap(0, owner),
+        benefits: {
+          time: "",
+          manpower: "",
+          risk: "",
+          scale: ""
+        },
+        slides: [],
         weeklyUsers: 0,
         activeUsers: 0,
         targetUsers: 0,
@@ -1532,10 +1884,11 @@
     }
 
     function normalizeProject(project) {
+      const agentType = project.agentType === "自動化程式" ? "自動化流程" : project.agentType;
       return {
         ...project,
         stage: clampNumber(project.stage, 0, 4),
-        progress: Math.min(clampNumber(project.progress, 0, 100), stageProgressCap(project.stage)),
+        progress: clampNumber(project.progress, 0, 100),
         weeklyUsers: clampNumber(project.weeklyUsers, 0, 9999),
         activeUsers: clampNumber(project.activeUsers || project.weeklyUsers, 0, 9999),
         targetUsers: clampNumber(project.targetUsers, 0, 9999),
@@ -1550,14 +1903,50 @@
         frequency: frequencyLabels.includes(project.frequency) ? project.frequency : "尚未使用",
         scale: scaleLabels.includes(project.scale) ? project.scale : "未定",
         size: sizeLabels.includes(project.size) ? project.size : "未定",
-        agentType: agentTypeLabels.includes(project.agentType) ? project.agentType : "待評估",
+        agentType: agentTypeLabels.includes(agentType) ? agentType : "待評估",
         agentTypeNote: project.agentTypeNote || "",
+        progressReason: project.progressReason || "",
+        roadmap: normalizeRoadmap(project.roadmap, project.owner),
+        benefits: normalizeBenefits(project.benefits),
+        slides: normalizeSlides(project.slides),
         agentOwner: project.agentOwner || "",
         source: project.source || "",
         flow: Array.isArray(project.flow) ? project.flow : [],
         supportStatus: supportStatusLabels.includes(project.supportStatus) ? project.supportStatus : "無",
         supportType: supportTypeLabels.includes(project.supportType) ? project.supportType : "無"
       };
+    }
+
+    function normalizeRoadmap(roadmap, owner = "") {
+      const incoming = Array.isArray(roadmap) ? roadmap : [];
+      return roadmapStepNames.map((name, index) => {
+        const matched = incoming.find(step => step && step.name === name) || incoming[index] || {};
+        return {
+          name,
+          status: roadmapStatusLabels.includes(matched.status) ? matched.status : "未開始",
+          owner: matched.owner || owner || "",
+          note: matched.note || ""
+        };
+      });
+    }
+
+    function normalizeBenefits(benefits) {
+      return {
+        time: benefits?.time || "",
+        manpower: benefits?.manpower || "",
+        risk: benefits?.risk || "",
+        scale: benefits?.scale || ""
+      };
+    }
+
+    function normalizeSlides(slides) {
+      if (!Array.isArray(slides)) return [];
+      return slides
+        .filter(slide => slide && slide.url)
+        .map(slide => ({
+          name: slide.name || slide.url.split("/").pop(),
+          url: slide.url
+        }));
     }
 
     function saveProjects() {
@@ -1594,7 +1983,7 @@
     }
 
     function progressScore(project) {
-      return Math.min(clampNumber(project.progress, 0, 100), stageProgressCap(project.stage));
+      return clampNumber(project.progress, 0, 100);
     }
 
     function readinessLabel(score) {
@@ -1799,9 +2188,11 @@
               <div>
                 <div class="label">部門完成度</div>
                 <div class="progress large"><div class="bar" style="--w:${completion}%"></div></div>
-                <div class="meta compact">四階段：個人 25% / Pilot 50% / 課部 75% / 中心或公司 100%</div>
+                <div class="meta compact">${escapeHtml(project.progressReason || "完成度由 Michael 手動判斷。")}</div>
               </div>
             </div>
+
+            ${renderRoadmap(project)}
 
             <div class="indicator-grid">
               <div class="indicator">${iconSvg("progress")}<span>完成度</span><strong>${progress}%</strong></div>
@@ -1828,17 +2219,63 @@
                 <div class="meta">${escapeHtml(project.agentType)}${project.agentTypeNote ? ` · ${escapeHtml(project.agentTypeNote)}` : ""}</div>
               </div>
               <div class="detail-box">
+                <strong>效益</strong>
+                <div class="meta">${renderBenefitsText(project)}</div>
+              </div>
+              <div class="detail-box">
                 <strong>主管協助</strong>
                 <div class="meta">${escapeHtml(project.supportStatus)}${project.supportType !== "無" ? ` · ${escapeHtml(project.supportType)}` : ""}${project.supportDescription ? ` · ${escapeHtml(project.supportDescription)}` : ""}</div>
               </div>
               <div class="detail-box">
                 <strong>資料來源</strong>
                 <div class="meta">${escapeHtml(project.source || "尚未填寫")}</div>
+                ${renderSlideLinks(project)}
               </div>
             </div>
           </article>
         `;
       }).join("");
+    }
+
+    function renderRoadmap(project) {
+      const roadmap = normalizeRoadmap(project.roadmap, project.owner);
+      return `
+        <div class="roadmap" aria-label="${escapeHtml(project.department)} 推進路徑">
+          ${roadmap.map(step => `
+            <div class="roadmap-step ${roadmapClass(step.status)}">
+              <div class="step-name">${escapeHtml(step.name)}</div>
+              <div class="step-state">${escapeHtml(step.status)}</div>
+              <div class="step-owner">${escapeHtml(step.owner || "Owner 待填")}</div>
+              ${step.note ? `<div class="meta compact">${escapeHtml(step.note)}</div>` : ""}
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function roadmapClass(status) {
+      if (status === "已完成") return "done";
+      if (status === "進行中") return "active";
+      if (status === "需協助") return "help";
+      return "";
+    }
+
+    function renderBenefitsText(project) {
+      const benefits = normalizeBenefits(project.benefits);
+      const lines = [
+        ["節省時間", benefits.time],
+        ["節省人力", benefits.manpower],
+        ["降低風險", benefits.risk],
+        ["擴展價值", benefits.scale]
+      ].filter(([, value]) => value);
+      if (!lines.length) return "尚未填寫效益說明。";
+      return lines.map(([label, value]) => `${escapeHtml(label)}：${escapeHtml(value)}`).join("<br>");
+    }
+
+    function renderSlideLinks(project) {
+      const slides = normalizeSlides(project.slides);
+      if (!slides.length) return "";
+      return `<div style="margin-top:10px">${slides.map(slide => `<a class="slide-link" href="${escapeHtml(slide.url)}" target="_blank" rel="noopener">${escapeHtml(slide.name)}</a>`).join(" ")}</div>`;
     }
 
     function renderFlow(project) {
@@ -1895,6 +2332,25 @@
       }).join("");
     }
 
+    function renderSlideCards(items) {
+      const slideItems = items.flatMap(project => normalizeSlides(project.slides).map(slide => ({ project, slide })));
+      document.getElementById("slideCards").innerHTML = slideItems.length ? slideItems.map(({ project, slide }) => `
+        <article class="slide-card">
+          <div>
+            <h3>${escapeHtml(project.department)}</h3>
+            <div class="meta compact">${escapeHtml(project.owner)} · ${escapeHtml(project.agentOwner || "Agent Owner 待確認")}</div>
+          </div>
+          <div>
+            <div class="copy">${escapeHtml(project.title)}</div>
+            <div class="meta">${escapeHtml(slide.name)}</div>
+          </div>
+          <a class="slide-link" href="${escapeHtml(slide.url)}" target="_blank" rel="noopener">開啟 / 下載</a>
+        </article>
+      `).join("") : `
+        <div class="empty-state">目前尚未放入投影片。</div>
+      `;
+    }
+
     function openKpiDetail(key) {
       const items = filteredProjects();
       const definition = kpiDefinitions(items)[key];
@@ -1931,11 +2387,17 @@
       setValue("architectureInput", project.architecture);
       setValue("stageInput", String(project.stage));
       setValue("progressInput", project.progress);
+      setValue("progressReasonInput", project.progressReason || "");
       setValue("frequencyInput", project.frequency);
       setValue("weeklyUsersInput", project.weeklyUsers);
       setValue("scaleInput", project.scale);
       setValue("sizeInput", project.size);
       setValue("targetUsersInput", project.targetUsers);
+      setValue("benefitTimeInput", project.benefits?.time || "");
+      setValue("benefitManpowerInput", project.benefits?.manpower || "");
+      setValue("benefitRiskInput", project.benefits?.risk || "");
+      setValue("benefitScaleInput", project.benefits?.scale || "");
+      setValue("slidesInput", (project.slides || []).map(slide => `${slide.name} | ${slide.url}`).join("\n"));
       setValue("necessityInput", project.necessity);
       setValue("practicalityInput", project.practicality);
       setValue("generalityInput", project.generality);
@@ -1949,8 +2411,61 @@
       setValue("currentProgressInput", project.currentProgress);
       setValue("nextStepInput", project.nextStep);
       setValue("supportDescriptionInput", project.supportDescription);
+      renderRoadmapEditor(project);
       updateEditDeptPicker();
       updateProgressCapHint();
+    }
+
+    function renderRoadmapEditor(project) {
+      const editor = document.getElementById("roadmapEditor");
+      if (!editor) return;
+      const roadmap = normalizeRoadmap(project.roadmap, project.owner);
+      editor.innerHTML = roadmap.map((step, index) => `
+        <div class="roadmap-edit-row" data-roadmap-index="${index}">
+          <div class="field">
+            <label>步驟</label>
+            <input data-roadmap-name value="${escapeHtml(step.name)}" readonly>
+          </div>
+          <div class="field">
+            <label>狀態</label>
+            <select data-roadmap-status>
+              ${roadmapStatusLabels.map(status => `<option value="${escapeHtml(status)}" ${status === step.status ? "selected" : ""}>${escapeHtml(status)}</option>`).join("")}
+            </select>
+          </div>
+          <div class="field">
+            <label>Owner</label>
+            <input data-roadmap-owner value="${escapeHtml(step.owner)}">
+          </div>
+          <div class="field">
+            <label>說明</label>
+            <input data-roadmap-note value="${escapeHtml(step.note)}">
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function readRoadmapEditor() {
+      return [...document.querySelectorAll("[data-roadmap-index]")].map(row => ({
+        name: row.querySelector("[data-roadmap-name]")?.value || "",
+        status: row.querySelector("[data-roadmap-status]")?.value || "未開始",
+        owner: row.querySelector("[data-roadmap-owner]")?.value.trim() || "",
+        note: row.querySelector("[data-roadmap-note]")?.value.trim() || ""
+      }));
+    }
+
+    function parseSlides(value) {
+      return value
+        .split(/\n+/)
+        .map(line => line.trim())
+        .filter(Boolean)
+        .map(line => {
+          const [name, url] = line.split("|").map(part => part.trim());
+          return {
+            name: url ? name : line.split("/").pop(),
+            url: url || line
+          };
+        })
+        .filter(slide => slide.url);
     }
 
     function updateProgressCapHint() {
@@ -1960,18 +2475,7 @@
       if (!hint || !progressInput || !stageInput) return;
 
       const requestedProgress = clampNumber(progressInput.value, 0, 100);
-      const selectedStage = clampNumber(stageInput.value, 0, 4);
-      const cap = stageProgressCap(selectedStage);
-      const requiredStage = stageForProgress(requestedProgress);
-
-      if (requestedProgress > cap) {
-        hint.textContent = `儲存時會同步成熟度為 ${requiredStage} ${stageLabels[requiredStage]}，完成度顯示 ${requestedProgress}%。`;
-        return;
-      }
-
-      hint.textContent = selectedStage === 0
-        ? "成熟度 0 代表尚未填寫，完成度會維持 0%。"
-        : `目前成熟度上限 ${cap}%。`;
+      hint.textContent = `完成度會依照你手動填寫顯示為 ${requestedProgress}%，不會由成熟度自動覆蓋。`;
     }
 
     function renderEditDeptPicker() {
@@ -2019,18 +2523,23 @@
       project.architecture = textValue("architectureInput") || "待填寫架構。";
       const requestedProgress = clampNumber(valueOf("progressInput"), 0, 100);
       const selectedStage = clampNumber(valueOf("stageInput"), 0, 4);
-      const syncedStage = requestedProgress > stageProgressCap(selectedStage)
-        ? stageForProgress(requestedProgress)
-        : selectedStage;
-      const maturityWasSynced = syncedStage !== selectedStage;
-      project.stage = syncedStage;
-      project.progress = Math.min(requestedProgress, stageProgressCap(project.stage));
+      project.stage = selectedStage;
+      project.progress = requestedProgress;
+      project.progressReason = textValue("progressReasonInput");
       project.frequency = valueOf("frequencyInput");
       project.weeklyUsers = clampNumber(valueOf("weeklyUsersInput"), 0, 9999);
       project.activeUsers = project.weeklyUsers;
       project.scale = valueOf("scaleInput");
       project.size = valueOf("sizeInput");
       project.targetUsers = clampNumber(valueOf("targetUsersInput"), 0, 9999);
+      project.roadmap = readRoadmapEditor();
+      project.benefits = {
+        time: textValue("benefitTimeInput"),
+        manpower: textValue("benefitManpowerInput"),
+        risk: textValue("benefitRiskInput"),
+        scale: textValue("benefitScaleInput")
+      };
+      project.slides = parseSlides(textValue("slidesInput"));
       project.necessity = clampNumber(valueOf("necessityInput"), 0, 5);
       project.practicality = clampNumber(valueOf("practicalityInput"), 0, 5);
       project.generality = clampNumber(valueOf("generalityInput"), 0, 5);
@@ -2052,7 +2561,7 @@
       render();
       document.getElementById("projectSelect").value = id;
       loadForm();
-      const maturityDetail = maturityWasSynced ? `完成度已同步成熟度為 ${project.stage} ${stageLabels[project.stage]}` : "";
+      const maturityDetail = "完成度使用手動值";
       showSavedStatus(project.department, maturityDetail);
       const serverSynced = await saveProjectsToServer();
       if (serverSynced) {
@@ -2111,6 +2620,7 @@
       renderExecutiveSummary(items);
       renderKpis(items);
       renderCards(items);
+      renderSlideCards(items);
       renderTrackingCards(items);
       loadForm();
     }
@@ -2137,7 +2647,7 @@
     function agentTypeBadge(type) {
       if (type === "AI Agent") return "green";
       if (type === "Agent 化中") return "blue";
-      if (type === "自動化程式") return "amber";
+      if (type === "自動化流程") return "amber";
       return "";
     }
 

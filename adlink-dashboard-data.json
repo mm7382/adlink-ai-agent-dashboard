@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-09T00:54:23.421Z",
+  "savedAt": "2026-07-09T10:11:58.887Z",
   "projects": [
     {
       "id": "pec-emc-rf",
@@ -41,7 +41,58 @@
       "currentProgress": "PPT 已定義端到端方案；7/10 Kick-off，7 月底完成架構與流程設計。",
       "nextStep": "完成技術需求對齊與系統架構評估，確認內網資料夾、報告格式與 ANYDOOR 自動勾選流程。",
       "source": "使用 AI Agent 加速 EU DoC 產出流程.pptx",
-      "lastUpdate": "2026-07-08"
+      "lastUpdate": "2026-07-08",
+      "progressReason": "已完成題目與端到端流程定義，尚未進入可使用 prototype，目前由 Michael 手動判斷為早期進度。",
+      "roadmap": [
+        {
+          "name": "需求確認",
+          "status": "進行中",
+          "owner": "Frankie",
+          "note": ""
+        },
+        {
+          "name": "資料/權限",
+          "status": "未開始",
+          "owner": "Frankie",
+          "note": ""
+        },
+        {
+          "name": "架構設計",
+          "status": "未開始",
+          "owner": "Frankie",
+          "note": ""
+        },
+        {
+          "name": "Prototype",
+          "status": "未開始",
+          "owner": "Frankie",
+          "note": ""
+        },
+        {
+          "name": "Pilot 測試",
+          "status": "未開始",
+          "owner": "Frankie",
+          "note": ""
+        },
+        {
+          "name": "導入/擴展",
+          "status": "未開始",
+          "owner": "Frankie",
+          "note": ""
+        }
+      ],
+      "benefits": {
+        "time": "減少工程師人工查找報告、逐一勾選標準與匯出文件時間。",
+        "manpower": "降低 EMC/RF/Safety/EC 多窗口重複確認與人工整理工作。",
+        "risk": "減少標準版本漏選、錯選與 DoC 文件一致性問題。",
+        "scale": "若完成，可擴展到其他需要技術報告解析與標準勾選的合規流程。"
+      },
+      "slides": [
+        {
+          "name": "使用 AI Agent 加速 EU DoC 產出流程",
+          "url": "slides/2026-07-09/PEC-EMC-RF-EU-DoC-Agent.pptx"
+        }
+      ]
     },
     {
       "id": "pec-se",
@@ -83,7 +134,58 @@
       "currentProgress": "已完成 PLM 料號申請自動化流程規劃，進入個人使用與跨部門測試；本週 7/10 前新增 Manufacturers 寫入 PN Agent。",
       "nextStep": "導入線材編碼原則到 PN Agent，推進 SIE/ME/thermal 助理試用、部門使用與跨 BU 導入。",
       "source": "PLM申請料號Agent自動化流程_Andy0703.pptx",
-      "lastUpdate": "2026-07-08"
+      "lastUpdate": "2026-07-08",
+      "progressReason": "已完成流程規劃並進入個人使用與跨部門測試，完成度由 Michael 手動判斷。",
+      "roadmap": [
+        {
+          "name": "需求確認",
+          "status": "已完成",
+          "owner": "Andy PK Yang",
+          "note": ""
+        },
+        {
+          "name": "資料/權限",
+          "status": "已完成",
+          "owner": "Andy PK Yang",
+          "note": ""
+        },
+        {
+          "name": "架構設計",
+          "status": "進行中",
+          "owner": "Andy PK Yang",
+          "note": ""
+        },
+        {
+          "name": "Prototype",
+          "status": "未開始",
+          "owner": "Andy PK Yang",
+          "note": ""
+        },
+        {
+          "name": "Pilot 測試",
+          "status": "未開始",
+          "owner": "Andy PK Yang",
+          "note": ""
+        },
+        {
+          "name": "導入/擴展",
+          "status": "未開始",
+          "owner": "Andy PK Yang",
+          "note": ""
+        }
+      ],
+      "benefits": {
+        "time": "降低 Excel 資料搬移、PLM 欄位填寫、附件上傳與 Save 的人工時間。",
+        "manpower": "讓工程師只保留資料確認與送簽判斷，減少重複操作人力。",
+        "risk": "減少欄位漏填、附件漏傳與資料複製錯誤。",
+        "scale": "可推進到 SIE/ME/Thermal 或跨 BU 料號申請流程。"
+      },
+      "slides": [
+        {
+          "name": "PLM 申請料號 Agent 自動化流程",
+          "url": "slides/2026-07-09/PEC-SE-PLM-Part-Number-Agent.pptx"
+        }
+      ]
     },
     {
       "id": "pec-me",
@@ -125,7 +227,58 @@
       "currentProgress": "機構已提出計畫：先架設主機，作為後續 Footprint 讀取與圖面產生 Agent 的執行環境。",
       "nextStep": "確認主機環境、Footprint 格式/來源、圖面輸出格式與人工確認流程，開始建立讀取 Footprint 的 Agent prototype。",
       "source": "機構提供計畫（使用者口述）",
-      "lastUpdate": "2026-07-08"
+      "lastUpdate": "2026-07-08",
+      "progressReason": "已確認題目方向與主機需求，尚未完成 prototype，因此以早期進度呈現。",
+      "roadmap": [
+        {
+          "name": "需求確認",
+          "status": "進行中",
+          "owner": "Ray Hsu",
+          "note": ""
+        },
+        {
+          "name": "資料/權限",
+          "status": "未開始",
+          "owner": "Ray Hsu",
+          "note": ""
+        },
+        {
+          "name": "架構設計",
+          "status": "未開始",
+          "owner": "Ray Hsu",
+          "note": ""
+        },
+        {
+          "name": "Prototype",
+          "status": "未開始",
+          "owner": "Ray Hsu",
+          "note": ""
+        },
+        {
+          "name": "Pilot 測試",
+          "status": "未開始",
+          "owner": "Ray Hsu",
+          "note": ""
+        },
+        {
+          "name": "導入/擴展",
+          "status": "未開始",
+          "owner": "Ray Hsu",
+          "note": ""
+        }
+      ],
+      "benefits": {
+        "time": "減少 Footprint 資料轉圖面與初稿整理時間。",
+        "manpower": "讓 ME 工程師把時間放在確認與修正，而不是重複產圖。",
+        "risk": "降低尺寸、孔位、外形轉換時的人為漏判風險。",
+        "scale": "若輸出格式穩定，可複用到其他機構圖面產生流程。"
+      },
+      "slides": [
+        {
+          "name": "機構圖 DXF 載入 Allegro 亂碼解決方案",
+          "url": "slides/2026-07-09/PEC-ME-DXF-Allegro-Footprint-Agent.pptx"
+        }
+      ]
     },
     {
       "id": "pec-thermal",
@@ -167,7 +320,53 @@
       "currentProgress": "已定義 Thermal 題目方向：針對 PM 詢問設計架構是否可能通過，先用 Data Search 找相似專案與前幾代設計架構，提供 Thermo 工程師初步判斷參考。",
       "nextStep": "盤點 FS1 與其他 Database 可查詢欄位，定義相似案例比對條件、回傳格式與 Thermo 工程師驗證方式。",
       "source": "PEC-Thermal 題目說明（使用者口述）",
-      "lastUpdate": "2026-07-09"
+      "lastUpdate": "2026-07-09",
+      "progressReason": "已完成題目與應用場景定義，待資料來源、欄位與相似案例規則確認。",
+      "roadmap": [
+        {
+          "name": "需求確認",
+          "status": "進行中",
+          "owner": "Eric",
+          "note": ""
+        },
+        {
+          "name": "資料/權限",
+          "status": "未開始",
+          "owner": "Eric",
+          "note": ""
+        },
+        {
+          "name": "架構設計",
+          "status": "未開始",
+          "owner": "Eric",
+          "note": ""
+        },
+        {
+          "name": "Prototype",
+          "status": "未開始",
+          "owner": "Eric",
+          "note": ""
+        },
+        {
+          "name": "Pilot 測試",
+          "status": "未開始",
+          "owner": "Eric",
+          "note": ""
+        },
+        {
+          "name": "導入/擴展",
+          "status": "未開始",
+          "owner": "Eric",
+          "note": ""
+        }
+      ],
+      "benefits": {
+        "time": "PM 初步詢問時可快速取得相似案例，減少重新搜尋與等待時間。",
+        "manpower": "Thermal 工程師先用歷史資料回覆方向，精確判斷再進入模擬。",
+        "risk": "避免只靠記憶判斷，保留可追溯的前代設計資料依據。",
+        "scale": "可擴展到其他以歷史設計案例輔助初判的工程領域。"
+      },
+      "slides": []
     },
     {
       "id": "dqac",
@@ -203,7 +402,53 @@
       "currentProgress": "尚未填寫本週進度。",
       "nextStep": "待填寫下週進度 / Action。",
       "source": "",
-      "lastUpdate": "2026-07-08"
+      "lastUpdate": "2026-07-08",
+      "progressReason": "",
+      "roadmap": [
+        {
+          "name": "需求確認",
+          "status": "未開始",
+          "owner": "Vincent chu",
+          "note": ""
+        },
+        {
+          "name": "資料/權限",
+          "status": "未開始",
+          "owner": "Vincent chu",
+          "note": ""
+        },
+        {
+          "name": "架構設計",
+          "status": "未開始",
+          "owner": "Vincent chu",
+          "note": ""
+        },
+        {
+          "name": "Prototype",
+          "status": "未開始",
+          "owner": "Vincent chu",
+          "note": ""
+        },
+        {
+          "name": "Pilot 測試",
+          "status": "未開始",
+          "owner": "Vincent chu",
+          "note": ""
+        },
+        {
+          "name": "導入/擴展",
+          "status": "未開始",
+          "owner": "Vincent chu",
+          "note": ""
+        }
+      ],
+      "benefits": {
+        "time": "",
+        "manpower": "",
+        "risk": "",
+        "scale": ""
+      },
+      "slides": []
     },
     {
       "id": "bec",
@@ -226,7 +471,7 @@
       "size": "M",
       "frequency": "每週",
       "scale": "課級",
-      "agentType": "自動化程式",
+      "agentType": "自動化流程",
       "agentTypeNote": "目前 demo 主要是批次檔與 Python 腳本串接固定跨 APP 流程，效益明確但仍偏自動化程式；下一步才是加入記憶、工具調用、MCP/應用串接與可擴充 agent 架構。",
       "weeklyUsers": 2,
       "activeUsers": 2,
@@ -245,7 +490,53 @@
       "currentProgress": "Chih-Fu 已完成 demo，可由批次檔啟動並自動執行跨 APP 操作；已進入個人使用與跨 team 評估，但仍需從固定 script automation 升級成可擴充 agent 架構。",
       "nextStep": "Miles 將納入 BEC 推動項目；與 Michael 討論如何把起點整合成 BEC 工具，建立開發/導入進程追蹤，並定期 review 後彙整給 Stephen。",
       "source": "BEC 昨日會議逐字稿（使用者貼上）",
-      "lastUpdate": "2026-07-08"
+      "lastUpdate": "2026-07-08",
+      "progressReason": "已有可 demo 的固定流程自動化，正在評估跨 team 導入與 Agent 化架構。",
+      "roadmap": [
+        {
+          "name": "需求確認",
+          "status": "已完成",
+          "owner": "Chih-Fu Hsu",
+          "note": ""
+        },
+        {
+          "name": "資料/權限",
+          "status": "已完成",
+          "owner": "Chih-Fu Hsu",
+          "note": ""
+        },
+        {
+          "name": "架構設計",
+          "status": "進行中",
+          "owner": "Chih-Fu Hsu",
+          "note": ""
+        },
+        {
+          "name": "Prototype",
+          "status": "未開始",
+          "owner": "Chih-Fu Hsu",
+          "note": ""
+        },
+        {
+          "name": "Pilot 測試",
+          "status": "未開始",
+          "owner": "Chih-Fu Hsu",
+          "note": ""
+        },
+        {
+          "name": "導入/擴展",
+          "status": "未開始",
+          "owner": "Chih-Fu Hsu",
+          "note": ""
+        }
+      ],
+      "benefits": {
+        "time": "減少跨 APP 瑣碎操作與固定流程執行時間。",
+        "manpower": "讓工程師把時間移回設計、驗證與問題判斷。",
+        "risk": "降低重複操作造成的步驟遺漏，後續可補上記錄與追蹤。",
+        "scale": "若架構化完成，可從 BEC 擴展到其他 team 或 TPDC RD 類似流程。"
+      },
+      "slides": []
     },
     {
       "id": "sec",
@@ -281,7 +572,53 @@
       "currentProgress": "尚未填寫本週進度。",
       "nextStep": "待填寫下週進度 / Action。",
       "source": "",
-      "lastUpdate": "2026-07-08"
+      "lastUpdate": "2026-07-08",
+      "progressReason": "",
+      "roadmap": [
+        {
+          "name": "需求確認",
+          "status": "未開始",
+          "owner": "Fencer",
+          "note": ""
+        },
+        {
+          "name": "資料/權限",
+          "status": "未開始",
+          "owner": "Fencer",
+          "note": ""
+        },
+        {
+          "name": "架構設計",
+          "status": "未開始",
+          "owner": "Fencer",
+          "note": ""
+        },
+        {
+          "name": "Prototype",
+          "status": "未開始",
+          "owner": "Fencer",
+          "note": ""
+        },
+        {
+          "name": "Pilot 測試",
+          "status": "未開始",
+          "owner": "Fencer",
+          "note": ""
+        },
+        {
+          "name": "導入/擴展",
+          "status": "未開始",
+          "owner": "Fencer",
+          "note": ""
+        }
+      ],
+      "benefits": {
+        "time": "",
+        "manpower": "",
+        "risk": "",
+        "scale": ""
+      },
+      "slides": []
     }
   ]
 }
