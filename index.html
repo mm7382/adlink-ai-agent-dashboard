@@ -404,6 +404,61 @@
       background: rgba(255,255,255,.025);
     }
 
+    .org-branch-label {
+      justify-self: start;
+      min-height: 30px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(111,211,255,.3);
+      background: rgba(111,211,255,.08);
+      color: var(--cyan);
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .org-split {
+      position: relative;
+      min-height: 48px;
+      display: grid;
+      place-items: center;
+    }
+
+    .org-split::before {
+      content: "";
+      position: absolute;
+      left: 19%;
+      right: 19%;
+      top: 50%;
+      height: 2px;
+      background: rgba(111,211,255,.28);
+    }
+
+    .org-split::after {
+      content: "";
+      position: absolute;
+      left: calc(50% - 1px);
+      top: 0;
+      width: 2px;
+      height: 50%;
+      background: rgba(111,211,255,.38);
+    }
+
+    .org-split span {
+      position: relative;
+      z-index: 1;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(111,211,255,.28);
+      background: #101824;
+      color: var(--cyan);
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
     .org-branch .org-card.secondary {
       margin: 0 auto;
       width: min(420px, 100%);
@@ -1258,9 +1313,10 @@
               <span>AI Agent Program Sponsor</span>
             </div>
           </div>
-          <div class="org-connector"></div>
+          <div class="org-split"><span>Responsibility Split</span></div>
           <div class="org-branches">
             <div class="org-branch">
+              <div class="org-branch-label">Michael Scope</div>
               <div class="org-card secondary">
                 <strong>Michael Chuang</strong>
                 <span>AI Agent Program Lead</span>
@@ -1314,6 +1370,7 @@
               </div>
             </div>
             <div class="org-branch">
+              <div class="org-branch-label">Fencer Scope</div>
               <div class="org-card secondary">
                 <strong>Fencer Kao</strong>
                 <span>AI Code & Software Process Lead</span>
