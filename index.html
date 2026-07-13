@@ -390,7 +390,7 @@
 
     .org-branches {
       display: grid;
-      grid-template-columns: 1.45fr .8fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 16px;
       align-items: start;
     }
@@ -412,8 +412,8 @@
     .org-sponsor-branch::before {
       content: "";
       position: absolute;
-      left: 32%;
-      right: 18%;
+      left: 25%;
+      right: 25%;
       top: 31px;
       height: 2px;
       background: rgba(111,211,255,.28);
@@ -438,11 +438,11 @@
     }
 
     .org-sponsor-branch .org-branch-line.michael {
-      left: calc(32% - 1px);
+      left: calc(25% - 1px);
     }
 
     .org-sponsor-branch .org-branch-line.fencer {
-      left: calc(82% - 1px);
+      left: calc(75% - 1px);
     }
 
     .org-branch .org-card.secondary {
