@@ -380,11 +380,50 @@
     .org-panel {
       display: grid;
       gap: 18px;
+      margin-bottom: 16px;
     }
 
     .org-chart {
       display: grid;
       gap: 16px;
+    }
+
+    .org-branches {
+      display: grid;
+      grid-template-columns: 1.45fr .8fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .org-branch {
+      display: grid;
+      gap: 14px;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(111,211,255,.18);
+      background: rgba(255,255,255,.025);
+    }
+
+    .org-branch .org-card.secondary {
+      margin: 0 auto;
+      width: min(420px, 100%);
+    }
+
+    .org-subrow {
+      display: grid;
+      gap: 14px;
+    }
+
+    .org-subrow.centers {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .org-subrow.pec-teams {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .org-subrow.fencer-teams {
+      grid-template-columns: 1fr;
     }
 
     .org-row {
@@ -403,6 +442,10 @@
       border: 1px solid rgba(111,211,255,.24);
       background: rgba(255,255,255,.045);
       text-align: center;
+    }
+
+    .org-subrow .org-card {
+      min-width: 0;
     }
 
     .org-card.primary {
@@ -1028,7 +1071,10 @@
 
     @media (max-width: 1180px) {
       .executive-hero,
-      .track-card {
+      .track-card,
+      .org-branches,
+      .org-subrow.centers,
+      .org-subrow.pec-teams {
         grid-template-columns: 1fr;
       }
 
@@ -1158,14 +1204,90 @@
     </header>
 
     <main>
-      <section class="executive-hero" aria-label="主管總覽">
-        <div class="hero-card" id="overallReadiness"></div>
-        <div class="panel" id="centerRanking"></div>
-        <div class="panel" id="supportOverview"></div>
+      <section class="panel org-panel">
+        <div class="section-head">
+          <div>
+            <h2>AI Agent Program 組織架構</h2>
+            <div class="hint">首頁只呈現責任分工與管理線，完成度與 Agent 細節放在其他分頁。</div>
+          </div>
+        </div>
+        <div class="org-chart">
+          <div class="org-row">
+            <div class="org-card primary">
+              <strong>John Chien</strong>
+              <span>AI Agent Program Sponsor</span>
+            </div>
+          </div>
+          <div class="org-connector"></div>
+          <div class="org-branches">
+            <div class="org-branch">
+              <div class="org-card secondary">
+                <strong>Michael Chuang</strong>
+                <span>AI Agent Program Lead</span>
+                <em>PEC / BEC / DQAC</em>
+              </div>
+              <div class="org-connector"></div>
+              <div class="org-subrow centers">
+                <div class="org-card">
+                  <strong>PEC</strong>
+                  <span>Michael Chuang</span>
+                </div>
+                <div class="org-card">
+                  <strong>BEC</strong>
+                  <span>Miles Shih</span>
+                </div>
+                <div class="org-card">
+                  <strong>DQAC</strong>
+                  <span>Diya Tseng</span>
+                </div>
+              </div>
+              <div class="org-subrow pec-teams">
+                <div class="org-card">
+                  <strong>PEC-SE</strong>
+                  <span>Andy Yang</span>
+                </div>
+                <div class="org-card">
+                  <strong>PEC-Thermal</strong>
+                  <span>Eric Lin</span>
+                </div>
+                <div class="org-card">
+                  <strong>PEC-ME</strong>
+                  <span>Ray Hsu</span>
+                </div>
+                <div class="org-card">
+                  <strong>PEC-EMC/RF</strong>
+                  <span>Frankie Chuang</span>
+                </div>
+              </div>
+            </div>
+            <div class="org-branch">
+              <div class="org-card secondary">
+                <strong>Fencer Kao</strong>
+                <span>AI Code & Software Process Lead</span>
+                <em>SEC</em>
+              </div>
+              <div class="org-connector"></div>
+              <div class="org-subrow fencer-teams">
+                <div class="org-card">
+                  <strong>SEC</strong>
+                  <span>Fencer Kao</span>
+                </div>
+                <div class="org-card">
+                  <strong>AI Coding</strong>
+                  <span>Code improvement</span>
+                </div>
+                <div class="org-card">
+                  <strong>Software Process Lead</strong>
+                  <span>Software process improvement</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <nav class="tabs" aria-label="dashboard 分頁">
-        <button class="tab active" data-view="overview">組織架構</button>
+        <button class="tab active" data-view="overview">主管總覽</button>
         <button class="tab" data-view="departments">部門 Agent 進度</button>
         <button class="tab" data-view="slides">投影片</button>
         <button class="tab" data-view="tracking">主管追蹤表</button>
@@ -1191,72 +1313,6 @@
       </section>
 
       <section class="view active" id="view-overview">
-        <section class="panel org-panel">
-          <div class="section-head">
-            <div>
-              <h2>AI Agent Program 組織架構</h2>
-              <div class="hint">首頁只呈現責任分工與管理線，完成度與 Agent 細節放在其他分頁。</div>
-            </div>
-          </div>
-          <div class="org-chart">
-            <div class="org-row">
-              <div class="org-card primary">
-                <strong>John Chien</strong>
-                <span>AI Agent Program Sponsor</span>
-              </div>
-            </div>
-            <div class="org-connector"></div>
-            <div class="org-row">
-              <div class="org-card secondary">
-                <strong>Michael Chuang</strong>
-                <span>AI Agent Program Lead</span>
-                <em>PEC / BEC / DQAC / SEC</em>
-              </div>
-              <div class="org-card secondary">
-                <strong>Fencer Kao</strong>
-                <span>AI Code & Software Process Lead</span>
-                <em>目前無直屬單位</em>
-              </div>
-            </div>
-            <div class="org-connector"></div>
-            <div class="org-row">
-              <div class="org-card">
-                <strong>PEC</strong>
-                <span>Michael Chuang</span>
-              </div>
-              <div class="org-card">
-                <strong>BEC</strong>
-                <span>Miles Shih</span>
-              </div>
-              <div class="org-card">
-                <strong>DQAC</strong>
-                <span>Diya Tseng</span>
-              </div>
-              <div class="org-card">
-                <strong>SEC</strong>
-                <span>Fencer Kao</span>
-              </div>
-            </div>
-            <div class="org-row">
-              <div class="org-card">
-                <strong>PEC-SE</strong>
-                <span>Andy Yang</span>
-              </div>
-              <div class="org-card">
-                <strong>PEC-Thermal</strong>
-                <span>Eric Lin</span>
-              </div>
-              <div class="org-card">
-                <strong>PEC-ME</strong>
-                <span>Ray Hsu</span>
-              </div>
-              <div class="org-card">
-                <strong>PEC-EMC/RF</strong>
-                <span>Frankie Chuang</span>
-              </div>
-            </div>
-          </div>
-        </section>
         <section class="kpis" id="kpis"></section>
       </section>
 
@@ -1295,6 +1351,12 @@
           </div>
           <div class="track-list" id="trackingCards"></div>
         </section>
+      </section>
+
+      <section class="executive-hero" aria-label="主管總覽">
+        <div class="hero-card" id="overallReadiness"></div>
+        <div class="panel" id="centerRanking"></div>
+        <div class="panel" id="supportOverview"></div>
       </section>
 
       <section class="panel management-only" id="updatePanel">
