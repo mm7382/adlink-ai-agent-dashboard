@@ -419,11 +419,41 @@
     }
 
     .org-subrow.pec-teams {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
     }
 
     .org-subrow.fencer-teams {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pec-children {
+      display: grid;
+      gap: 12px;
+    }
+
+    .pec-connector {
+      position: relative;
+      height: 28px;
+    }
+
+    .pec-connector::before {
+      content: "";
+      position: absolute;
+      left: calc(16.666% - 1px);
+      top: 0;
+      width: 2px;
+      height: 28px;
+      background: rgba(111,211,255,.42);
+    }
+
+    .pec-connector::after {
+      content: "";
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      bottom: 0;
+      height: 2px;
+      background: rgba(111,211,255,.26);
     }
 
     .org-row {
@@ -1074,8 +1104,13 @@
       .track-card,
       .org-branches,
       .org-subrow.centers,
-      .org-subrow.pec-teams {
+      .org-subrow.pec-teams,
+      .org-subrow.fencer-teams {
         grid-template-columns: 1fr;
+      }
+
+      .pec-connector::before {
+        left: calc(50% - 1px);
       }
 
       .dept-grid {
@@ -1241,22 +1276,29 @@
                   <span>Diya Tseng</span>
                 </div>
               </div>
-              <div class="org-subrow pec-teams">
-                <div class="org-card">
-                  <strong>PEC-SE</strong>
-                  <span>Andy Yang</span>
-                </div>
-                <div class="org-card">
-                  <strong>PEC-Thermal</strong>
-                  <span>Eric Lin</span>
-                </div>
-                <div class="org-card">
-                  <strong>PEC-ME</strong>
-                  <span>Ray Hsu</span>
-                </div>
-                <div class="org-card">
-                  <strong>PEC-EMC/RF</strong>
-                  <span>Frankie Chuang</span>
+              <div class="pec-children">
+                <div class="pec-connector" aria-hidden="true"></div>
+                <div class="org-subrow pec-teams">
+                  <div class="org-card">
+                    <strong>PEC-SE</strong>
+                    <span>Andy Yang</span>
+                  </div>
+                  <div class="org-card">
+                    <strong>PEC-Thermal</strong>
+                    <span>Eric Lin</span>
+                  </div>
+                  <div class="org-card">
+                    <strong>PEC-ME</strong>
+                    <span>Ray Hsu</span>
+                  </div>
+                  <div class="org-card">
+                    <strong>PEC-EMC</strong>
+                    <span>Frankie Chuang</span>
+                  </div>
+                  <div class="org-card">
+                    <strong>PEC-RF</strong>
+                    <span>Frankie Chuang</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1264,14 +1306,10 @@
               <div class="org-card secondary">
                 <strong>Fencer Kao</strong>
                 <span>AI Code & Software Process Lead</span>
-                <em>SEC</em>
+                <em>AI Coding / Software Process Lead</em>
               </div>
               <div class="org-connector"></div>
               <div class="org-subrow fencer-teams">
-                <div class="org-card">
-                  <strong>SEC</strong>
-                  <span>Fencer Kao</span>
-                </div>
                 <div class="org-card">
                   <strong>AI Coding</strong>
                   <span>Code improvement</span>
