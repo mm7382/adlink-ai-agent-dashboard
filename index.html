@@ -414,46 +414,55 @@
       gap: 14px;
     }
 
-    .org-subrow.centers {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .org-center-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .org-center-column {
+      display: grid;
+      gap: 12px;
+      align-content: start;
     }
 
     .org-subrow.pec-teams {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .org-subrow.fencer-teams {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .pec-children {
+    .pec-team-box {
+      position: relative;
       display: grid;
       gap: 12px;
+      margin-top: 22px;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(111,211,255,.28);
+      background: rgba(111,211,255,.045);
     }
 
-    .pec-connector {
-      position: relative;
-      height: 28px;
-    }
-
-    .pec-connector::before {
+    .pec-team-box::before {
       content: "";
       position: absolute;
-      left: calc(16.666% - 1px);
-      top: 0;
+      left: calc(50% - 1px);
+      top: -22px;
       width: 2px;
-      height: 28px;
+      height: 22px;
       background: rgba(111,211,255,.42);
     }
 
-    .pec-connector::after {
-      content: "";
-      position: absolute;
-      left: 8%;
-      right: 8%;
-      bottom: 0;
-      height: 2px;
-      background: rgba(111,211,255,.26);
+    .pec-team-title {
+      color: var(--cyan);
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1.35;
+      text-align: center;
+      text-transform: uppercase;
     }
 
     .org-row {
@@ -1103,14 +1112,10 @@
       .executive-hero,
       .track-card,
       .org-branches,
-      .org-subrow.centers,
+      .org-center-grid,
       .org-subrow.pec-teams,
       .org-subrow.fencer-teams {
         grid-template-columns: 1fr;
-      }
-
-      .pec-connector::before {
-        left: calc(50% - 1px);
       }
 
       .dept-grid {
@@ -1262,42 +1267,48 @@
                 <em>PEC / BEC / DQAC</em>
               </div>
               <div class="org-connector"></div>
-              <div class="org-subrow centers">
-                <div class="org-card">
-                  <strong>PEC</strong>
-                  <span>Michael Chuang</span>
+              <div class="org-center-grid">
+                <div class="org-center-column">
+                  <div class="org-card">
+                    <strong>PEC</strong>
+                    <span>Michael Chuang</span>
+                  </div>
+                  <div class="pec-team-box">
+                    <div class="pec-team-title">PEC Teams</div>
+                    <div class="org-subrow pec-teams">
+                      <div class="org-card">
+                        <strong>PEC-SE</strong>
+                        <span>Andy Yang</span>
+                      </div>
+                      <div class="org-card">
+                        <strong>PEC-Thermal</strong>
+                        <span>Eric Lin</span>
+                      </div>
+                      <div class="org-card">
+                        <strong>PEC-ME</strong>
+                        <span>Ray Hsu</span>
+                      </div>
+                      <div class="org-card">
+                        <strong>PEC-EMC</strong>
+                        <span>Frankie Chuang</span>
+                      </div>
+                      <div class="org-card">
+                        <strong>PEC-RF</strong>
+                        <span>Frankie Chuang</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="org-card">
-                  <strong>BEC</strong>
-                  <span>Miles Shih</span>
+                <div class="org-center-column">
+                  <div class="org-card">
+                    <strong>BEC</strong>
+                    <span>Miles Shih</span>
+                  </div>
                 </div>
-                <div class="org-card">
-                  <strong>DQAC</strong>
-                  <span>Diya Tseng</span>
-                </div>
-              </div>
-              <div class="pec-children">
-                <div class="pec-connector" aria-hidden="true"></div>
-                <div class="org-subrow pec-teams">
+                <div class="org-center-column">
                   <div class="org-card">
-                    <strong>PEC-SE</strong>
-                    <span>Andy Yang</span>
-                  </div>
-                  <div class="org-card">
-                    <strong>PEC-Thermal</strong>
-                    <span>Eric Lin</span>
-                  </div>
-                  <div class="org-card">
-                    <strong>PEC-ME</strong>
-                    <span>Ray Hsu</span>
-                  </div>
-                  <div class="org-card">
-                    <strong>PEC-EMC</strong>
-                    <span>Frankie Chuang</span>
-                  </div>
-                  <div class="org-card">
-                    <strong>PEC-RF</strong>
-                    <span>Frankie Chuang</span>
+                    <strong>DQAC</strong>
+                    <span>Diya Tseng</span>
                   </div>
                 </div>
               </div>
