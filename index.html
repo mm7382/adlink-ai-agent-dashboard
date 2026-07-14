@@ -2439,6 +2439,13 @@
       }
     }
 
+    function resetViewFilters() {
+      setValue("centerFilter", "全部");
+      setValue("levelFilter", "全部");
+      setValue("stageFilter", "全部");
+      setValue("searchInput", "");
+    }
+
     function renderExecutiveSummary(items) {
       const readiness = average(items.map(completionScore));
       const filled = items.filter(hasData).length;
@@ -2967,6 +2974,7 @@
       saveProjects();
       renderFilters();
       document.getElementById("projectSelect").value = id;
+      resetViewFilters();
       render();
       document.getElementById("projectSelect").value = id;
       loadForm();
@@ -3132,7 +3140,12 @@
     });
     document.getElementById("modeBtn").addEventListener("click", () => {
       document.body.classList.toggle("management-mode");
-      document.getElementById("modeBtn").textContent = document.body.classList.contains("management-mode") ? "關閉管理模式" : "管理模式";
+      const isManagementMode = document.body.classList.contains("management-mode");
+      document.getElementById("modeBtn").textContent = isManagementMode ? "關閉管理模式" : "管理模式";
+      if (!isManagementMode) {
+        resetViewFilters();
+        render();
+      }
     });
     document.getElementById("saveBtn").addEventListener("click", saveForm);
     document.getElementById("resetBtn").addEventListener("click", () => {
