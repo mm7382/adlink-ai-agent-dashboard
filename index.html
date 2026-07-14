@@ -1225,7 +1225,7 @@
     }
 
     .modal-box {
-      width: min(860px, 100%);
+      width: min(1040px, 100%);
       max-height: min(760px, 88vh);
       overflow: auto;
       padding: 22px;
@@ -1266,6 +1266,136 @@
       margin-bottom: 6px;
     }
 
+    .exec-detail {
+      display: grid;
+      gap: 14px;
+    }
+
+    .exec-detail-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .exec-summary-box,
+    .exec-support-card,
+    .decision-card,
+    .exec-flow,
+    .supplement-panel {
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.045);
+    }
+
+    .exec-summary-box {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .exec-summary {
+      margin: 0;
+      color: #fff;
+      font-size: 21px;
+      line-height: 1.48;
+      font-weight: 850;
+    }
+
+    .exec-support-card {
+      padding: 16px;
+      display: grid;
+      align-content: start;
+      gap: 8px;
+    }
+
+    .exec-support-card span,
+    .decision-card span,
+    .exec-section-label {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .exec-support-card strong,
+    .decision-card strong {
+      color: #fff;
+      font-size: 24px;
+      line-height: 1.25;
+      font-weight: 950;
+    }
+
+    .exec-support-card p,
+    .decision-card p {
+      margin: 0;
+      color: var(--soft);
+      font-size: 17px;
+      line-height: 1.48;
+      font-weight: 750;
+    }
+
+    .exec-support-card.warn {
+      border-color: rgba(244,185,66,.28);
+      background: rgba(244,185,66,.08);
+    }
+
+    .exec-support-card.danger {
+      border-color: rgba(255,106,125,.3);
+      background: rgba(200,16,46,.1);
+    }
+
+    .decision-grid {
+      display: grid;
+      grid-template-columns: .9fr 1.25fr 1.25fr;
+      gap: 12px;
+    }
+
+    .decision-card {
+      min-height: 118px;
+      padding: 14px;
+      display: grid;
+      align-content: start;
+      gap: 8px;
+    }
+
+    .exec-flow {
+      padding: 14px;
+      display: grid;
+      gap: 11px;
+    }
+
+    .supplement-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .supplement-panel {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .supplement-panel summary {
+      min-height: 50px;
+      padding: 13px 15px;
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.35;
+      font-weight: 900;
+      cursor: pointer;
+      list-style-position: inside;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .supplement-panel:not([open]) summary {
+      border-bottom: 0;
+    }
+
+    .supplement-body {
+      padding: 14px;
+    }
+
     .empty-state {
       padding: 18px;
       border-radius: 8px;
@@ -1282,7 +1412,9 @@
       .org-branches,
       .org-center-grid,
       .org-subrow.pec-teams,
-      .org-subrow.fencer-teams {
+      .org-subrow.fencer-teams,
+      .exec-detail-hero,
+      .decision-grid {
         grid-template-columns: 1fr;
       }
 
@@ -2579,69 +2711,107 @@
       const project = projects.find(item => item.id === projectId);
       if (!project) return;
       const completion = completionScore(project);
-      const usage = adoptionScore(project);
-      const benefit = valueScore(project);
-      const scaleScore = scaleWeights[project.scale] || 0;
 
       document.getElementById("modalTitle").textContent = `${project.department} · ${project.title}`;
       document.getElementById("modalHint").textContent = `部門負責人：${project.owner} · 研究中心：${project.center}${project.agentOwner ? ` · Agent Owner：${project.agentOwner}` : ""}`;
       document.getElementById("modalList").innerHTML = `
-        <div class="modal-item">
-          <div class="badge-stack" style="justify-content:flex-start;margin-bottom:12px">
-            <span class="stage-badge level-${project.stage}">${project.stage} ${escapeHtml(projectStatusLabel(project))}</span>
-            <span class="badge ${agentTypeBadge(project.agentType)}">${escapeHtml(project.agentType)}</span>
+        <div class="exec-detail">
+          <div class="exec-detail-hero">
+            <section class="exec-summary-box">
+              <div class="badge-stack" style="justify-content:flex-start">
+                <span class="stage-badge level-${project.stage}">${project.stage} ${escapeHtml(projectStatusLabel(project))}</span>
+                <span class="badge ${agentTypeBadge(project.agentType)}">${escapeHtml(project.agentType)}</span>
+                <span class="badge">${completion}%</span>
+              </div>
+              <p class="exec-summary">${escapeHtml(executiveSummary(project))}</p>
+            </section>
+            <aside class="exec-support-card ${supportClass(project.supportStatus)}">
+              <span>主管協助</span>
+              <strong>${escapeHtml(project.supportStatus)}</strong>
+              <p>${escapeHtml(executiveSupportText(project))}</p>
+            </aside>
           </div>
-          <div class="copy">${escapeHtml(project.summary)}</div>
-          ${renderFlow(project)}
-          <div class="readiness-row" style="margin-top:14px">
-            <div class="readiness-number">${completion}%</div>
-            <div>
-              <div class="label">部門完成度</div>
-              <div class="progress large"><div class="bar" style="--w:${completion}%"></div></div>
-              <div class="meta compact">${escapeHtml(project.progressReason || "完成度由 Michael 手動判斷。")}</div>
+
+          <div class="decision-grid">
+            <div class="decision-card">
+              <span>目前階段</span>
+              <strong>${project.stage} ${escapeHtml(projectStatusLabel(project))}</strong>
+              <p>完成度 ${completion}%</p>
             </div>
-          </div>
-          ${renderRoadmap(project)}
-          <div class="indicator-grid" style="margin-top:14px">
-            <div class="indicator">${iconSvg("progress")}<span>完成度</span><strong>${completion}%</strong></div>
-            <div class="indicator">${iconSvg("usage")}<span>使用</span><strong>${escapeHtml(project.frequency)} · ${usage}%</strong></div>
-            <div class="indicator">${iconSvg("benefit")}<span>效益</span><strong>${benefit}%</strong></div>
-            <div class="indicator">${iconSvg("center")}<span>擴展</span><strong>${escapeHtml(project.scale)} · ${scaleScore}%</strong></div>
-          </div>
-          <div class="detail-grid" style="margin-top:14px">
-            <div class="detail-box">
-              <strong>目前進度</strong>
-              <div class="meta">${escapeHtml(project.currentProgress)}</div>
+            <div class="decision-card">
+              <span>本週進度</span>
+              <strong>${escapeHtml(compactText(project.currentProgress, 38))}</strong>
+              <p>${escapeHtml(project.progressReason || "完成度由 Michael 手動判斷。")}</p>
             </div>
-            <div class="detail-box">
-              <strong>下一步</strong>
-              <div class="meta">${escapeHtml(project.nextStep)}</div>
-            </div>
-            <div class="detail-box">
-              <strong>架構</strong>
-              <div class="meta">${escapeHtml(project.architecture)}</div>
-            </div>
-            <div class="detail-box">
-              <strong>技術型態</strong>
-              <div class="meta">${escapeHtml(project.agentType)}${project.agentTypeNote ? ` · ${escapeHtml(project.agentTypeNote)}` : ""}</div>
-            </div>
-            <div class="detail-box">
-              <strong>效益</strong>
-              <div class="meta">${renderBenefitsText(project)}</div>
-            </div>
-            <div class="detail-box">
-              <strong>主管協助</strong>
-              <div class="meta">${supportSummary(project)}</div>
-            </div>
-            <div class="detail-box">
-              <strong>資料來源</strong>
-              <div class="meta">${escapeHtml(project.source || "尚未填寫")}</div>
-              ${renderSlideLinks(project)}
+            <div class="decision-card">
+              <span>下一步</span>
+              <strong>${escapeHtml(compactText(project.nextStep, 42))}</strong>
+              <p>${project.supportStatus === "無" ? "目前不需要主管介入。" : "若卡住，請主管協助推進此項目。"}</p>
             </div>
           </div>
+
+          <section class="exec-flow">
+            <div class="exec-section-label">Agent 流程</div>
+            ${renderFlow(project)}
+          </section>
+
+          <section class="supplement-list" aria-label="補充資料">
+            <details class="supplement-panel" open>
+              <summary>Task 進度</summary>
+              <div class="supplement-body">${renderRoadmap(project)}</div>
+            </details>
+            <details class="supplement-panel">
+              <summary>架構與技術型態</summary>
+              <div class="supplement-body detail-grid">
+                <div class="detail-box">
+                  <strong>架構</strong>
+                  <div class="meta">${escapeHtml(project.architecture)}</div>
+                </div>
+                <div class="detail-box">
+                  <strong>技術型態</strong>
+                  <div class="meta">${escapeHtml(project.agentType)}${project.agentTypeNote ? ` · ${escapeHtml(project.agentTypeNote)}` : ""}</div>
+                </div>
+              </div>
+            </details>
+            <details class="supplement-panel">
+              <summary>效益</summary>
+              <div class="supplement-body detail-grid">
+                ${renderBenefitBoxes(project)}
+              </div>
+            </details>
+            <details class="supplement-panel">
+              <summary>投影片 / 資料來源</summary>
+              <div class="supplement-body">
+                <div class="detail-box">
+                  <strong>資料來源</strong>
+                  <div class="meta">${escapeHtml(project.source || "尚未填寫")}</div>
+                  ${renderSlideLinks(project)}
+                </div>
+              </div>
+            </details>
+          </section>
         </div>
       `;
       document.getElementById("detailModal").classList.add("open");
+    }
+
+    function executiveSummary(project) {
+      const stage = projectStatusLabel(project);
+      const current = compactText(project.currentProgress, 54);
+      const next = compactText(project.nextStep, 48);
+      return `${project.department} 目前在「${stage}」，${current} 下一步：${next}`;
+    }
+
+    function executiveSupportText(project) {
+      if (project.supportStatus === "無") return "目前不需要主管介入。";
+      const type = project.supportType !== "無" ? `${project.supportType}：` : "";
+      return `${type}${project.supportDescription || "需要補充主管協助內容。"}`;
+    }
+
+    function compactText(value, maxLength = 60) {
+      const text = String(value || "").replace(/\s+/g, " ").trim();
+      if (text.length <= maxLength) return text;
+      return `${text.slice(0, maxLength - 1)}…`;
     }
 
     function renderRoadmap(project) {
@@ -2686,6 +2856,22 @@
       ].filter(([, value]) => value);
       if (!lines.length) return "尚未填寫效益說明。";
       return lines.map(([label, value]) => `${escapeHtml(label)}：${escapeHtml(value)}`).join("<br>");
+    }
+
+    function renderBenefitBoxes(project) {
+      const benefits = normalizeBenefits(project.benefits);
+      const rows = [
+        ["節省時間", benefits.time],
+        ["節省人力", benefits.manpower],
+        ["降低風險", benefits.risk],
+        ["擴展價值", benefits.scale]
+      ];
+      return rows.map(([label, value]) => `
+        <div class="detail-box">
+          <strong>${escapeHtml(label)}</strong>
+          <div class="meta">${escapeHtml(value || "尚未填寫")}</div>
+        </div>
+      `).join("");
     }
 
     function renderSlideLinks(project) {
