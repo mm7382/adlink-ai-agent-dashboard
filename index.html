@@ -948,6 +948,7 @@
       color: #fff;
       font-size: 15px;
       line-height: 1.25;
+      font-weight: 700;
     }
 
     .readiness-row {
@@ -1299,7 +1300,7 @@
       color: #fff;
       font-size: 21px;
       line-height: 1.48;
-      font-weight: 850;
+      font-weight: 500;
     }
 
     .exec-support-card {
@@ -1324,7 +1325,12 @@
       color: #fff;
       font-size: 24px;
       line-height: 1.25;
-      font-weight: 950;
+      font-weight: 750;
+    }
+
+    .exec-support-card strong,
+    .decision-card:first-child strong {
+      font-weight: 900;
     }
 
     .exec-support-card p,
@@ -1333,7 +1339,14 @@
       color: var(--soft);
       font-size: 17px;
       line-height: 1.48;
-      font-weight: 750;
+      font-weight: 500;
+    }
+
+    .decision-card .decision-main {
+      color: #fff;
+      font-size: 20px;
+      line-height: 1.42;
+      font-weight: 500;
     }
 
     .exec-support-card.warn {
@@ -2740,12 +2753,12 @@
             </div>
             <div class="decision-card">
               <span>本週進度</span>
-              <strong>${escapeHtml(compactText(project.currentProgress, 38))}</strong>
+              <p class="decision-main">${escapeHtml(compactText(project.currentProgress, 58))}</p>
               <p>${escapeHtml(project.progressReason || "完成度由 Michael 手動判斷。")}</p>
             </div>
             <div class="decision-card">
               <span>下一步</span>
-              <strong>${escapeHtml(compactText(project.nextStep, 42))}</strong>
+              <p class="decision-main">${escapeHtml(compactText(project.nextStep, 58))}</p>
               <p>${project.supportStatus === "無" ? "目前不需要主管介入。" : "若卡住，請主管協助推進此項目。"}</p>
             </div>
           </div>
