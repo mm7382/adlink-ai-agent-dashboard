@@ -286,87 +286,92 @@
       "department": "PEC-Thermal",
       "owner": "Eric",
       "agentOwner": "Eric",
-      "title": "Thermal 設計架構相似案例搜尋 Agent",
-      "summary": "當 PM 詢問某專案設計架構是否可能通過時，系統先用 Data Search 從 FS1 或其他 Database 找出相似專案、前幾代設計架構與相關熱設計資料，提供 Thermo 工程師快速判斷與回覆 PM 的參考依據；精確數值仍需透過模擬確認。",
+      "title": "Project Filter TES/EV 熱測報告判讀輔助工具",
+      "summary": "把散落在公司 share 的 Word/PDF 熱測報告，整理成可搜尋、可篩選、可比對、可追溯的本機資料庫與 GUI 工作台，讓 Thermal 工程師快速找到相似案例、溫度資料與原始證據，再提供 PM 初步判斷參考；精確 Pass/Fail 仍需透過模擬確認。",
       "flow": [
-        "PM 提問",
-        "Data Search",
-        "相似案例比對",
-        "前代架構回傳",
-        "Thermal RD 判斷"
+        "來源測試",
+        "Inventory 掃描",
+        "選擇下載/匯入",
+        "溫度擷取",
+        "比對回查"
       ],
-      "architecture": "PM 問題/專案條件 -> Data Search 查詢 FS1/Database -> 擷取相似專案與前幾代 Thermal 設計架構 -> 彙整比較重點與參考資料 -> Thermo 工程師判斷初步風險與回覆 PM -> 必要時再進入模擬取得精確數值。",
-      "stage": 1,
-      "progress": 8,
-      "size": "M",
-      "frequency": "尚未使用",
-      "scale": "個人",
+      "architecture": "本機 GUI 工作台 -> PEC_TES_EV / FS1 來源路徑測試 -> 掃描 Thermal Simulation & Test 並建立 inventory -> 勾選下載報告到 incoming_reports -> 匯入 SQLite DB -> 擷取 CPU/GPU、環溫、airflow、hot components、spec、measured temp、margin -> GUI 篩選、原始結果比對與開啟來源資料夾。",
+      "stage": 2,
+      "progress": 40,
+      "size": "L",
+      "frequency": "偶爾",
+      "scale": "課級",
       "agentType": "Agent 化中",
-      "agentTypeNote": "目前是資料搜尋與設計架構比對的 Agent 題目定義階段；核心價值是用歷史案例輔助初步判斷，不取代 Thermal simulation 的精確 Pass/Fail 結果。",
-      "weeklyUsers": 0,
-      "activeUsers": 0,
-      "targetUsers": 30,
+      "agentTypeNote": "目前較接近本機化資料擷取、搜尋、比對與判讀輔助工具，已具備 GUI、資料庫、掃描與回查流程；下一步是定義 pilot 驗收與使用規則，逐步往 Thermal Agent 工作流收斂。",
+      "weeklyUsers": 1,
+      "activeUsers": 1,
+      "targetUsers": 8,
       "necessity": 5,
       "practicality": 5,
-      "generality": 5,
+      "generality": 4,
       "timeSaving": 5,
       "addedValue": 5,
-      "governance": 25,
-      "dataReadiness": 20,
-      "validation": 5,
-      "supportStatus": "無",
-      "supportType": "無",
-      "supportDescription": "需要確認 FS1/Database 存取權限、歷史專案資料欄位、相似案例比對條件，以及回傳資料是否可用於 PM 溝通。",
-      "currentProgress": "已定義 Thermal 題目方向：針對 PM 詢問設計架構是否可能通過，先用 Data Search 找相似專案與前幾代設計架構，提供 Thermo 工程師初步判斷參考。",
-      "nextStep": "盤點 FS1 與其他 Database 可查詢欄位，定義相似案例比對條件、回傳格式與 Thermo 工程師驗證方式。",
-      "source": "PEC-Thermal 題目說明（使用者口述）",
-      "lastUpdate": "2026-07-09",
-      "progressReason": "已完成題目與應用場景定義，待資料來源、欄位與相似案例規則確認。",
+      "governance": 55,
+      "dataReadiness": 70,
+      "validation": 60,
+      "supportStatus": "需注意",
+      "supportType": "擴大導入決策",
+      "supportDescription": "需要主管核准 Project Filter 進入 TES/EV 熱測報告 pilot，並決定 pilot 範圍、空白 spec / power-side row 顯示規則、正式新檔驗證方式與後續跨 BU 擴展條件。",
+      "currentProgress": "已完成本機 GUI 工作台、PEC_TES_EV 來源盤點、81 份有效 thermal report source、30 份報告匯入、29/30 份有可用溫度資料、427 筆高溫零件列，以及原始結果 / 擷取數據比對功能。",
+      "nextStep": "取得主管核准作為 TES/EV pilot，完成 3-5 頁主管簡報與 demo，定義 pilot 驗收條件：搜尋/篩選、溫度擷取品質、原始證據回查、selected-only download 真實新檔驗證與使用者回饋。",
+      "source": "project-filter-gemini-ppt-brief.md",
+      "lastUpdate": "2026-07-14",
+      "progressReason": "已完成本機 GUI、來源盤點、選擇性下載、匯入、溫度資料擷取與原始結果比對；已有真實 TES/EV 熱測報告驗證數字，待主管核准成為正式 pilot。",
       "roadmap": [
         {
           "name": "需求確認",
-          "status": "進行中",
+          "status": "已完成",
           "owner": "Eric",
-          "note": ""
+          "note": "已定義 Project Filter 服務 TES/EV 熱測報告搜尋、篩選、判讀與原始證據回查。"
         },
         {
           "name": "資料/權限",
-          "status": "未開始",
+          "status": "已完成",
           "owner": "Eric",
-          "note": ""
+          "note": "PEC_TES_EV FS1 路徑已做低衝擊測試，確認 exists / is_dir / can_list。"
         },
         {
           "name": "架構設計",
-          "status": "未開始",
+          "status": "已完成",
           "owner": "Eric",
-          "note": ""
+          "note": "本機 GUI + SQLite + source inventory + selected download + import + extraction + result review 流程已成形。"
         },
         {
           "name": "Prototype",
-          "status": "未開始",
+          "status": "已完成",
           "owner": "Eric",
-          "note": ""
+          "note": "已匯入 30 份報告、盤點 81 份有效來源、擷取 427 筆高溫零件列。"
         },
         {
           "name": "Pilot 測試",
-          "status": "未開始",
+          "status": "進行中",
           "owner": "Eric",
-          "note": ""
+          "note": "待主管核准 TES/EV pilot 範圍、顯示規則與下一次真實新檔驗證方式。"
         },
         {
           "name": "導入/擴展",
           "status": "未開始",
           "owner": "Eric",
-          "note": ""
+          "note": "Pilot 穩定後，再評估跨 BU 或跨文件類型擴展。"
         }
       ],
       "benefits": {
-        "time": "PM 初步詢問時可快速取得相似案例，減少重新搜尋與等待時間。",
-        "manpower": "Thermal 工程師先用歷史資料回覆方向，精確判斷再進入模擬。",
-        "risk": "避免只靠記憶判斷，保留可追溯的前代設計資料依據。",
-        "scale": "可擴展到其他以歷史設計案例輔助初判的工程領域。"
+        "time": "減少工程師人工翻 Word/PDF、查找相似熱測報告、整理 CPU/GPU/環溫/airflow/spec/margin 表格的時間。",
+        "manpower": "讓 Thermal 工程師從資料搜尋與表格整理，轉向判讀、規則調整與 PM 技術回覆。",
+        "risk": "每筆結果可回到原始報告與來源資料夾，能區分來源報告未填值、OCR/parser 問題或真正沒有資料，降低誤判。",
+        "scale": "先鎖定 TES/EV 熱測報告 pilot；流程穩定後可評估跨 BU 或其他工程文件類型。"
       },
-      "slides": []
+      "slides": [
+        {
+          "name": "Project Filter 主管簡報素材整理",
+          "url": "slides/2026-07-14/PEC-Thermal-Project-Filter-brief.md"
+        }
+      ]
     },
     {
       "id": "dqac",
