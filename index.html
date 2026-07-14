@@ -740,6 +740,133 @@
       gap: 16px;
     }
 
+    .dept-table-wrap {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid rgba(111,211,255,.18);
+      background: rgba(255,255,255,.025);
+    }
+
+    .dept-table {
+      width: 100%;
+      min-width: 1180px;
+      border-collapse: collapse;
+    }
+
+    .dept-table th,
+    .dept-table td {
+      padding: 15px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.075);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .dept-table th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: rgba(12,18,28,.98);
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .dept-table tbody tr {
+      transition: background .12s ease;
+    }
+
+    .dept-table tbody tr:hover {
+      background: rgba(111,211,255,.045);
+    }
+
+    .dept-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .dept-name {
+      color: #fff;
+      font-size: 22px;
+      line-height: 1.22;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .dept-owner,
+    .dept-agent,
+    .dept-summary {
+      color: var(--text);
+      font-size: 17px;
+      line-height: 1.45;
+      font-weight: 800;
+    }
+
+    .dept-agent {
+      display: grid;
+      gap: 8px;
+    }
+
+    .dept-summary {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      color: var(--soft);
+      font-weight: 750;
+    }
+
+    .dept-support {
+      display: grid;
+      gap: 7px;
+      justify-items: start;
+    }
+
+    .dept-action {
+      text-align: right;
+    }
+
+    .dept-action .btn {
+      min-width: 58px;
+      white-space: nowrap;
+    }
+
+    .stage-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.13);
+      background: rgba(255,255,255,.075);
+      color: #dbe7f4;
+      font-size: 16px;
+      line-height: 1.2;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .stage-badge.level-1 {
+      background: rgba(111,211,255,.14);
+      color: #9ee3ff;
+    }
+
+    .stage-badge.level-2 {
+      background: rgba(244,185,66,.16);
+      color: #ffd47a;
+    }
+
+    .stage-badge.level-3 {
+      background: rgba(40,194,143,.16);
+      color: #8ae4c4;
+    }
+
+    .stage-badge.level-4 {
+      background: rgba(190,132,255,.16);
+      color: #d7b6ff;
+    }
+
     .dept-card {
       padding: 20px;
       display: grid;
@@ -1176,6 +1303,10 @@
         grid-template-columns: 1fr;
       }
 
+      .dept-table {
+        min-width: 1080px;
+      }
+
       .kpis,
       .filters {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1427,11 +1558,11 @@
           <div class="section-head">
             <div>
               <h2>部門 Agent 進度</h2>
-              <div class="hint">每張卡代表一個部門；卡內保留 Agent 方向、簡介、負責人、本週進度與下週動作。</div>
+              <div class="hint">主管快速掃描版：一列一個部門，只保留階段、本週進度、下一步與主管協助；完整內容按「查看」。</div>
             </div>
             <span class="badge red" id="todayBadge"></span>
           </div>
-          <div class="dept-grid" id="projectCards"></div>
+          <div class="dept-table-wrap" id="projectCards"></div>
         </section>
       </section>
 
@@ -2332,81 +2463,132 @@
     }
 
     function renderCards(items) {
-      document.getElementById("projectCards").innerHTML = items.map(project => {
-        const completion = completionScore(project);
-        const progress = progressScore(project);
-        const usage = adoptionScore(project);
-        const benefit = valueScore(project);
-        const scaleScore = scaleWeights[project.scale] || 0;
-        const statusLabel = projectStatusLabel(project);
-        return `
-          <article class="dept-card">
-            <div class="dept-top">
-              <div>
-                <h3 class="dept-title">${escapeHtml(project.department)}</h3>
-                <div class="meta compact">部門負責人：${escapeHtml(project.owner)} · 研究中心：${escapeHtml(project.center)}${project.agentOwner ? ` · Agent Owner：${escapeHtml(project.agentOwner)}` : ""}</div>
-              </div>
-              <div class="badge-stack">
-                <span class="badge ${project.stage >= 3 ? "green" : project.stage >= 1 ? "amber" : "red"}">${escapeHtml(statusLabel)}</span>
-                <span class="badge ${agentTypeBadge(project.agentType)}">${escapeHtml(project.agentType)}</span>
-              </div>
+      const orderedItems = sortProjectsForDisplay(items);
+      document.getElementById("projectCards").innerHTML = `
+        <table class="dept-table">
+          <thead>
+            <tr>
+              <th style="width: 130px;">部門</th>
+              <th style="width: 120px;">負責人</th>
+              <th style="width: 260px;">Agent 題目</th>
+              <th style="width: 190px;">目前階段</th>
+              <th>本週進度</th>
+              <th>下一步</th>
+              <th style="width: 150px;">主管協助</th>
+              <th style="width: 92px;">詳細</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${orderedItems.map(project => `
+              <tr>
+                <td><div class="dept-name">${escapeHtml(project.department)}</div></td>
+                <td>
+                  <div class="dept-owner">${escapeHtml(project.owner)}</div>
+                  ${project.agentOwner ? `<div class="meta compact">Agent Owner：${escapeHtml(project.agentOwner)}</div>` : ""}
+                </td>
+                <td>
+                  <div class="dept-agent">
+                    <span>${escapeHtml(project.title)}</span>
+                    <span class="badge ${agentTypeBadge(project.agentType)}">${escapeHtml(project.agentType)}</span>
+                  </div>
+                </td>
+                <td><span class="stage-badge level-${project.stage}">${project.stage} ${escapeHtml(projectStatusLabel(project))}</span></td>
+                <td><div class="dept-summary">${escapeHtml(project.currentProgress)}</div></td>
+                <td><div class="dept-summary">${escapeHtml(project.nextStep)}</div></td>
+                <td>
+                  <div class="dept-support">
+                    <span class="badge ${supportBadge(project.supportStatus)}">${escapeHtml(project.supportStatus)}</span>
+                    ${project.supportStatus !== "無" && project.supportType !== "無" ? `<span class="meta compact">${escapeHtml(project.supportType)}</span>` : ""}
+                  </div>
+                </td>
+                <td class="dept-action"><button class="btn small" type="button" data-project-detail="${escapeHtml(project.id)}">查看</button></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+      document.querySelectorAll("[data-project-detail]").forEach(button => {
+        button.addEventListener("click", () => openProjectDetail(button.dataset.projectDetail));
+      });
+    }
+
+    function sortProjectsForDisplay(items) {
+      return [...items].sort((a, b) => {
+        const aIndex = editDepartmentOrder.indexOf(a.department);
+        const bIndex = editDepartmentOrder.indexOf(b.department);
+        const safeA = aIndex === -1 ? 999 : aIndex;
+        const safeB = bIndex === -1 ? 999 : bIndex;
+        return safeA - safeB;
+      });
+    }
+
+    function openProjectDetail(projectId) {
+      const project = projects.find(item => item.id === projectId);
+      if (!project) return;
+      const completion = completionScore(project);
+      const usage = adoptionScore(project);
+      const benefit = valueScore(project);
+      const scaleScore = scaleWeights[project.scale] || 0;
+
+      document.getElementById("modalTitle").textContent = `${project.department} · ${project.title}`;
+      document.getElementById("modalHint").textContent = `部門負責人：${project.owner} · 研究中心：${project.center}${project.agentOwner ? ` · Agent Owner：${project.agentOwner}` : ""}`;
+      document.getElementById("modalList").innerHTML = `
+        <div class="modal-item">
+          <div class="badge-stack" style="justify-content:flex-start;margin-bottom:12px">
+            <span class="stage-badge level-${project.stage}">${project.stage} ${escapeHtml(projectStatusLabel(project))}</span>
+            <span class="badge ${agentTypeBadge(project.agentType)}">${escapeHtml(project.agentType)}</span>
+          </div>
+          <div class="copy">${escapeHtml(project.summary)}</div>
+          ${renderFlow(project)}
+          <div class="readiness-row" style="margin-top:14px">
+            <div class="readiness-number">${completion}%</div>
+            <div>
+              <div class="label">部門完成度</div>
+              <div class="progress large"><div class="bar" style="--w:${completion}%"></div></div>
+              <div class="meta compact">${escapeHtml(project.progressReason || "完成度由 Michael 手動判斷。")}</div>
             </div>
-
-            <div class="copy">${escapeHtml(project.title)}</div>
-            ${renderFlow(project)}
-
-            <div class="readiness-row">
-              <div class="readiness-number">${completion}%</div>
-              <div>
-                <div class="label">部門完成度</div>
-                <div class="progress large"><div class="bar" style="--w:${completion}%"></div></div>
-                <div class="meta compact">${escapeHtml(project.progressReason || "完成度由 Michael 手動判斷。")}</div>
-              </div>
+          </div>
+          ${renderRoadmap(project)}
+          <div class="indicator-grid" style="margin-top:14px">
+            <div class="indicator">${iconSvg("progress")}<span>完成度</span><strong>${completion}%</strong></div>
+            <div class="indicator">${iconSvg("usage")}<span>使用</span><strong>${escapeHtml(project.frequency)} · ${usage}%</strong></div>
+            <div class="indicator">${iconSvg("benefit")}<span>效益</span><strong>${benefit}%</strong></div>
+            <div class="indicator">${iconSvg("center")}<span>擴展</span><strong>${escapeHtml(project.scale)} · ${scaleScore}%</strong></div>
+          </div>
+          <div class="detail-grid" style="margin-top:14px">
+            <div class="detail-box">
+              <strong>目前進度</strong>
+              <div class="meta">${escapeHtml(project.currentProgress)}</div>
             </div>
-
-            ${renderRoadmap(project)}
-
-            <div class="indicator-grid">
-              <div class="indicator">${iconSvg("progress")}<span>完成度</span><strong>${progress}%</strong></div>
-              <div class="indicator">${iconSvg("usage")}<span>使用</span><strong>${escapeHtml(project.frequency)} · ${usage}%</strong></div>
-              <div class="indicator">${iconSvg("benefit")}<span>效益</span><strong>${benefit}%</strong></div>
-              <div class="indicator">${iconSvg("center")}<span>擴展</span><strong>${escapeHtml(project.scale)} · ${scaleScore}%</strong></div>
+            <div class="detail-box">
+              <strong>下一步</strong>
+              <div class="meta">${escapeHtml(project.nextStep)}</div>
             </div>
-
-            <div class="detail-grid">
-              <div class="detail-box">
-                <strong>目前進度</strong>
-                <div class="meta">${escapeHtml(project.currentProgress)}</div>
-              </div>
-              <div class="detail-box">
-                <strong>下週進度</strong>
-                <div class="meta">${escapeHtml(project.nextStep)}</div>
-              </div>
-              <div class="detail-box">
-                <strong>架構</strong>
-                <div class="meta">${escapeHtml(project.architecture)}</div>
-              </div>
-              <div class="detail-box">
-                <strong>技術型態</strong>
-                <div class="meta">${escapeHtml(project.agentType)}${project.agentTypeNote ? ` · ${escapeHtml(project.agentTypeNote)}` : ""}</div>
-              </div>
-              <div class="detail-box">
-                <strong>效益</strong>
-                <div class="meta">${renderBenefitsText(project)}</div>
-              </div>
-              <div class="detail-box">
-                <strong>主管協助</strong>
-                <div class="meta">${escapeHtml(project.supportStatus)}${project.supportType !== "無" ? ` · ${escapeHtml(project.supportType)}` : ""}${project.supportDescription ? ` · ${escapeHtml(project.supportDescription)}` : ""}</div>
-              </div>
-              <div class="detail-box">
-                <strong>資料來源</strong>
-                <div class="meta">${escapeHtml(project.source || "尚未填寫")}</div>
-                ${renderSlideLinks(project)}
-              </div>
+            <div class="detail-box">
+              <strong>架構</strong>
+              <div class="meta">${escapeHtml(project.architecture)}</div>
             </div>
-          </article>
-        `;
-      }).join("");
+            <div class="detail-box">
+              <strong>技術型態</strong>
+              <div class="meta">${escapeHtml(project.agentType)}${project.agentTypeNote ? ` · ${escapeHtml(project.agentTypeNote)}` : ""}</div>
+            </div>
+            <div class="detail-box">
+              <strong>效益</strong>
+              <div class="meta">${renderBenefitsText(project)}</div>
+            </div>
+            <div class="detail-box">
+              <strong>主管協助</strong>
+              <div class="meta">${supportSummary(project)}</div>
+            </div>
+            <div class="detail-box">
+              <strong>資料來源</strong>
+              <div class="meta">${escapeHtml(project.source || "尚未填寫")}</div>
+              ${renderSlideLinks(project)}
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById("detailModal").classList.add("open");
     }
 
     function renderRoadmap(project) {
@@ -2423,6 +2605,15 @@
           `).join("")}
         </div>
       `;
+    }
+
+    function supportSummary(project) {
+      if (project.supportStatus === "無") return "無";
+      return [
+        project.supportStatus,
+        project.supportType !== "無" ? project.supportType : "",
+        project.supportDescription || ""
+      ].filter(Boolean).map(escapeHtml).join(" · ");
     }
 
     function roadmapClass(status) {
