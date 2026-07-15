@@ -673,6 +673,10 @@
     }
 
     .kpi {
+      --maturity-rgb: 111 211 255;
+      --maturity-color: #6fd3ff;
+      position: relative;
+      overflow: hidden;
       min-height: 156px;
       padding: 20px;
       display: grid;
@@ -683,12 +687,84 @@
       text-align: center;
     }
 
+    .kpi::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 4px;
+      background: rgb(var(--maturity-rgb));
+      opacity: .9;
+    }
+
+    .kpi::after {
+      content: "";
+      position: absolute;
+      inset: auto 18px 14px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgb(var(--maturity-rgb) / .46), transparent);
+      opacity: .8;
+    }
+
+    .kpi.maturity-0,
+    .modal-item.maturity-0,
+    .modal-box.maturity-0,
+    .dept-table tbody tr.maturity-0 {
+      --maturity-rgb: 160 174 190;
+      --maturity-color: #a0aebe;
+    }
+
+    .kpi.maturity-1,
+    .modal-item.maturity-1,
+    .modal-box.maturity-1,
+    .dept-table tbody tr.maturity-1 {
+      --maturity-rgb: 111 211 255;
+      --maturity-color: #6fd3ff;
+    }
+
+    .kpi.maturity-2,
+    .modal-item.maturity-2,
+    .modal-box.maturity-2,
+    .dept-table tbody tr.maturity-2 {
+      --maturity-rgb: 244 185 66;
+      --maturity-color: #f4b942;
+    }
+
+    .kpi.maturity-3,
+    .modal-item.maturity-3,
+    .modal-box.maturity-3,
+    .dept-table tbody tr.maturity-3 {
+      --maturity-rgb: 40 194 143;
+      --maturity-color: #28c28f;
+    }
+
+    .kpi.maturity-4,
+    .modal-item.maturity-4,
+    .modal-box.maturity-4,
+    .dept-table tbody tr.maturity-4 {
+      --maturity-rgb: 190 132 255;
+      --maturity-color: #be84ff;
+    }
+
+    .kpi.maturity-1,
+    .kpi.maturity-2,
+    .kpi.maturity-3,
+    .kpi.maturity-4 {
+      border-color: rgb(var(--maturity-rgb) / .38);
+      background:
+        radial-gradient(circle at 50% 0%, rgb(var(--maturity-rgb) / .14), transparent 48%),
+        linear-gradient(180deg, rgba(20,29,42,.96), rgba(11,17,27,.96));
+    }
+
     .kpi-icon svg,
     .indicator svg {
       width: 25px;
       height: 25px;
       color: var(--cyan);
       stroke-width: 2;
+    }
+
+    .kpi .kpi-icon svg {
+      color: var(--maturity-color);
     }
 
     .kpi .kpi-label {
@@ -774,11 +850,28 @@
     }
 
     .dept-table tbody tr {
+      --maturity-rgb: 160 174 190;
+      --maturity-color: #a0aebe;
+      background:
+        linear-gradient(90deg, rgb(var(--maturity-rgb) / .075), transparent 34%),
+        rgba(255,255,255,.012);
       transition: background .12s ease;
     }
 
+    .dept-table tbody tr:nth-child(even) {
+      background:
+        linear-gradient(90deg, rgb(var(--maturity-rgb) / .11), transparent 34%),
+        rgba(255,255,255,.026);
+    }
+
     .dept-table tbody tr:hover {
-      background: rgba(111,211,255,.045);
+      background:
+        linear-gradient(90deg, rgb(var(--maturity-rgb) / .16), transparent 42%),
+        rgba(255,255,255,.045);
+    }
+
+    .dept-table tbody tr td:first-child {
+      box-shadow: inset 5px 0 0 rgb(var(--maturity-rgb) / .78);
     }
 
     .dept-table tbody tr:last-child td {
@@ -799,12 +892,17 @@
       color: var(--text);
       font-size: 17px;
       line-height: 1.45;
-      font-weight: 800;
+      font-weight: 650;
     }
 
     .dept-agent {
       display: grid;
       gap: 8px;
+    }
+
+    .dept-agent .agent-title {
+      color: #f5f8fb;
+      font-weight: 850;
     }
 
     .dept-summary {
@@ -813,7 +911,7 @@
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
       color: var(--soft);
-      font-weight: 750;
+      font-weight: 650;
     }
 
     .dept-support {
@@ -845,6 +943,11 @@
       line-height: 1.2;
       font-weight: 900;
       white-space: nowrap;
+    }
+
+    .stage-badge.level-0 {
+      background: rgba(160,174,190,.13);
+      color: #c2ccd7;
     }
 
     .stage-badge.level-1 {
@@ -1253,10 +1356,31 @@
     }
 
     .modal-item {
+      --maturity-rgb: 160 174 190;
+      --maturity-color: #a0aebe;
       padding: 14px;
       border-radius: 7px;
       border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.045);
+      border-left: 5px solid rgb(var(--maturity-rgb) / .82);
+      background:
+        linear-gradient(90deg, rgb(var(--maturity-rgb) / .11), transparent 34%),
+        rgba(255,255,255,.045);
+    }
+
+    .modal-box.maturity-1,
+    .modal-box.maturity-2,
+    .modal-box.maturity-3,
+    .modal-box.maturity-4 {
+      border-color: rgb(var(--maturity-rgb) / .34);
+      box-shadow: 0 24px 70px rgba(0,0,0,.42), 0 0 0 1px rgb(var(--maturity-rgb) / .08);
+    }
+
+    .modal-box.maturity-1 .modal-head,
+    .modal-box.maturity-2 .modal-head,
+    .modal-box.maturity-3 .modal-head,
+    .modal-box.maturity-4 .modal-head {
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgb(var(--maturity-rgb) / .22);
     }
 
     .modal-item strong {
@@ -2535,24 +2659,28 @@
           title: "個人建立測試中",
           note: "成熟度 1：個人已建立或測試中的 Agent / 自動化",
           icon: "personal",
+          maturity: 1,
           items: items.filter(project => project.stage === 1)
         },
         pilot: {
           title: "Pilot 以上 / 跨部門測試",
           note: "成熟度 2 以上：已進入 Pilot 或跨部門測試",
           icon: "pilot",
+          maturity: 2,
           items: items.filter(project => project.stage >= 2)
         },
         workflow: {
           title: "進入課/部日常工作流程",
           note: "成熟度 3 以上：已進入課/部日常工作流程",
           icon: "workflow",
+          maturity: 3,
           items: items.filter(project => project.stage >= 3)
         },
         center: {
           title: "已擴及中心/公司級",
           note: "成熟度 4：已擴及其他研發中心或公司級",
           icon: "center",
+          maturity: 4,
           items: items.filter(project => project.stage >= 4)
         }
       };
@@ -2651,7 +2779,7 @@
     function renderKpis(items) {
       const definitions = kpiDefinitions(items);
       document.getElementById("kpis").innerHTML = Object.entries(definitions).map(([key, definition]) => `
-        <button class="kpi" data-kpi="${key}" type="button">
+        <button class="kpi maturity-${definition.maturity}" data-kpi="${key}" type="button">
           <span class="kpi-icon">${iconSvg(definition.icon)}</span>
           <span class="kpi-label">${escapeHtml(definition.title)}</span>
           <span class="kpi-value">${definition.items.length}</span>
@@ -2682,7 +2810,7 @@
           </thead>
           <tbody>
             ${orderedItems.map(project => `
-              <tr>
+              <tr class="maturity-${project.stage}">
                 <td><div class="dept-name">${escapeHtml(project.department)}</div></td>
                 <td>
                   <div class="dept-owner">${escapeHtml(project.owner)}</div>
@@ -2690,7 +2818,7 @@
                 </td>
                 <td>
                   <div class="dept-agent">
-                    <span>${escapeHtml(project.title)}</span>
+                    <span class="agent-title">${escapeHtml(project.title)}</span>
                     <span class="badge ${agentTypeBadge(project.agentType)}">${escapeHtml(project.agentType)}</span>
                   </div>
                 </td>
@@ -2728,6 +2856,7 @@
       const project = projects.find(item => item.id === projectId);
       if (!project) return;
       const completion = completionScore(project);
+      setModalMaturity(project.stage);
 
       document.getElementById("modalTitle").textContent = `${project.department} · ${project.title}`;
       document.getElementById("modalHint").textContent = `部門負責人：${project.owner} · 研究中心：${project.center}${project.agentOwner ? ` · Agent Owner：${project.agentOwner}` : ""}`;
@@ -2974,11 +3103,12 @@
       const items = filteredProjects();
       const definition = kpiDefinitions(items)[key];
       if (!definition) return;
+      setModalMaturity(definition.maturity);
 
       document.getElementById("modalTitle").textContent = definition.title;
       document.getElementById("modalHint").textContent = definition.note;
       document.getElementById("modalList").innerHTML = definition.items.length ? definition.items.map(project => `
-        <div class="modal-item">
+        <div class="modal-item maturity-${project.stage}">
           <strong>${escapeHtml(project.department)} · ${escapeHtml(project.title)}</strong>
           <div class="meta">部門負責人：${escapeHtml(project.owner)}${project.agentOwner ? ` · Agent Owner：${escapeHtml(project.agentOwner)}` : ""} · 技術型態 ${escapeHtml(project.agentType)} · 完成度 ${completionScore(project)}% · 成熟度 ${project.stage} ${stageLabels[project.stage]}</div>
           <div class="meta">目前：${escapeHtml(project.currentProgress)}</div>
@@ -2988,6 +3118,13 @@
         <div class="empty-state">目前 0 個部門符合此指標，尚未填入可列入明細的資料。</div>
       `;
       document.getElementById("detailModal").classList.add("open");
+    }
+
+    function setModalMaturity(stage) {
+      const box = document.querySelector("#detailModal .modal-box");
+      if (!box) return;
+      box.classList.remove("maturity-0", "maturity-1", "maturity-2", "maturity-3", "maturity-4");
+      box.classList.add(`maturity-${clampNumber(stage, 0, 4)}`);
     }
 
     function loadForm() {
