@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-07-09T10:11:58.887Z",
+  "savedAt": "2026-07-15T08:00:20.202Z",
   "projects": [
     {
       "id": "pec-emc-rf",
@@ -41,44 +41,50 @@
       "currentProgress": "PPT 已定義端到端方案；7/10 Kick-off，7 月底完成架構與流程設計。",
       "nextStep": "完成技術需求對齊與系統架構評估，確認內網資料夾、報告格式與 ANYDOOR 自動勾選流程。",
       "source": "使用 AI Agent 加速 EU DoC 產出流程.pptx",
-      "lastUpdate": "2026-07-08",
+      "lastUpdate": "2026-07-15",
       "progressReason": "已完成題目與端到端流程定義，尚未進入可使用 prototype，目前由 Michael 手動判斷為早期進度。",
       "roadmap": [
         {
-          "name": "需求確認",
+          "name": "完成 EU DoC 端到端流程草案",
+          "status": "已完成",
+          "startDate": "2026/07/01",
+          "dueDate": "2026/07/10"
+        },
+        {
+          "name": "定義報告解析與標準擷取規則",
           "status": "進行中",
-          "owner": "Frankie",
-          "note": ""
+          "startDate": "2026/07/15",
+          "dueDate": "2026/07/26"
         },
         {
-          "name": "資料/權限",
+          "name": "建立 EMC/RF/Safety/EC 報告樣本集",
           "status": "未開始",
-          "owner": "Frankie",
-          "note": ""
+          "startDate": "2026/07/29",
+          "dueDate": "2026/08/09"
         },
         {
-          "name": "架構設計",
+          "name": "完成 EU DoC 標準勾選邏輯",
           "status": "未開始",
-          "owner": "Frankie",
-          "note": ""
+          "startDate": "2026/08/12",
+          "dueDate": "2026/08/23"
         },
         {
-          "name": "Prototype",
+          "name": "串接 ANYDOOR 操作流程",
           "status": "未開始",
-          "owner": "Frankie",
-          "note": ""
+          "startDate": "2026/08/26",
+          "dueDate": "2026/09/06"
         },
         {
-          "name": "Pilot 測試",
+          "name": "完成 EU DoC 輸出驗證",
           "status": "未開始",
-          "owner": "Frankie",
-          "note": ""
+          "startDate": "2026/09/09",
+          "dueDate": "2026/09/20"
         },
         {
-          "name": "導入/擴展",
+          "name": "Pilot 案件試跑與修正",
           "status": "未開始",
-          "owner": "Frankie",
-          "note": ""
+          "startDate": "2026/09/23",
+          "dueDate": "2026/10/04"
         }
       ],
       "benefits": {
@@ -134,44 +140,50 @@
       "currentProgress": "已完成 PLM 料號申請自動化流程規劃，進入個人使用與跨部門測試；本週 7/10 前新增 Manufacturers 寫入 PN Agent。",
       "nextStep": "導入線材編碼原則到 PN Agent，推進 SIE/ME/thermal 助理試用、部門使用與跨 BU 導入。",
       "source": "PLM申請料號Agent自動化流程_Andy0703.pptx",
-      "lastUpdate": "2026-07-08",
+      "lastUpdate": "2026-07-15",
       "progressReason": "已完成流程規劃並進入個人使用與跨部門測試，完成度由 Michael 手動判斷。",
       "roadmap": [
         {
-          "name": "需求確認",
+          "name": "完成 PLM 料號申請基本流程",
           "status": "已完成",
-          "owner": "Andy PK Yang",
-          "note": ""
+          "startDate": "2026/07/01",
+          "dueDate": "2026/07/10"
         },
         {
-          "name": "資料/權限",
-          "status": "已完成",
-          "owner": "Andy PK Yang",
-          "note": ""
-        },
-        {
-          "name": "架構設計",
+          "name": "導入公司料號編碼原則",
           "status": "進行中",
-          "owner": "Andy PK Yang",
-          "note": ""
+          "startDate": "2026/07/15",
+          "dueDate": "2026/07/26"
         },
         {
-          "name": "Prototype",
+          "name": "加入 Manufacturers 寫入 PN Agent",
           "status": "未開始",
-          "owner": "Andy PK Yang",
-          "note": ""
+          "startDate": "2026/07/22",
+          "dueDate": "2026/08/02"
         },
         {
-          "name": "Pilot 測試",
+          "name": "完成 SIE 試用與回饋修正",
           "status": "未開始",
-          "owner": "Andy PK Yang",
-          "note": ""
+          "startDate": "2026/08/05",
+          "dueDate": "2026/08/16"
         },
         {
-          "name": "導入/擴展",
+          "name": "完成 ME / Thermal 助理試用",
           "status": "未開始",
-          "owner": "Andy PK Yang",
-          "note": ""
+          "startDate": "2026/08/19",
+          "dueDate": "2026/08/30"
+        },
+        {
+          "name": "跨部門 Pilot 與導入規則整理",
+          "status": "未開始",
+          "startDate": "2026/09/02",
+          "dueDate": "2026/09/13"
+        },
+        {
+          "name": "部門日常導入版本整理",
+          "status": "未開始",
+          "startDate": "2026/09/16",
+          "dueDate": "2026/09/27"
         }
       ],
       "benefits": {
@@ -227,44 +239,44 @@
       "currentProgress": "機構已提出計畫：先架設主機，作為後續 Footprint 讀取與圖面產生 Agent 的執行環境。",
       "nextStep": "確認主機環境、Footprint 格式/來源、圖面輸出格式與人工確認流程，開始建立讀取 Footprint 的 Agent prototype。",
       "source": "機構提供計畫（使用者口述）",
-      "lastUpdate": "2026-07-08",
+      "lastUpdate": "2026-07-15",
       "progressReason": "已確認題目方向與主機需求，尚未完成 prototype，因此以早期進度呈現。",
       "roadmap": [
         {
-          "name": "需求確認",
+          "name": "確認 Footprint 讀取範圍",
           "status": "進行中",
-          "owner": "Ray Hsu",
-          "note": ""
+          "startDate": "2026/07/15",
+          "dueDate": "2026/07/26"
         },
         {
-          "name": "資料/權限",
+          "name": "整理 Footprint 輸入格式與樣本",
           "status": "未開始",
-          "owner": "Ray Hsu",
-          "note": ""
+          "startDate": "2026/07/29",
+          "dueDate": "2026/08/09"
         },
         {
-          "name": "架構設計",
+          "name": "建立 Footprint 解析流程",
           "status": "未開始",
-          "owner": "Ray Hsu",
-          "note": ""
+          "startDate": "2026/08/12",
+          "dueDate": "2026/08/23"
         },
         {
-          "name": "Prototype",
+          "name": "產生圖面草稿輸出",
           "status": "未開始",
-          "owner": "Ray Hsu",
-          "note": ""
+          "startDate": "2026/08/26",
+          "dueDate": "2026/09/06"
         },
         {
-          "name": "Pilot 測試",
+          "name": "比對圖面輸出與人工修正差異",
           "status": "未開始",
-          "owner": "Ray Hsu",
-          "note": ""
+          "startDate": "2026/09/09",
+          "dueDate": "2026/09/20"
         },
         {
-          "name": "導入/擴展",
+          "name": "完成 ME 試用版本",
           "status": "未開始",
-          "owner": "Ray Hsu",
-          "note": ""
+          "startDate": "2026/09/23",
+          "dueDate": "2026/10/04"
         }
       ],
       "benefits": {
@@ -320,44 +332,44 @@
       "currentProgress": "已完成本機 GUI 工作台、PEC_TES_EV 來源盤點、81 份有效 thermal report source、30 份報告匯入、29/30 份有可用溫度資料、427 筆高溫零件列，以及原始結果 / 擷取數據比對功能。",
       "nextStep": "取得主管核准作為 TES/EV pilot，完成 3-5 頁主管簡報與 demo，定義 pilot 驗收條件：搜尋/篩選、溫度擷取品質、原始證據回查、selected-only download 真實新檔驗證與使用者回饋。",
       "source": "project-filter-gemini-ppt-brief.md",
-      "lastUpdate": "2026-07-14",
+      "lastUpdate": "2026-07-15",
       "progressReason": "已完成本機 GUI、來源盤點、選擇性下載、匯入、溫度資料擷取與原始結果比對；已有真實 TES/EV 熱測報告驗證數字，待主管核准成為正式 pilot。",
       "roadmap": [
         {
-          "name": "需求確認",
+          "name": "確定 Thermal 相似案例搜尋題目",
           "status": "已完成",
-          "owner": "Eric",
-          "note": "已定義 Project Filter 服務 TES/EV 熱測報告搜尋、篩選、判讀與原始證據回查。"
+          "startDate": "2026/07/01",
+          "dueDate": "2026/07/10"
         },
         {
-          "name": "資料/權限",
-          "status": "已完成",
-          "owner": "Eric",
-          "note": "PEC_TES_EV FS1 路徑已做低衝擊測試，確認 exists / is_dir / can_list。"
-        },
-        {
-          "name": "架構設計",
-          "status": "已完成",
-          "owner": "Eric",
-          "note": "本機 GUI + SQLite + source inventory + selected download + import + extraction + result review 流程已成形。"
-        },
-        {
-          "name": "Prototype",
-          "status": "已完成",
-          "owner": "Eric",
-          "note": "已匯入 30 份報告、盤點 81 份有效來源、擷取 427 筆高溫零件列。"
-        },
-        {
-          "name": "Pilot 測試",
+          "name": "整理歷史專案與熱設計資料欄位",
           "status": "進行中",
-          "owner": "Eric",
-          "note": "待主管核准 TES/EV pilot 範圍、顯示規則與下一次真實新檔驗證方式。"
+          "startDate": "2026/07/15",
+          "dueDate": "2026/07/26"
         },
         {
-          "name": "導入/擴展",
+          "name": "定義相似案例比對條件",
           "status": "未開始",
-          "owner": "Eric",
-          "note": "Pilot 穩定後，再評估跨 BU 或跨文件類型擴展。"
+          "startDate": "2026/07/29",
+          "dueDate": "2026/08/09"
+        },
+        {
+          "name": "建立 Thermal Data Search 查詢流程",
+          "status": "未開始",
+          "startDate": "2026/08/12",
+          "dueDate": "2026/08/23"
+        },
+        {
+          "name": "產生 PM 回覆參考摘要",
+          "status": "未開始",
+          "startDate": "2026/08/26",
+          "dueDate": "2026/09/06"
+        },
+        {
+          "name": "用 3 個歷史案例驗證結果",
+          "status": "未開始",
+          "startDate": "2026/09/09",
+          "dueDate": "2026/09/20"
         }
       ],
       "benefits": {
@@ -413,44 +425,44 @@
       "currentProgress": "已完成 DQAC 題目初版簡報，定義痛點、商業價值與五步驟工作流程；本週行動仍待定。",
       "nextStep": "完成 AI Agent Pipeline 初版規劃，評估一個適合落地操作的 Agent 方案，並盤點資料源與掃描/報告串接方式。",
       "source": "iec62443_agent_tw_page.pptx",
-      "lastUpdate": "2026-07-14",
+      "lastUpdate": "2026-07-15",
       "progressReason": "已完成初版 proposal，包含痛點、商業價值與 workflow；尚未看到 prototype 或實際使用紀錄，因此先以 10% 呈現。",
       "roadmap": [
         {
-          "name": "需求確認",
-          "status": "已完成",
-          "owner": "Vincent chu",
-          "note": "已定義 IEC-62443-4-2 漏洞管理痛點與商業價值。"
-        },
-        {
-          "name": "資料/權限",
-          "status": "未開始",
-          "owner": "Vincent chu",
-          "note": "待確認映像檔、版本資料、Trivy 掃描結果與歷史報告來源。"
-        },
-        {
-          "name": "架構設計",
+          "name": "整理 IEC-62443-4-2 報告欄位需求",
           "status": "進行中",
-          "owner": "Vincent chu",
-          "note": "規劃 AI Agent Pipeline 與持續監控流程。"
+          "startDate": "2026/07/15",
+          "dueDate": "2026/07/26"
         },
         {
-          "name": "Prototype",
+          "name": "建立弱點資料與版本資料輸入格式",
           "status": "未開始",
-          "owner": "Vincent chu",
-          "note": ""
+          "startDate": "2026/07/29",
+          "dueDate": "2026/08/09"
         },
         {
-          "name": "Pilot 測試",
+          "name": "定義合規判斷與缺口分類規則",
           "status": "未開始",
-          "owner": "Vincent chu",
-          "note": ""
+          "startDate": "2026/08/12",
+          "dueDate": "2026/08/23"
         },
         {
-          "name": "導入/擴展",
+          "name": "產生初版 Vulnerability Management 報告",
           "status": "未開始",
-          "owner": "Vincent chu",
-          "note": ""
+          "startDate": "2026/08/26",
+          "dueDate": "2026/09/06"
+        },
+        {
+          "name": "用一個產品案例驗證報告結果",
+          "status": "未開始",
+          "startDate": "2026/09/09",
+          "dueDate": "2026/09/20"
+        },
+        {
+          "name": "整理 DQAC 使用流程與交付格式",
+          "status": "未開始",
+          "startDate": "2026/09/23",
+          "dueDate": "2026/10/04"
         }
       ],
       "benefits": {
@@ -506,44 +518,44 @@
       "currentProgress": "Chih-Fu 已完成 demo，可由批次檔啟動並自動執行跨 APP 操作；已進入個人使用與跨 team 評估，但仍需從固定 script automation 升級成可擴充 agent 架構。",
       "nextStep": "Miles 將納入 BEC 推動項目；與 Michael 討論如何把起點整合成 BEC 工具，建立開發/導入進程追蹤，並定期 review 後彙整給 Stephen。",
       "source": "BEC 昨日會議逐字稿（使用者貼上）",
-      "lastUpdate": "2026-07-08",
+      "lastUpdate": "2026-07-15",
       "progressReason": "已有可 demo 的固定流程自動化，正在評估跨 team 導入與 Agent 化架構。",
       "roadmap": [
         {
-          "name": "需求確認",
+          "name": "完成跨 APP 自動化 demo",
           "status": "已完成",
-          "owner": "Chih-Fu Hsu",
-          "note": ""
+          "startDate": "2026/07/01",
+          "dueDate": "2026/07/10"
         },
         {
-          "name": "資料/權限",
-          "status": "已完成",
-          "owner": "Chih-Fu Hsu",
-          "note": ""
-        },
-        {
-          "name": "架構設計",
+          "name": "選定 BEC 第一個導入流程",
           "status": "進行中",
-          "owner": "Chih-Fu Hsu",
-          "note": ""
+          "startDate": "2026/07/15",
+          "dueDate": "2026/07/26"
         },
         {
-          "name": "Prototype",
+          "name": "把固定 script 改成可配置流程",
           "status": "未開始",
-          "owner": "Chih-Fu Hsu",
-          "note": ""
+          "startDate": "2026/07/29",
+          "dueDate": "2026/08/09"
         },
         {
-          "name": "Pilot 測試",
+          "name": "整理啟動與執行紀錄畫面",
           "status": "未開始",
-          "owner": "Chih-Fu Hsu",
-          "note": ""
+          "startDate": "2026/08/12",
+          "dueDate": "2026/08/23"
         },
         {
-          "name": "導入/擴展",
+          "name": "BEC 小範圍試用與問題修正",
           "status": "未開始",
-          "owner": "Chih-Fu Hsu",
-          "note": ""
+          "startDate": "2026/08/26",
+          "dueDate": "2026/09/06"
+        },
+        {
+          "name": "建立 BEC 導入節奏與回報格式",
+          "status": "未開始",
+          "startDate": "2026/09/09",
+          "dueDate": "2026/09/20"
         }
       ],
       "benefits": {
@@ -560,10 +572,10 @@
       "department": "SEC",
       "owner": "Fencer",
       "agentOwner": "",
-      "title": "待填寫 Agent 方向",
-      "summary": "待填寫功能簡介與主要痛點。",
+      "title": "",
+      "summary": "",
       "flow": [],
-      "architecture": "待填寫架構。",
+      "architecture": "",
       "stage": 0,
       "progress": 0,
       "size": "未定",
@@ -585,49 +597,12 @@
       "supportStatus": "需主管決策",
       "supportType": "無",
       "supportDescription": "尚未提供任何資料, 有需要參與此活動嗎？",
-      "currentProgress": "尚未填寫本週進度。",
-      "nextStep": "待填寫下週進度 / Action。",
+      "currentProgress": "",
+      "nextStep": "",
       "source": "",
-      "lastUpdate": "2026-07-08",
+      "lastUpdate": "2026-07-15",
       "progressReason": "",
-      "roadmap": [
-        {
-          "name": "需求確認",
-          "status": "未開始",
-          "owner": "Fencer",
-          "note": ""
-        },
-        {
-          "name": "資料/權限",
-          "status": "未開始",
-          "owner": "Fencer",
-          "note": ""
-        },
-        {
-          "name": "架構設計",
-          "status": "未開始",
-          "owner": "Fencer",
-          "note": ""
-        },
-        {
-          "name": "Prototype",
-          "status": "未開始",
-          "owner": "Fencer",
-          "note": ""
-        },
-        {
-          "name": "Pilot 測試",
-          "status": "未開始",
-          "owner": "Fencer",
-          "note": ""
-        },
-        {
-          "name": "導入/擴展",
-          "status": "未開始",
-          "owner": "Fencer",
-          "note": ""
-        }
-      ],
+      "roadmap": [],
       "benefits": {
         "time": "",
         "manpower": "",
@@ -635,6 +610,87 @@
         "scale": ""
       },
       "slides": []
+    },
+    {
+      "id": "training-codex-clarify-spec-ticket",
+      "center": "Training",
+      "department": "ADLINK AI Agent Training",
+      "owner": "Michael",
+      "agentOwner": "Codex",
+      "title": "Codex 需求釐清到 Ticket 工作法",
+      "summary": "教學同仁在與 Codex / Code 討論功能或系統改動時，先釐清需求、寫成 spec，再拆成可驗證 ticket，避免 AI 做出來與需求不一致。",
+      "flow": [
+        "Skill First",
+        "需求釐清",
+        "To Spec",
+        "To Tickets",
+        "逐張驗證"
+      ],
+      "architecture": "Codex / Code 討論 -> skill-first 路由 -> clarify-to-spec -> spec-to-tickets -> 一張 ticket 一張 ticket 驗證與實作。",
+      "stage": 3,
+      "progress": 100,
+      "size": "S",
+      "frequency": "需要時",
+      "scale": "跨部門",
+      "agentType": "教學教材",
+      "agentTypeNote": "這是 Codex / Code 討論工作法，不是本地端 Agent 常駐功能。",
+      "weeklyUsers": 1,
+      "activeUsers": 1,
+      "targetUsers": 80,
+      "necessity": 5,
+      "practicality": 5,
+      "generality": 5,
+      "timeSaving": 4,
+      "addedValue": 5,
+      "governance": 90,
+      "dataReadiness": 100,
+      "validation": 90,
+      "supportStatus": "無",
+      "supportType": "無",
+      "supportDescription": "可直接作為 ADLINK 內訓教材使用。",
+      "currentProgress": "教材已完成 HTML 版本，已放入教學網站 slides。",
+      "nextStep": "內訓時示範一個實際需求，從釐清、spec 到 ticket 切片完整走一次。",
+      "source": "Codex local skills: clarify-to-spec, spec-to-tickets；Matt Pocock skills workflow concept。",
+      "lastUpdate": "2026-07-15",
+      "progressReason": "教學頁已建立並掛到 dashboard 資料。",
+      "roadmap": [
+        {
+          "name": "需求確認",
+          "status": "已完成",
+          "owner": "Michael",
+          "note": "定位為 Codex / Code 討論工作法。"
+        },
+        {
+          "name": "教材撰寫",
+          "status": "已完成",
+          "owner": "Codex",
+          "note": "HTML 教學頁已產出。"
+        },
+        {
+          "name": "網站上架",
+          "status": "已完成",
+          "owner": "Codex",
+          "note": "已加入 slides 連結。"
+        },
+        {
+          "name": "內訓示範",
+          "status": "未開始",
+          "owner": "Michael",
+          "note": "建議用一個實際 ADLINK agent 需求示範。"
+        }
+      ],
+      "benefits": {
+        "time": "減少需求理解錯誤造成的返工。",
+        "manpower": "讓非工程背景同仁也能用標準格式跟 Codex 討論。",
+        "risk": "避免 AI 在需求未清楚時直接修改系統或產出錯誤成果。",
+        "scale": "可套用到各部門的 Codex / Code 討論、功能規劃與自動化需求。"
+      },
+      "slides": [
+        {
+          "name": "Codex 需求釐清到 Ticket 工作法",
+          "url": "slides/2026-07-15/ADLINK-Codex-需求釐清到Ticket工作法.html"
+        }
+      ]
     }
   ]
 }

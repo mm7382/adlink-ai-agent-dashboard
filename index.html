@@ -628,13 +628,13 @@
 
     .roadmap {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 8px;
+      grid-template-columns: repeat(auto-fit, minmax(172px, 1fr));
+      gap: 9px;
     }
 
     .roadmap-step {
-      min-height: 112px;
-      padding: 12px 10px;
+      min-height: 142px;
+      padding: 12px;
       border-radius: 7px;
       border: 1px solid rgba(255,255,255,.08);
       background: rgba(255,255,255,.045);
@@ -661,16 +661,64 @@
     .roadmap-step .step-name {
       color: #fff;
       font-size: 16px;
-      line-height: 1.25;
+      line-height: 1.32;
       font-weight: 900;
     }
 
-    .roadmap-step .step-state,
-    .roadmap-step .step-owner {
+    .roadmap-step .step-state {
+      justify-self: start;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #dff5ff;
+      background: rgba(111,211,255,.12);
+      border: 1px solid rgba(111,211,255,.25);
+      font-size: 13px;
+      line-height: 1.2;
+      font-weight: 900;
+    }
+
+    .roadmap-step.done .step-state {
+      color: #8cf0c6;
+      background: rgba(40,194,143,.12);
+      border-color: rgba(40,194,143,.28);
+    }
+
+    .roadmap-step.help .step-state {
+      color: #ffe5a3;
+      background: rgba(244,185,66,.12);
+      border-color: rgba(244,185,66,.3);
+    }
+
+    .task-dates {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+      margin-top: 3px;
+    }
+
+    .task-date {
+      min-width: 0;
+      padding: 7px 8px;
+      border-radius: 6px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.07);
+    }
+
+    .task-date span {
+      display: block;
       color: var(--muted);
-      font-size: 14px;
-      line-height: 1.35;
+      font-size: 12px;
+      line-height: 1.25;
       font-weight: 850;
+    }
+
+    .task-date strong {
+      display: block;
+      color: #fff;
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
     }
 
     .roadmap-editor {
@@ -680,7 +728,7 @@
 
     .roadmap-edit-row {
       display: grid;
-      grid-template-columns: 170px 150px 160px 1fr;
+      grid-template-columns: minmax(240px, 1fr) 140px 150px 150px;
       gap: 10px;
       align-items: end;
     }
@@ -1522,12 +1570,54 @@
       gap: 12px;
     }
 
+    .decision-grid.two-col {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .decision-card {
       min-height: 118px;
       padding: 14px;
       display: grid;
       align-content: start;
       gap: 8px;
+    }
+
+    .task-snapshot {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .task-snapshot-card {
+      padding: 12px;
+      border-radius: 7px;
+      background: rgba(111,211,255,.065);
+      border: 1px solid rgba(111,211,255,.16);
+      display: grid;
+      gap: 6px;
+    }
+
+    .task-snapshot-card span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+      font-weight: 900;
+    }
+
+    .task-snapshot-card strong {
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.32;
+      font-weight: 900;
+    }
+
+    .task-snapshot-card small {
+      color: var(--soft);
+      font-size: 14px;
+      line-height: 1.4;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
     }
 
     .exec-flow {
@@ -1656,6 +1746,7 @@
       .detail-grid,
       .track-metrics,
       .roadmap,
+      .task-snapshot,
       .roadmap-edit-row,
       .benefit-grid,
       .slide-card {
@@ -2106,11 +2197,11 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "adlink-ai-agent-dashboard-v10";
+    const STORAGE_KEY = "adlink-ai-agent-dashboard-v11";
     const SERVER_PROJECTS_ENDPOINT = "/api/projects";
     const STATIC_PROJECTS_ENDPOINT = "adlink-dashboard-data.json";
 
-    const today = "2026-07-08";
+    const today = "2026-07-15";
 
     const stageLabels = {
       0: "尚未填寫",
@@ -2127,8 +2218,9 @@
     const supportStatusLabels = ["無", "需注意", "需主管決策"];
     const supportTypeLabels = ["無", "資料權限", "跨部門協調", "資源人力", "試用者指定", "擴大導入決策", "其他"];
     const editDepartmentOrder = ["PEC-SE", "BEC", "PEC-EMC/RF", "PEC-ME", "PEC-Thermal", "DQAC", "SEC"];
-    const roadmapStepNames = ["需求確認", "資料/權限", "架構設計", "Prototype", "Pilot 測試", "導入/擴展"];
-    const roadmapStatusLabels = ["未開始", "進行中", "已完成", "需協助"];
+    const legacyRoadmapStepNames = ["需求確認", "資料/權限", "架構設計", "Prototype", "Pilot 測試", "導入/擴展"];
+    const roadmapStepNames = ["題目確認", "規則整理", "流程設計", "可用版本", "小範圍測試", "導入修正", "正式導入"];
+    const roadmapStatusLabels = ["未開始", "進行中", "已完成", "卡住"];
 
     const scaleWeights = {
       "未定": 0,
@@ -2165,7 +2257,7 @@
         agentType: "Agent 化中",
         agentTypeNote: "方案包含需求監測、PDF 解析與系統勾選，已有 Agent 化方向；仍需確認工具調用、驗證閉環與內網權限後才能視為完整 AI Agent。",
         progressReason: "已完成題目與端到端流程定義，尚未進入可使用 prototype，因此先以 10% 呈現。",
-        roadmap: makeRoadmap(1, "Frankie"),
+        roadmap: defaultTaskPlan("pec-emc-rf"),
         benefits: {
           time: "減少工程師人工查找報告、逐一勾選標準與匯出文件時間。",
           manpower: "降低 EMC/RF/Safety/EC 多窗口重複確認與人工整理工作。",
@@ -2205,7 +2297,7 @@
         agentType: "Agent 化中",
         agentTypeNote: "目前已把 Excel 到 PLM 的固定工作流工具化，進入個人使用與跨部門測試；需補足可擴充工具、驗證與決策邊界後，才算完整 AI Agent。",
         progressReason: "已完成流程規劃並進入個人使用與跨部門測試，完成度由 Michael 手動判斷為 45%。",
-        roadmap: makeRoadmap(3, "Andy PK Yang"),
+        roadmap: defaultTaskPlan("pec-se"),
         benefits: {
           time: "降低 Excel 資料搬移、PLM 欄位填寫、附件上傳與 Save 的人工時間。",
           manpower: "讓工程師只保留資料確認與送簽判斷，減少重複操作人力。",
@@ -2245,7 +2337,7 @@
         agentType: "Agent 化中",
         agentTypeNote: "目前是主機與資料讀取規劃階段，目標是讓 Agent 解析 Footprint 並產生圖面；完成工具調用、輸出驗證與人工確認前，仍屬 Agent 化中。",
         progressReason: "已確認題目方向與主機需求，尚未完成 prototype，因此以早期進度呈現。",
-        roadmap: makeRoadmap(1, "Ray Hsu"),
+        roadmap: defaultTaskPlan("pec-me"),
         benefits: {
           time: "減少 Footprint 資料轉圖面與初稿整理時間。",
           manpower: "讓 ME 工程師把時間放在確認與修正，而不是重複產圖。",
@@ -2285,14 +2377,7 @@
         agentType: "Agent 化中",
         agentTypeNote: "目前較接近本機化資料擷取、搜尋、比對與判讀輔助工具，已具備 GUI、資料庫、掃描與回查流程；下一步是定義 pilot 驗收與使用規則，逐步往 Thermal Agent 工作流收斂。",
         progressReason: "已完成本機 GUI、來源盤點、選擇性下載、匯入、溫度資料擷取與原始結果比對；已有真實 TES/EV 熱測報告驗證數字，待主管核准成為正式 pilot。",
-        roadmap: [
-          { name: "需求確認", status: "已完成", owner: "Eric", note: "已定義 Project Filter 服務 TES/EV 熱測報告搜尋、篩選、判讀與原始證據回查。" },
-          { name: "資料/權限", status: "已完成", owner: "Eric", note: "PEC_TES_EV FS1 路徑已做低衝擊測試，確認 exists / is_dir / can_list。" },
-          { name: "架構設計", status: "已完成", owner: "Eric", note: "本機 GUI + SQLite + source inventory + selected download + import + extraction + result review 流程已成形。" },
-          { name: "Prototype", status: "已完成", owner: "Eric", note: "已匯入 30 份報告、盤點 81 份有效來源、擷取 427 筆高溫零件列。" },
-          { name: "Pilot 測試", status: "進行中", owner: "Eric", note: "待主管核准 TES/EV pilot 範圍、顯示規則與下一次真實新檔驗證方式。" },
-          { name: "導入/擴展", status: "未開始", owner: "Eric", note: "Pilot 穩定後，再評估跨 BU 或跨文件類型擴展。" }
-        ],
+        roadmap: defaultTaskPlan("pec-thermal"),
         benefits: {
           time: "減少工程師人工翻 Word/PDF、查找相似熱測報告、整理 CPU/GPU/環溫/airflow/spec/margin 表格的時間。",
           manpower: "讓 Thermal 工程師從資料搜尋與表格整理，轉向判讀、規則調整與 PM 技術回覆。",
@@ -2332,14 +2417,7 @@
         agentType: "Agent 化中",
         agentTypeNote: "目前已定義 AI Agent Pipeline 與五步驟工作流程，目標是 24/7 持續監測與自動報告；仍需確認資料源、掃描環境、追蹤資料模型與驗證閉環後，才算完整 AI Agent。",
         progressReason: "已完成初版 proposal，包含痛點、商業價值與 workflow；尚未看到 prototype 或實際使用紀錄，因此先以 10% 呈現。",
-        roadmap: [
-          { name: "需求確認", status: "已完成", owner: "Vincent chu", note: "已定義 IEC-62443-4-2 漏洞管理痛點與商業價值。" },
-          { name: "資料/權限", status: "未開始", owner: "Vincent chu", note: "待確認映像檔、版本資料、Trivy 掃描結果與歷史報告來源。" },
-          { name: "架構設計", status: "進行中", owner: "Vincent chu", note: "規劃 AI Agent Pipeline 與持續監控流程。" },
-          { name: "Prototype", status: "未開始", owner: "Vincent chu", note: "" },
-          { name: "Pilot 測試", status: "未開始", owner: "Vincent chu", note: "" },
-          { name: "導入/擴展", status: "未開始", owner: "Vincent chu", note: "" }
-        ],
+        roadmap: defaultTaskPlan("dqac"),
         benefits: {
           time: "以自動化分析與報告取代 80% 以上人工追蹤、Excel 記錄與報告彙整時間。",
           manpower: "讓資安/合規專家從資料搬移與整理轉向風險判斷與修復決策。",
@@ -2379,7 +2457,7 @@
         agentType: "自動化流程",
         agentTypeNote: "目前 demo 主要是批次檔與 Python 腳本串接固定跨 APP 流程，效益明確但仍偏自動化流程；下一步才是加入記憶、工具調用、MCP/應用串接與可擴充 agent 架構。",
         progressReason: "已有可 demo 的固定流程自動化，正在評估跨 team 導入與 Agent 化架構。",
-        roadmap: makeRoadmap(3, "Chih-Fu Hsu"),
+        roadmap: defaultTaskPlan("bec"),
         benefits: {
           time: "減少跨 APP 瑣碎操作與固定流程執行時間。",
           manpower: "讓工程師把時間移回設計、驗證與問題判斷。",
@@ -2409,22 +2487,87 @@
         nextStep: "Miles 將納入 BEC 推動項目；與 Michael 討論如何把起點整合成 BEC 工具，建立開發/導入進程追蹤，並定期 review 後彙整給 Stephen。",
         source: "BEC 昨日會議逐字稿（使用者貼上）"
       }),
-      makeDepartment("sec", "SEC", "SEC", "Fencer")
+      makeDepartment("sec", "SEC", "SEC", "Fencer", {
+        title: "",
+        summary: "",
+        architecture: "",
+        progressReason: "",
+        roadmap: [],
+        currentProgress: "",
+        nextStep: "",
+        source: ""
+      })
     ];
 
     let projects = loadProjects();
 
-    function makeRoadmap(activeIndex = 0, owner = "") {
+    function task(name, status = "未開始", startDate = "", dueDate = "") {
+      return { name, status, startDate, dueDate };
+    }
+
+    function defaultTaskPlan(projectId) {
+      const plans = {
+        "pec-se": [
+          task("完成 PLM 料號申請基本流程", "已完成", "2026/07/01", "2026/07/10"),
+          task("導入公司料號編碼原則", "進行中", "2026/07/15", "2026/07/26"),
+          task("加入 Manufacturers 寫入 PN Agent", "未開始", "2026/07/22", "2026/08/02"),
+          task("完成 SIE 試用與回饋修正", "未開始", "2026/08/05", "2026/08/16"),
+          task("完成 ME / Thermal 助理試用", "未開始", "2026/08/19", "2026/08/30"),
+          task("跨部門 Pilot 與導入規則整理", "未開始", "2026/09/02", "2026/09/13"),
+          task("部門日常導入版本整理", "未開始", "2026/09/16", "2026/09/27")
+        ],
+        "bec": [
+          task("完成跨 APP 自動化 demo", "已完成", "2026/07/01", "2026/07/10"),
+          task("選定 BEC 第一個導入流程", "進行中", "2026/07/15", "2026/07/26"),
+          task("把固定 script 改成可配置流程", "未開始", "2026/07/29", "2026/08/09"),
+          task("整理啟動與執行紀錄畫面", "未開始", "2026/08/12", "2026/08/23"),
+          task("BEC 小範圍試用與問題修正", "未開始", "2026/08/26", "2026/09/06"),
+          task("建立 BEC 導入節奏與回報格式", "未開始", "2026/09/09", "2026/09/20")
+        ],
+        "pec-emc-rf": [
+          task("完成 EU DoC 端到端流程草案", "已完成", "2026/07/01", "2026/07/10"),
+          task("定義報告解析與標準擷取規則", "進行中", "2026/07/15", "2026/07/26"),
+          task("建立 EMC/RF/Safety/EC 報告樣本集", "未開始", "2026/07/29", "2026/08/09"),
+          task("完成 EU DoC 標準勾選邏輯", "未開始", "2026/08/12", "2026/08/23"),
+          task("串接 ANYDOOR 操作流程", "未開始", "2026/08/26", "2026/09/06"),
+          task("完成 EU DoC 輸出驗證", "未開始", "2026/09/09", "2026/09/20"),
+          task("Pilot 案件試跑與修正", "未開始", "2026/09/23", "2026/10/04")
+        ],
+        "pec-me": [
+          task("確認 Footprint 讀取範圍", "進行中", "2026/07/15", "2026/07/26"),
+          task("整理 Footprint 輸入格式與樣本", "未開始", "2026/07/29", "2026/08/09"),
+          task("建立 Footprint 解析流程", "未開始", "2026/08/12", "2026/08/23"),
+          task("產生圖面草稿輸出", "未開始", "2026/08/26", "2026/09/06"),
+          task("比對圖面輸出與人工修正差異", "未開始", "2026/09/09", "2026/09/20"),
+          task("完成 ME 試用版本", "未開始", "2026/09/23", "2026/10/04")
+        ],
+        "pec-thermal": [
+          task("確定 Thermal 相似案例搜尋題目", "已完成", "2026/07/01", "2026/07/10"),
+          task("整理歷史專案與熱設計資料欄位", "進行中", "2026/07/15", "2026/07/26"),
+          task("定義相似案例比對條件", "未開始", "2026/07/29", "2026/08/09"),
+          task("建立 Thermal Data Search 查詢流程", "未開始", "2026/08/12", "2026/08/23"),
+          task("產生 PM 回覆參考摘要", "未開始", "2026/08/26", "2026/09/06"),
+          task("用 3 個歷史案例驗證結果", "未開始", "2026/09/09", "2026/09/20")
+        ],
+        "dqac": [
+          task("整理 IEC-62443-4-2 報告欄位需求", "進行中", "2026/07/15", "2026/07/26"),
+          task("建立弱點資料與版本資料輸入格式", "未開始", "2026/07/29", "2026/08/09"),
+          task("定義合規判斷與缺口分類規則", "未開始", "2026/08/12", "2026/08/23"),
+          task("產生初版 Vulnerability Management 報告", "未開始", "2026/08/26", "2026/09/06"),
+          task("用一個產品案例驗證報告結果", "未開始", "2026/09/09", "2026/09/20"),
+          task("整理 DQAC 使用流程與交付格式", "未開始", "2026/09/23", "2026/10/04")
+        ],
+        "sec": []
+      };
+      return (plans[projectId] || []).map(item => ({ ...item }));
+    }
+
+    function makeRoadmap(activeIndex = 0) {
       return roadmapStepNames.map((name, index) => {
         let status = "未開始";
         if (activeIndex > 0 && index < activeIndex - 1) status = "已完成";
         if (activeIndex > 0 && index === activeIndex - 1) status = "進行中";
-        return {
-          name,
-          status,
-          owner,
-          note: ""
-        };
+        return task(name, status);
       });
     }
 
@@ -2447,7 +2590,7 @@
         agentType: "待評估",
         agentTypeNote: "",
         progressReason: "",
-        roadmap: makeRoadmap(0, owner),
+        roadmap: defaultTaskPlan(id),
         benefits: {
           time: "",
           manpower: "",
@@ -2578,7 +2721,7 @@
         agentType: agentTypeLabels.includes(agentType) ? agentType : "待評估",
         agentTypeNote: project.agentTypeNote || "",
         progressReason: project.progressReason || "",
-        roadmap: normalizeRoadmap(project.roadmap, project.owner),
+        roadmap: normalizeRoadmap(project.roadmap, project),
         benefits: normalizeBenefits(project.benefits),
         slides: normalizeSlides(project.slides),
         agentOwner: project.agentOwner || "",
@@ -2589,17 +2732,37 @@
       };
     }
 
-    function normalizeRoadmap(roadmap, owner = "") {
-      const incoming = Array.isArray(roadmap) ? roadmap : [];
-      return roadmapStepNames.map((name, index) => {
-        const matched = incoming.find(step => step && step.name === name) || incoming[index] || {};
+    function normalizeRoadmap(roadmap, projectOrOwner = "") {
+      const incoming = Array.isArray(roadmap)
+        ? roadmap.filter(step => step && String(step.name || "").trim())
+        : [];
+      const projectId = typeof projectOrOwner === "object" ? projectOrOwner.id : "";
+      const owner = typeof projectOrOwner === "object" ? projectOrOwner.owner : projectOrOwner;
+      const fallback = defaultTaskPlan(projectId);
+      const isLegacyRoadmap = incoming.length > 0
+        && fallback.length > 0
+        && incoming.every(step => legacyRoadmapStepNames.includes(step.name));
+      const source = incoming.length && !isLegacyRoadmap ? incoming : fallback;
+
+      return source.map((step, index) => {
+        const fallbackStep = fallback[index] || {};
+        const rawStatus = step.status || fallbackStep.status || "未開始";
+        const status = rawStatus === "需協助"
+          ? "卡住"
+          : roadmapStatusLabels.includes(rawStatus) ? rawStatus : "未開始";
         return {
-          name,
-          status: roadmapStatusLabels.includes(matched.status) ? matched.status : "未開始",
-          owner: matched.owner || owner || "",
-          note: matched.note || ""
+          name: String(step.name || fallbackStep.name || "").trim(),
+          status,
+          startDate: normalizeDateText(step.startDate || step.start || fallbackStep.startDate),
+          dueDate: normalizeDateText(step.dueDate || step.endDate || fallbackStep.dueDate),
+          owner: step.owner || owner || "",
+          note: step.note || ""
         };
-      });
+      }).filter(step => step.name).slice(0, 7);
+    }
+
+    function normalizeDateText(value) {
+      return String(value || "").trim().replace(/-/g, "/");
     }
 
     function normalizeBenefits(benefits) {
@@ -2906,6 +3069,8 @@
       const project = projects.find(item => item.id === projectId);
       if (!project) return;
       const completion = completionScore(project);
+      const currentTask = currentRoadmapTask(project);
+      const nextTask = nextRoadmapTask(project);
       setModalMaturity(project.stage);
 
       document.getElementById("modalTitle").textContent = `${project.department} · ${project.title}`;
@@ -2928,20 +3093,15 @@
             </aside>
           </div>
 
-          <div class="decision-grid">
-            <div class="decision-card">
-              <span>目前階段</span>
-              <strong>${project.stage} ${escapeHtml(projectStatusLabel(project))}</strong>
-              <p>完成度 ${completion}%</p>
-            </div>
+          <div class="decision-grid two-col">
             <div class="decision-card">
               <span>本週進度</span>
-              <p class="decision-main">${escapeHtml(compactText(project.currentProgress, 58))}</p>
+              <p class="decision-main">${escapeHtml(compactText(project.currentProgress || "尚未填寫本週進度。", 90))}</p>
               <p>${escapeHtml(project.progressReason || "完成度由 Michael 手動判斷。")}</p>
             </div>
             <div class="decision-card">
               <span>下一步</span>
-              <p class="decision-main">${escapeHtml(compactText(project.nextStep, 58))}</p>
+              <p class="decision-main">${escapeHtml(compactText(project.nextStep || "待填寫下週進度 / Action。", 90))}</p>
               <p>${project.supportStatus === "無" ? "目前不需要主管介入。" : "若卡住，請主管協助推進此項目。"}</p>
             </div>
           </div>
@@ -2954,18 +3114,28 @@
           <section class="supplement-list" aria-label="補充資料">
             <details class="supplement-panel" open>
               <summary>Task 進度</summary>
-              <div class="supplement-body">${renderRoadmap(project)}</div>
+              <div class="supplement-body">
+                <div class="task-snapshot">
+                  <div class="task-snapshot-card">
+                    <span>目前 Task</span>
+                    <strong>${escapeHtml(currentTask?.name || "尚未設定")}</strong>
+                    <small>${escapeHtml(taskDateText(currentTask))}</small>
+                  </div>
+                  <div class="task-snapshot-card">
+                    <span>下一個 Task</span>
+                    <strong>${escapeHtml(nextTask?.name || "尚未設定")}</strong>
+                    <small>${escapeHtml(taskDateText(nextTask))}</small>
+                  </div>
+                </div>
+                ${renderRoadmap(project)}
+              </div>
             </details>
             <details class="supplement-panel">
-              <summary>架構與技術型態</summary>
+              <summary>架構</summary>
               <div class="supplement-body detail-grid">
                 <div class="detail-box">
                   <strong>架構</strong>
                   <div class="meta">${escapeHtml(project.architecture)}</div>
-                </div>
-                <div class="detail-box">
-                  <strong>技術型態</strong>
-                  <div class="meta">${escapeHtml(project.agentType)}${project.agentTypeNote ? ` · ${escapeHtml(project.agentTypeNote)}` : ""}</div>
                 </div>
               </div>
             </details>
@@ -3010,16 +3180,52 @@
       return `${text.slice(0, maxLength - 1)}…`;
     }
 
+    function currentRoadmapTask(project) {
+      const roadmap = normalizeRoadmap(project.roadmap, project);
+      return roadmap.find(step => step.status === "進行中")
+        || roadmap.find(step => step.status === "卡住")
+        || roadmap.find(step => step.status === "未開始")
+        || roadmap[roadmap.length - 1]
+        || null;
+    }
+
+    function nextRoadmapTask(project) {
+      const roadmap = normalizeRoadmap(project.roadmap, project);
+      const currentIndex = roadmap.findIndex(step => step.status === "進行中" || step.status === "卡住");
+      if (currentIndex >= 0) {
+        return roadmap.slice(currentIndex + 1).find(step => step.status === "未開始") || null;
+      }
+      return roadmap.find(step => step.status === "未開始") || null;
+    }
+
+    function taskDateText(step) {
+      if (!step) return "尚未設定日期";
+      const start = step.startDate || "未填";
+      const due = step.dueDate || "未填";
+      return `開始 ${start} · 預計 ${due}`;
+    }
+
     function renderRoadmap(project) {
-      const roadmap = normalizeRoadmap(project.roadmap, project.owner);
+      const roadmap = normalizeRoadmap(project.roadmap, project);
+      if (!roadmap.length) {
+        return `<div class="empty-state">這個部門的 Agent 題目尚未確定，Task 先保留空白。</div>`;
+      }
       return `
         <div class="roadmap" aria-label="${escapeHtml(project.department)} 推進路徑">
-          ${roadmap.map(step => `
+          ${roadmap.map((step, index) => `
             <div class="roadmap-step ${roadmapClass(step.status)}">
-              <div class="step-name">${escapeHtml(step.name)}</div>
               <div class="step-state">${escapeHtml(step.status)}</div>
-              <div class="step-owner">${escapeHtml(step.owner || "Owner 待填")}</div>
-              ${step.note ? `<div class="meta compact">${escapeHtml(step.note)}</div>` : ""}
+              <div class="step-name">${escapeHtml(step.name)}</div>
+              <div class="task-dates">
+                <div class="task-date">
+                  <span>開始</span>
+                  <strong>${escapeHtml(step.startDate || "未填")}</strong>
+                </div>
+                <div class="task-date">
+                  <span>預計完成</span>
+                  <strong>${escapeHtml(step.dueDate || "未填")}</strong>
+                </div>
+              </div>
             </div>
           `).join("")}
         </div>
@@ -3038,7 +3244,7 @@
     function roadmapClass(status) {
       if (status === "已完成") return "done";
       if (status === "進行中") return "active";
-      if (status === "需協助") return "help";
+      if (status === "卡住") return "help";
       return "";
     }
 
@@ -3225,12 +3431,12 @@
     function renderRoadmapEditor(project) {
       const editor = document.getElementById("roadmapEditor");
       if (!editor) return;
-      const roadmap = normalizeRoadmap(project.roadmap, project.owner);
+      const roadmap = normalizeRoadmap(project.roadmap, project);
       editor.innerHTML = roadmap.map((step, index) => `
         <div class="roadmap-edit-row" data-roadmap-index="${index}">
           <div class="field">
-            <label>步驟</label>
-            <input data-roadmap-name value="${escapeHtml(step.name)}" readonly>
+            <label>Task</label>
+            <input data-roadmap-name value="${escapeHtml(step.name)}">
           </div>
           <div class="field">
             <label>狀態</label>
@@ -3239,24 +3445,27 @@
             </select>
           </div>
           <div class="field">
-            <label>Owner</label>
-            <input data-roadmap-owner value="${escapeHtml(step.owner)}">
+            <label>開始日</label>
+            <input data-roadmap-start value="${escapeHtml(step.startDate)}" placeholder="2026/07/15">
           </div>
           <div class="field">
-            <label>說明</label>
-            <input data-roadmap-note value="${escapeHtml(step.note)}">
+            <label>預計完成日</label>
+            <input data-roadmap-due value="${escapeHtml(step.dueDate)}" placeholder="2026/07/26">
           </div>
         </div>
       `).join("");
     }
 
     function readRoadmapEditor() {
-      return [...document.querySelectorAll("[data-roadmap-index]")].map(row => ({
-        name: row.querySelector("[data-roadmap-name]")?.value || "",
-        status: row.querySelector("[data-roadmap-status]")?.value || "未開始",
-        owner: row.querySelector("[data-roadmap-owner]")?.value.trim() || "",
-        note: row.querySelector("[data-roadmap-note]")?.value.trim() || ""
-      }));
+      return [...document.querySelectorAll("[data-roadmap-index]")]
+        .map(row => ({
+          name: row.querySelector("[data-roadmap-name]")?.value.trim() || "",
+          status: row.querySelector("[data-roadmap-status]")?.value || "未開始",
+          startDate: normalizeDateText(row.querySelector("[data-roadmap-start]")?.value),
+          dueDate: normalizeDateText(row.querySelector("[data-roadmap-due]")?.value)
+        }))
+        .filter(step => step.name)
+        .slice(0, 7);
     }
 
     function parseSlides(value) {
@@ -3314,19 +3523,20 @@
       const id = document.getElementById("projectSelect").value;
       const project = projects.find(item => item.id === id);
       if (!project) return;
+      const allowsBlankTopic = id === "sec";
 
-      project.title = textValue("titleInput") || "待填寫 Agent 方向";
+      project.title = textValue("titleInput") || (allowsBlankTopic ? "" : "待填寫 Agent 方向");
       project.owner = textValue("ownerInput") || project.owner;
       project.agentOwner = textValue("agentOwnerInput");
       project.agentType = valueOf("agentTypeInput");
       project.source = textValue("sourceInput");
       project.agentTypeNote = textValue("agentTypeNoteInput");
-      project.summary = textValue("summaryInput") || "待填寫功能簡介與主要痛點。";
+      project.summary = textValue("summaryInput") || (allowsBlankTopic ? "" : "待填寫功能簡介與主要痛點。");
       project.flow = textValue("flowInput")
         .split(/\s*->\s*/)
         .map(step => step.trim())
         .filter(Boolean);
-      project.architecture = textValue("architectureInput") || "待填寫架構。";
+      project.architecture = textValue("architectureInput") || (allowsBlankTopic ? "" : "待填寫架構。");
       const requestedProgress = clampNumber(valueOf("progressInput"), 0, 100);
       const selectedStage = clampNumber(valueOf("stageInput"), 0, 4);
       project.stage = selectedStage;
@@ -3357,8 +3567,8 @@
       project.supportStatus = valueOf("supportStatusInput");
       project.supportType = project.supportStatus === "無" ? "無" : valueOf("supportTypeInput");
       project.supportDescription = textValue("supportDescriptionInput");
-      project.currentProgress = textValue("currentProgressInput") || "尚未填寫本週進度。";
-      project.nextStep = textValue("nextStepInput") || "待填寫下週進度 / Action。";
+      project.currentProgress = textValue("currentProgressInput") || (allowsBlankTopic ? "" : "尚未填寫本週進度。");
+      project.nextStep = textValue("nextStepInput") || (allowsBlankTopic ? "" : "待填寫下週進度 / Action。");
       project.lastUpdate = new Date().toISOString().slice(0, 10);
 
       saveProjects();
