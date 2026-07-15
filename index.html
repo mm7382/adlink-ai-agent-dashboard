@@ -457,7 +457,7 @@
 
     .org-center-grid {
       display: grid;
-      grid-template-columns: 1.45fr 1fr 1fr;
+      grid-template-columns: minmax(260px, 1.35fr) repeat(3, minmax(130px, 1fr));
       gap: 14px;
       align-items: start;
     }
@@ -468,15 +468,20 @@
       align-content: start;
     }
 
+    .org-center-grid > .org-center-column > .org-card {
+      min-width: 0;
+    }
+
     .org-subrow.pec-teams {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .org-subrow.fencer-teams {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    .pec-team-box {
+    .pec-team-box,
+    .fencer-scope-box {
       position: relative;
       display: grid;
       gap: 12px;
@@ -487,7 +492,8 @@
       background: rgba(111,211,255,.045);
     }
 
-    .pec-team-box::before {
+    .pec-team-box::before,
+    .fencer-scope-box::before {
       content: "";
       position: absolute;
       left: calc(50% - 1px);
@@ -497,7 +503,8 @@
       background: rgba(111,211,255,.42);
     }
 
-    .pec-team-title {
+    .pec-team-title,
+    .fencer-scope-title {
       color: var(--cyan);
       font-size: 15px;
       font-weight: 900;
@@ -1721,7 +1728,7 @@
               <div class="org-card secondary">
                 <strong>Michael Chuang</strong>
                 <span>AI Agent Program Lead</span>
-                <em>PEC / BEC / DQAC</em>
+                <em>PEC / BEC / DQAC / SEC</em>
               </div>
               <div class="org-connector"></div>
               <div class="org-center-grid">
@@ -1764,23 +1771,40 @@
                     <span>Diya Tseng</span>
                   </div>
                 </div>
+                <div class="org-center-column">
+                  <div class="org-card">
+                    <strong>SEC</strong>
+                    <span>Software Process Improvement</span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="org-branch">
               <div class="org-card secondary">
                 <strong>Fencer Kao</strong>
-                <span>AI Code & Software Process Lead</span>
-                <em>AI Coding / Software Process Lead</em>
+                <span>AI Code Lead</span>
+                <em>AI Coding</em>
               </div>
               <div class="org-connector"></div>
-              <div class="org-subrow fencer-teams">
-                <div class="org-card">
-                  <strong>AI Coding</strong>
-                  <span>Code improvement</span>
-                </div>
-                <div class="org-card">
-                  <strong>Software Process Lead</strong>
-                  <span>Software process improvement</span>
+              <div class="org-card">
+                <strong>AI Coding</strong>
+                <span>BIOS / FW / BSP</span>
+              </div>
+              <div class="fencer-scope-box">
+                <div class="fencer-scope-title">AI Coding Scope</div>
+                <div class="org-subrow fencer-teams">
+                  <div class="org-card">
+                    <strong>BIOS</strong>
+                    <span>AI coding</span>
+                  </div>
+                  <div class="org-card">
+                    <strong>FW</strong>
+                    <span>AI coding</span>
+                  </div>
+                  <div class="org-card">
+                    <strong>BSP</strong>
+                    <span>AI coding</span>
+                  </div>
                 </div>
               </div>
             </div>
