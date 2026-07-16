@@ -1016,18 +1016,34 @@
 
     .stage-badge {
       display: inline-flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 34px;
-      padding: 6px 12px;
-      border-radius: 999px;
+      min-width: 138px;
+      padding: 7px 12px 8px;
+      border-radius: 8px;
       border: 1px solid rgba(255,255,255,.13);
       background: rgba(255,255,255,.075);
       color: #dbe7f4;
-      font-size: 16px;
-      line-height: 1.2;
       font-weight: 900;
-      white-space: nowrap;
+      text-align: center;
+      white-space: normal;
+    }
+
+    .stage-phase {
+      color: #fff;
+      font-size: 15px;
+      line-height: 1.15;
+      font-weight: 950;
+    }
+
+    .stage-name {
+      color: currentColor;
+      font-size: 14px;
+      line-height: 1.18;
+      font-weight: 900;
+      margin-top: 3px;
     }
 
     .stage-badge.level-0 {
@@ -1695,7 +1711,7 @@
 
     .task-bar {
       display: grid;
-      grid-template-columns: 44px minmax(0, 1fr) 96px 248px;
+      grid-template-columns: 44px minmax(0, 1fr) 88px 300px;
       gap: 12px;
       align-items: center;
       min-height: 66px;
@@ -1788,23 +1804,52 @@
 
     .task-bar-date {
       justify-self: end;
-      min-width: 232px;
-      padding: 8px 12px;
-      border-radius: 7px;
-      color: #eef8ff;
-      background: rgba(255,255,255,.085);
-      border: 1px solid rgba(255,255,255,.14);
-      font-size: 16px;
-      line-height: 1.35;
-      font-weight: 900;
-      text-align: center;
+      min-width: 292px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
       font-variant-numeric: tabular-nums;
     }
 
-    .task-bar.active .task-bar-date {
+    .task-date-chip {
+      padding: 7px 10px;
+      border-radius: 7px;
+      color: #eef8ff;
+      background: rgba(255,255,255,.075);
+      border: 1px solid rgba(255,255,255,.12);
+      text-align: left;
+    }
+
+    .task-date-chip span {
+      display: block;
+      color: #9fb0c2;
+      font-size: 11px;
+      line-height: 1.1;
+      font-weight: 950;
+      letter-spacing: .02em;
+      margin-bottom: 4px;
+    }
+
+    .task-date-chip strong {
+      display: block;
+      color: #eef8ff;
+      font-size: 17px;
+      line-height: 1.15;
+      font-weight: 950;
+    }
+
+    .task-bar.active .task-date-chip {
       color: #fff;
       background: rgba(111,211,255,.18);
       border-color: rgba(111,211,255,.42);
+    }
+
+    .task-bar.active .task-date-chip span {
+      color: #bcefff;
+    }
+
+    .task-bar.active .task-date-chip strong {
+      color: #fff;
     }
 
     .benefit-list {
@@ -1975,7 +2020,9 @@
       }
 
       .task-bar-date {
-        text-align: left;
+        justify-self: stretch;
+        min-width: 0;
+        width: 100%;
       }
 
       .indicator-grid {
@@ -2427,6 +2474,22 @@
       2: "Pilot / 跨部門測試",
       3: "課/部日常工作流程",
       4: "已擴及中心/公司級"
+    };
+
+    const stagePhaseLabels = {
+      0: "未分階段",
+      1: "第一階段",
+      2: "第二階段",
+      3: "第三階段",
+      4: "第四階段"
+    };
+
+    const stageShortLabels = {
+      0: "尚未填寫",
+      1: "個人測試",
+      2: "跨部門測試",
+      3: "日常導入",
+      4: "中心/公司級"
     };
 
     const frequencyLabels = ["尚未使用", "每天", "每週", "每月", "偶爾"];
@@ -3054,6 +3117,20 @@
       return "尚未填寫";
     }
 
+    function stageBadge(project) {
+      const stage = clampNumber(project.stage, 0, 4);
+      return `
+        <span class="stage-badge level-${stage}">
+          <span class="stage-phase">${escapeHtml(stagePhaseLabels[stage] || "未分階段")}</span>
+          <span class="stage-name">${escapeHtml(stageShortLabels[stage] || projectStatusLabel(project))}</span>
+        </span>
+      `;
+    }
+
+    function displayTaskName(step, fallback) {
+      return step?.name || fallback || "尚未設定";
+    }
+
     function filteredProjects() {
       const department = document.getElementById("centerFilter").value || "全部";
       const level = document.getElementById("levelFilter").value || "全部";
@@ -3259,7 +3336,7 @@
                 <td><div class="dept-name">${escapeHtml(project.department)}</div></td>
                 <td>
                   <div class="dept-owner">${escapeHtml(project.owner)}</div>
-                  ${project.agentOwner ? `<div class="meta compact">Agent Owner：${escapeHtml(project.agentOwner)}</div>` : ""}
+                  ${project.agentOwner ? `<div class="meta compact">${escapeHtml(project.agentOwner)}</div>` : ""}
                 </td>
                 <td>
                   <div class="dept-agent">
@@ -3267,9 +3344,9 @@
                     <span class="badge ${agentTypeBadge(project.agentType)}">${escapeHtml(project.agentType)}</span>
                   </div>
                 </td>
-                <td><span class="stage-badge level-${project.stage}">${project.stage} ${escapeHtml(projectStatusLabel(project))}</span></td>
-                <td><div class="dept-summary">${escapeHtml(project.currentProgress)}</div></td>
-                <td><div class="dept-summary">${escapeHtml(project.nextStep)}</div></td>
+                <td>${stageBadge(project)}</td>
+                <td><div class="dept-summary">${escapeHtml(displayTaskName(currentRoadmapTask(project), project.currentProgress))}</div></td>
+                <td><div class="dept-summary">${escapeHtml(displayTaskName(nextRoadmapTask(project), project.nextStep))}</div></td>
                 <td>
                   <div class="dept-support">
                     <span class="badge ${supportBadge(project.supportStatus)}">${escapeHtml(project.supportStatus)}</span>
@@ -3306,7 +3383,7 @@
       setModalMaturity(project.stage);
 
       document.getElementById("modalTitle").textContent = `${project.department} · ${project.title}`;
-      document.getElementById("modalHint").textContent = `部門負責人：${project.owner} · 研究中心：${project.center}${project.agentOwner ? ` · Agent Owner：${project.agentOwner}` : ""}`;
+      document.getElementById("modalHint").textContent = `部門負責人：${project.owner} · 研究中心：${project.center}${project.agentOwner ? ` · ${project.agentOwner}` : ""}`;
       if (project.id === "pec-se") {
         document.getElementById("modalList").innerHTML = renderPecSeDetail(project);
         document.getElementById("detailModal").classList.add("open");
@@ -3317,7 +3394,7 @@
           <div class="exec-detail-hero">
             <section class="exec-summary-box">
               <div class="badge-stack" style="justify-content:flex-start">
-                <span class="stage-badge level-${project.stage}">${project.stage} ${escapeHtml(projectStatusLabel(project))}</span>
+                ${stageBadge(project)}
                 <span class="badge ${agentTypeBadge(project.agentType)}">${escapeHtml(project.agentType)}</span>
                 <span class="badge">${completion}%</span>
               </div>
@@ -3485,7 +3562,16 @@
                 <strong>${escapeHtml(step.name)}</strong>
               </div>
               <div class="task-bar-status">${escapeHtml(step.status)}</div>
-              <div class="task-bar-date">${escapeHtml(step.startDate || "未填")} → ${escapeHtml(step.dueDate || "未填")}</div>
+              <div class="task-bar-date">
+                <div class="task-date-chip">
+                  <span>開始</span>
+                  <strong>${escapeHtml(step.startDate || "未填")}</strong>
+                </div>
+                <div class="task-date-chip">
+                  <span>完成</span>
+                  <strong>${escapeHtml(step.dueDate || "未填")}</strong>
+                </div>
+              </div>
             </li>
           `).join("")}
         </ol>
@@ -3622,12 +3708,12 @@
             <div>
               <h3>${escapeHtml(project.department)}</h3>
               <div class="meta">部門負責人：${escapeHtml(project.owner)}</div>
-              <div class="meta">Agent Owner：${escapeHtml(project.agentOwner || "待確認")}</div>
+              <div class="meta">${escapeHtml(project.agentOwner || "待確認")}</div>
               <div class="meta">Agent：${escapeHtml(project.title)}</div>
             </div>
             <div class="track-metrics">
               <div class="track-metric"><span>完成度</span><strong>${completion}%</strong></div>
-              <div class="track-metric"><span>成熟度</span><strong>${project.stage} ${stageLabels[project.stage]}</strong></div>
+              <div class="track-metric"><span>成熟度</span><strong>${escapeHtml(stagePhaseLabels[project.stage] || "未分階段")} · ${escapeHtml(stageShortLabels[project.stage] || projectStatusLabel(project))}</strong></div>
               <div class="track-metric"><span>技術型態</span><strong>${escapeHtml(project.agentType)}</strong></div>
               <div class="track-metric"><span>使用頻率</span><strong>${escapeHtml(project.frequency)}</strong></div>
               <div class="track-metric"><span>效益</span><strong>${valueScore(project)}%</strong></div>
@@ -3635,8 +3721,8 @@
               <div class="track-metric"><span>主管協助</span><strong>${escapeHtml(project.supportStatus)}</strong></div>
             </div>
             <div>
-              <div class="copy"><strong>目前：</strong>${escapeHtml(project.currentProgress)}</div>
-              <div class="copy"><strong>下週：</strong>${escapeHtml(project.nextStep)}</div>
+              <div class="copy"><strong>目前：</strong>${escapeHtml(displayTaskName(currentRoadmapTask(project), project.currentProgress))}</div>
+              <div class="copy"><strong>下週：</strong>${escapeHtml(displayTaskName(nextRoadmapTask(project), project.nextStep))}</div>
             </div>
           </article>
         `;
@@ -3669,13 +3755,11 @@
       setModalMaturity(definition.maturity);
 
       document.getElementById("modalTitle").textContent = definition.title;
-      document.getElementById("modalHint").textContent = definition.note;
+      document.getElementById("modalHint").textContent = "";
       document.getElementById("modalList").innerHTML = definition.items.length ? definition.items.map(project => `
         <div class="modal-item maturity-${project.stage}">
-          <strong>${escapeHtml(project.department)} · ${escapeHtml(project.title)}</strong>
-          <div class="meta">部門負責人：${escapeHtml(project.owner)}${project.agentOwner ? ` · Agent Owner：${escapeHtml(project.agentOwner)}` : ""} · 技術型態 ${escapeHtml(project.agentType)} · 完成度 ${completionScore(project)}% · 成熟度 ${project.stage} ${stageLabels[project.stage]}</div>
-          <div class="meta">目前：${escapeHtml(project.currentProgress)}</div>
-          <div class="meta">下週：${escapeHtml(project.nextStep)}</div>
+          <strong>${escapeHtml(project.department)} · ${escapeHtml(project.title || "尚未填寫 Agent 方向")}</strong>
+          <div class="meta">部門負責人：${escapeHtml(project.owner || "待確認")} · ${escapeHtml(project.agentOwner || "待確認")}</div>
         </div>
       `).join("") : `
         <div class="empty-state">目前 0 個部門符合此指標，尚未填入可列入明細的資料。</div>
