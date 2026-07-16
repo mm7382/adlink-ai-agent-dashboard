@@ -1671,29 +1671,34 @@
 
     .task-bar {
       display: grid;
-      grid-template-columns: 46px minmax(0, 1fr) 104px 190px;
-      gap: 10px;
+      grid-template-columns: 44px minmax(0, 1fr) 104px 220px;
+      gap: 12px;
       align-items: center;
       min-height: 66px;
       padding: 10px 12px;
       border-radius: 7px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: linear-gradient(90deg, rgba(111,211,255,.08), rgba(255,255,255,.035));
+      border: 1px solid rgba(157,175,196,.13);
+      background: rgba(255,255,255,.035);
+      opacity: .72;
     }
 
     .task-bar.done {
-      border-color: rgba(40,194,143,.28);
-      background: linear-gradient(90deg, rgba(40,194,143,.12), rgba(255,255,255,.035));
+      border-color: rgba(40,194,143,.18);
+      background: rgba(40,194,143,.055);
+      opacity: .66;
     }
 
     .task-bar.active {
-      border-color: rgba(111,211,255,.42);
-      background: linear-gradient(90deg, rgba(111,211,255,.16), rgba(255,255,255,.045));
+      border-color: rgba(111,211,255,.68);
+      background: linear-gradient(90deg, rgba(111,211,255,.22), rgba(111,211,255,.08));
+      box-shadow: inset 3px 0 0 rgba(111,211,255,.9), 0 0 0 1px rgba(111,211,255,.1);
+      opacity: 1;
     }
 
     .task-bar.help {
       border-color: rgba(244,185,66,.42);
       background: linear-gradient(90deg, rgba(244,185,66,.13), rgba(255,255,255,.04));
+      opacity: 1;
     }
 
     .task-number {
@@ -1702,19 +1707,24 @@
       border-radius: 999px;
       display: grid;
       place-items: center;
-      color: #fff;
-      background: rgba(111,211,255,.18);
-      border: 1px solid rgba(111,211,255,.34);
+      color: #c5d7e7;
+      background: rgba(157,175,196,.12);
+      border: 1px solid rgba(157,175,196,.24);
       font-size: 16px;
       line-height: 1;
       font-weight: 950;
       font-variant-numeric: tabular-nums;
     }
 
+    .task-bar.active .task-number {
+      color: #fff;
+      background: rgba(111,211,255,.26);
+      border-color: rgba(111,211,255,.58);
+    }
+
     .task-bar-main {
       min-width: 0;
       display: grid;
-      gap: 4px;
     }
 
     .task-bar-main strong {
@@ -1724,12 +1734,8 @@
       font-weight: 900;
     }
 
-    .task-bar-main span {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.35;
-      font-weight: 750;
-      font-variant-numeric: tabular-nums;
+    .task-bar:not(.active) .task-bar-main strong {
+      color: #d7e0ea;
     }
 
     .task-bar-status {
@@ -1757,12 +1763,24 @@
     }
 
     .task-bar-date {
-      color: var(--soft);
-      font-size: 13px;
+      justify-self: end;
+      min-width: 196px;
+      padding: 7px 10px;
+      border-radius: 7px;
+      color: #eef8ff;
+      background: rgba(255,255,255,.085);
+      border: 1px solid rgba(255,255,255,.14);
+      font-size: 14px;
       line-height: 1.35;
-      font-weight: 750;
-      text-align: right;
+      font-weight: 900;
+      text-align: center;
       font-variant-numeric: tabular-nums;
+    }
+
+    .task-bar.active .task-bar-date {
+      color: #fff;
+      background: rgba(111,211,255,.18);
+      border-color: rgba(111,211,255,.42);
     }
 
     .benefit-list {
@@ -2486,11 +2504,11 @@
         progressReason: "已完成流程規劃並進入個人使用與跨部門測試，完成度由 Michael 手動判斷為 45%。",
         roadmap: defaultTaskPlan("pec-se"),
         benefits: {
-          time: "每次料號申請約節省 20-30 分鐘；若每週 10 件，約節省 3-5 小時。",
-          manpower: "約等同每週 0.1-0.2 人力，可把重複填單時間移回資料確認與例外判斷。",
+          time: "每月約節省 13-22 小時（以每週 10 件、每件節省 20-30 分鐘估算）。",
+          manpower: "約節省 0.08-0.13 人力/月（13-22 小時 ÷ 每月 167 小時）。",
           risk: "減少欄位漏填、附件漏傳與資料複製錯誤。",
           scale: "可推進到 SIE/ME/Thermal 或跨 BU 料號申請流程。",
-          reason: "PLM 料號申請原本需要反覆搬移 Excel 資料、填寫欄位、上傳附件與建立 PN。Agent 接手固定操作後，工程師只保留資料確認、例外判斷與送簽，因此可直接節省重複操作時間。"
+          reason: "估算方式：每件料號申請若可少 20-30 分鐘重複操作，每週約 10 件，月工作週以 4.33 週計算，約可節省 13-22 小時；以每月 167 小時換算，約等於 0.08-0.13 人力。"
         },
         slides: [{ name: "PLM 申請料號 Agent 自動化流程", url: "slides/2026-07-09/PEC-SE-PLM-Part-Number-Agent.pptx" }],
         stage: 2,
@@ -3440,10 +3458,9 @@
               <div class="task-number">${index + 1}</div>
               <div class="task-bar-main">
                 <strong>${escapeHtml(step.name)}</strong>
-                <span>${escapeHtml(taskDateText(step))}</span>
               </div>
               <div class="task-bar-status">${escapeHtml(step.status)}</div>
-              <div class="task-bar-date">${escapeHtml(step.startDate || "未填")} - ${escapeHtml(step.dueDate || "未填")}</div>
+              <div class="task-bar-date">${escapeHtml(step.startDate || "未填")} → ${escapeHtml(step.dueDate || "未填")}</div>
             </li>
           `).join("")}
         </ol>
