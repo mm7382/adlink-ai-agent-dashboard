@@ -1695,21 +1695,21 @@
 
     .task-bar {
       display: grid;
-      grid-template-columns: 44px minmax(0, 1fr) 104px 220px;
+      grid-template-columns: 44px minmax(0, 1fr) 96px 248px;
       gap: 12px;
       align-items: center;
       min-height: 66px;
       padding: 10px 12px;
       border-radius: 7px;
-      border: 1px solid rgba(157,175,196,.13);
-      background: rgba(255,255,255,.035);
-      opacity: .72;
+      border: 1px solid rgba(157,175,196,.09);
+      background: rgba(255,255,255,.024);
+      opacity: .58;
     }
 
     .task-bar.done {
-      border-color: rgba(40,194,143,.18);
-      background: rgba(40,194,143,.055);
-      opacity: .66;
+      border-color: rgba(40,194,143,.13);
+      background: rgba(40,194,143,.035);
+      opacity: .5;
     }
 
     .task-bar.active {
@@ -1759,7 +1759,7 @@
     }
 
     .task-bar:not(.active) .task-bar-main strong {
-      color: #d7e0ea;
+      color: #aebac7;
     }
 
     .task-bar-status {
@@ -1788,13 +1788,13 @@
 
     .task-bar-date {
       justify-self: end;
-      min-width: 196px;
-      padding: 7px 10px;
+      min-width: 232px;
+      padding: 8px 12px;
       border-radius: 7px;
       color: #eef8ff;
       background: rgba(255,255,255,.085);
       border: 1px solid rgba(255,255,255,.14);
-      font-size: 14px;
+      font-size: 16px;
       line-height: 1.35;
       font-weight: 900;
       text-align: center;
@@ -2128,10 +2128,6 @@
                 <em>AI Coding</em>
               </div>
               <div class="org-connector"></div>
-              <div class="org-card">
-                <strong>AI Coding</strong>
-                <span>BIOS / FW / BSP</span>
-              </div>
               <div class="fencer-scope-box">
                 <div class="fencer-scope-title">AI Coding Scope</div>
                 <div class="org-subrow fencer-teams">
@@ -2332,10 +2328,6 @@
                 <label for="benefitScaleInput">擴展價值</label>
                 <textarea id="benefitScaleInput"></textarea>
               </div>
-              <div class="field full">
-                <label for="benefitReasonInput">估算原因 / 說明</label>
-                <textarea id="benefitReasonInput"></textarea>
-              </div>
             </div>
           </div>
           <div class="field full">
@@ -2423,7 +2415,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "adlink-ai-agent-dashboard-v12";
+    const STORAGE_KEY = "adlink-ai-agent-dashboard-v13";
     const SERVER_PROJECTS_ENDPOINT = "/api/projects";
     const STATIC_PROJECTS_ENDPOINT = "adlink-dashboard-data.json";
 
@@ -2528,8 +2520,7 @@
           time: "每月約節省 13-22 小時（以每週 10 件、每件節省 20-30 分鐘估算）。",
           manpower: "約節省 0.08-0.13 人力/月（13-22 小時 ÷ 每月 167 小時）。",
           risk: "減少欄位漏填、附件漏傳與資料複製錯誤。",
-          scale: "可推進到 SIE/ME/Thermal 或跨 BU 料號申請流程。",
-          reason: "估算方式：每件料號申請若可少 20-30 分鐘重複操作，每週約 10 件，月工作週以 4.33 週計算，約可節省 13-22 小時；以每月 167 小時換算，約等於 0.08-0.13 人力。"
+          scale: "可推進到 SIE/ME/Thermal 或跨 BU 料號申請流程。"
         },
         slides: [{ name: "PLM 申請料號 Agent 自動化流程", url: "slides/2026-07-09/PEC-SE-PLM-Part-Number-Agent.pptx" }],
         stage: 2,
@@ -2997,8 +2988,7 @@
         time: benefits?.time || "",
         manpower: benefits?.manpower || "",
         risk: benefits?.risk || "",
-        scale: benefits?.scale || "",
-        reason: benefits?.reason || ""
+        scale: benefits?.scale || ""
       };
     }
 
@@ -3578,7 +3568,6 @@
       const rows = [
         ["節省時間", benefits.time],
         ["節省人力", benefits.manpower],
-        ["估算原因", benefits.reason],
         ["降低風險", benefits.risk],
         ["擴展價值", benefits.scale]
       ];
@@ -3727,7 +3716,6 @@
       setValue("benefitManpowerInput", project.benefits?.manpower || "");
       setValue("benefitRiskInput", project.benefits?.risk || "");
       setValue("benefitScaleInput", project.benefits?.scale || "");
-      setValue("benefitReasonInput", project.benefits?.reason || "");
       setValue("slidesInput", (project.slides || []).map(slide => `${slide.name} | ${slide.url}`).join("\n"));
       setValue("necessityInput", project.necessity);
       setValue("practicalityInput", project.practicality);
@@ -3889,8 +3877,7 @@
         time: textValue("benefitTimeInput"),
         manpower: textValue("benefitManpowerInput"),
         risk: textValue("benefitRiskInput"),
-        scale: textValue("benefitScaleInput"),
-        reason: textValue("benefitReasonInput")
+        scale: textValue("benefitScaleInput")
       };
       project.slides = parseSlides(textValue("slidesInput"));
       project.necessity = clampNumber(valueOf("necessityInput"), 0, 5);
