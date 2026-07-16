@@ -2681,7 +2681,7 @@
         roadmap: defaultTaskPlan("pec-se"),
         benefits: {
           time: "每月約節省 13-22 小時（以每週 10 件、每件節省 20-30 分鐘估算）。",
-          manpower: "約 8%-13% 人力/月（13-22 小時 ÷ 每月 167 小時）。",
+          manpower: "約 8%-13% 人力/月（每月節省 13-22 小時 / 167 小時）。",
           risk: "減少欄位漏填、附件漏傳與資料複製錯誤。",
           scale: "可推進到 SIE/ME/Thermal 或跨 BU 料號申請流程。"
         },
@@ -3211,8 +3211,8 @@
       const min = Number(match[1]) * 100;
       const max = match[2] ? Number(match[2]) * 100 : null;
       const suffix = match[3] ? "以上" : "";
-      if (max === null) return `約 ${formatPercent(min)}% 人力/月${suffix}（以每月 ${monthlyWorkHours} 小時計）`;
-      return `約 ${formatPercent(min)}%-${formatPercent(max)}% 人力/月（以每月 ${monthlyWorkHours} 小時計）`;
+      if (max === null) return `約 ${formatPercent(min)}% 人力/月${suffix}（每月節省小時數 / ${monthlyWorkHours} 小時）`;
+      return `約 ${formatPercent(min)}%-${formatPercent(max)}% 人力/月（每月節省小時數 / ${monthlyWorkHours} 小時）`;
     }
 
     function calculateBenefitEstimate(timeValue, userValue) {
@@ -3226,7 +3226,7 @@
         : timeRange[1] * userRange[1];
       return {
         time: `${timeValue} × ${userValue} = 每月約 ${formatRange(minHours, maxHours, "小時")}`,
-        manpower: `${formatCapacityRange(minHours, maxHours)}（以每月 ${monthlyWorkHours} 小時計）`
+        manpower: `${formatCapacityRange(minHours, maxHours)}（每月節省小時數 / ${monthlyWorkHours} 小時）`
       };
     }
 
