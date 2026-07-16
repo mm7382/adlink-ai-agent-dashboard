@@ -1340,6 +1340,31 @@
       gap: 10px;
     }
 
+    .score-summary {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(111,211,255,.2);
+      background: rgba(111,211,255,.075);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--soft);
+      font-size: 15px;
+      line-height: 1.4;
+      font-weight: 800;
+    }
+
+    .score-summary strong {
+      color: #fff;
+      font-size: 24px;
+      line-height: 1.15;
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
     .edit-dept-picker {
       display: grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -2382,49 +2407,37 @@
             <textarea id="slidesInput"></textarea>
           </div>
           <div class="field full">
-            <label>效益評分 0-5</label>
+            <label>效益評分</label>
             <div class="score-inputs">
               <div class="field">
                 <label for="necessityInput">必要性</label>
-                <input id="necessityInput" type="number" min="0" max="5">
+                <select id="necessityInput"></select>
               </div>
               <div class="field">
                 <label for="practicalityInput">實用性</label>
-                <input id="practicalityInput" type="number" min="0" max="5">
+                <select id="practicalityInput"></select>
               </div>
               <div class="field">
                 <label for="generalityInput">通用性</label>
-                <input id="generalityInput" type="number" min="0" max="5">
+                <select id="generalityInput"></select>
               </div>
               <div class="field">
                 <label for="timeSavingInput">節省時間</label>
-                <input id="timeSavingInput" type="number" min="0" max="5">
+                <select id="timeSavingInput"></select>
               </div>
               <div class="field">
                 <label for="addedValueInput">附加價值</label>
-                <input id="addedValueInput" type="number" min="0" max="5">
+                <select id="addedValueInput"></select>
               </div>
             </div>
-          </div>
-          <div class="field">
-            <label for="governanceInput">治理/權限 %</label>
-            <input id="governanceInput" type="number" min="0" max="100">
-          </div>
-          <div class="field">
-            <label for="dataReadinessInput">資料準備 %</label>
-            <input id="dataReadinessInput" type="number" min="0" max="100">
-          </div>
-          <div class="field">
-            <label for="validationInput">驗證程度 %</label>
-            <input id="validationInput" type="number" min="0" max="100">
+            <div class="score-summary" id="scoreSummary">
+              <span>尚未評分</span>
+              <strong>0/25</strong>
+            </div>
           </div>
           <div class="field">
             <label for="supportStatusInput">主管協助狀態</label>
             <select id="supportStatusInput"></select>
-          </div>
-          <div class="field">
-            <label for="supportTypeInput">主管協助類型</label>
-            <select id="supportTypeInput"></select>
           </div>
           <div class="field full">
             <label for="currentProgressInput">目前做到什麼進度</label>
@@ -2509,6 +2522,48 @@
       ["每月 80-167 小時", "每月 80-167 小時"],
       ["每月 167 小時以上", "每月 167 小時以上"]
     ];
+    const scoreSelectOptions = {
+      necessity: [
+        [0, "0 分：尚未評分"],
+        [1, "1 分：必要性低，暫時可不做"],
+        [2, "2 分：需求偏弱，需再確認"],
+        [3, "3 分：有需要，但範圍可再收斂"],
+        [4, "4 分：明確需要，值得排入"],
+        [5, "5 分：非常必要，應優先處理"]
+      ],
+      practicality: [
+        [0, "0 分：尚未評分"],
+        [1, "1 分：使用頻率低，痛點不明顯"],
+        [2, "2 分：低頻使用，幫助有限"],
+        [3, "3 分：偶爾使用，有一定幫助"],
+        [4, "4 分：常見痛點，能明顯改善"],
+        [5, "5 分：高頻使用，明確解決痛點"]
+      ],
+      timeSaving: [
+        [0, "0 分：尚未評分"],
+        [1, "1 分：節省時間不明顯"],
+        [2, "2 分：節省少量時間"],
+        [3, "3 分：可節省部分時間"],
+        [4, "4 分：節省時間明顯"],
+        [5, "5 分：明顯節省大量時間或人力"]
+      ],
+      generality: [
+        [0, "0 分：尚未評分"],
+        [1, "1 分：只有個人可用"],
+        [2, "2 分：少數人可用"],
+        [3, "3 分：同單位部分人可用"],
+        [4, "4 分：同職能多人可用"],
+        [5, "5 分：同職能或跨專案多人可用"]
+      ],
+      addedValue: [
+        [0, "0 分：尚未評分"],
+        [1, "1 分：幾乎沒有額外價值"],
+        [2, "2 分：額外價值有限"],
+        [3, "3 分：有部分輔助價值"],
+        [4, "4 分：可提升品質或回覆效率"],
+        [5, "5 分：明顯提升品質、經驗傳承或回覆效率"]
+      ]
+    };
     const editDepartmentOrder = ["PEC-SE", "BEC", "PEC-EMC/RF", "PEC-ME", "PEC-Thermal", "DQAC", "SEC"];
     const legacyRoadmapStepNames = ["需求確認", "資料/權限", "架構設計", "Prototype", "Pilot 測試", "導入/擴展"];
     const roadmapStepNames = ["題目確認", "規則整理", "流程設計", "可用版本", "小範圍測試", "導入修正", "正式導入"];
@@ -3121,6 +3176,33 @@
       return Math.round(total / 25 * 100);
     }
 
+    function benefitScoreTotal(project) {
+      return clampNumber(project.necessity, 0, 5)
+        + clampNumber(project.practicality, 0, 5)
+        + clampNumber(project.generality, 0, 5)
+        + clampNumber(project.timeSaving, 0, 5)
+        + clampNumber(project.addedValue, 0, 5);
+    }
+
+    function benefitScoreDecision(total) {
+      if (total <= 0) return "尚未評估";
+      if (total <= 10) return "10 分以下：不建議優先執行";
+      if (total <= 15) return "11-15 分：題目需收斂";
+      if (total <= 20) return "16-20 分：可執行題目";
+      return "21-25 分：高優先題目";
+    }
+
+    function updateScoreSummary() {
+      const summary = document.getElementById("scoreSummary");
+      if (!summary) return;
+      const total = ["necessityInput", "practicalityInput", "generalityInput", "timeSavingInput", "addedValueInput"]
+        .reduce((sum, id) => sum + clampNumber(valueOf(id), 0, 5), 0);
+      summary.innerHTML = `
+        <span>${escapeHtml(benefitScoreDecision(total))}</span>
+        <strong>${total}/25</strong>
+      `;
+    }
+
     function adoptionScore(project) {
       const userRatio = project.targetUsers ? Math.min(100, Math.round(project.weeklyUsers / project.targetUsers * 100)) : 0;
       return Math.round((frequencyWeights[project.frequency] * .6) + (userRatio * .4));
@@ -3252,8 +3334,12 @@
       fillSelect("sizeInput", sizeLabels.map(value => [value, value]));
       fillSelect("agentTypeInput", agentTypeLabels.map(value => [value, value]));
       fillSelect("supportStatusInput", supportStatusLabels.map(value => [value, value]));
-      fillSelect("supportTypeInput", supportTypeLabels.map(value => [value, value]));
       fillSelect("benefitTimeInput", benefitTimeOptions);
+      fillSelect("necessityInput", scoreSelectOptions.necessity);
+      fillSelect("practicalityInput", scoreSelectOptions.practicality);
+      fillSelect("generalityInput", scoreSelectOptions.generality);
+      fillSelect("timeSavingInput", scoreSelectOptions.timeSaving);
+      fillSelect("addedValueInput", scoreSelectOptions.addedValue);
       renderEditDeptPicker();
     }
 
@@ -3608,7 +3694,9 @@
 
     function renderBenefitList(project) {
       const benefits = normalizeBenefits(project.benefits);
+      const total = benefitScoreTotal(project);
       const rows = [
+        ["效益評分", `${total}/25 · ${benefitScoreDecision(total)}`],
         ["節省時間", benefits.time],
         ["節省人力", benefits.manpower],
         ["降低風險", benefits.risk],
@@ -3660,6 +3748,7 @@
     function renderTrackingCards(items) {
       document.getElementById("trackingCards").innerHTML = items.map(project => {
         const completion = completionScore(project);
+        const benefitTotal = benefitScoreTotal(project);
         return `
           <article class="track-card">
             <div>
@@ -3673,7 +3762,7 @@
               <div class="track-metric"><span>成熟度</span><strong>${escapeHtml(stagePhaseLabels[project.stage] || "未分階段")} · ${escapeHtml(stageShortLabels[project.stage] || projectStatusLabel(project))}</strong></div>
               <div class="track-metric"><span>技術型態</span><strong>${escapeHtml(project.agentType)}</strong></div>
               <div class="track-metric"><span>使用頻率</span><strong>${escapeHtml(project.frequency)}</strong></div>
-              <div class="track-metric"><span>效益</span><strong>${valueScore(project)}%</strong></div>
+              <div class="track-metric"><span>效益</span><strong>${benefitTotal}/25</strong></div>
               <div class="track-metric"><span>擴展</span><strong>${escapeHtml(project.scale)}</strong></div>
               <div class="track-metric"><span>主管協助</span><strong>${escapeHtml(project.supportStatus)}</strong></div>
             </div>
@@ -3763,11 +3852,7 @@
       setValue("generalityInput", project.generality);
       setValue("timeSavingInput", project.timeSaving);
       setValue("addedValueInput", project.addedValue);
-      setValue("governanceInput", project.governance);
-      setValue("dataReadinessInput", project.dataReadiness);
-      setValue("validationInput", project.validation);
       setValue("supportStatusInput", project.supportStatus);
-      setValue("supportTypeInput", project.supportType);
       setValue("currentProgressInput", project.currentProgress);
       setValue("nextStepInput", project.nextStep);
       setValue("supportDescriptionInput", project.supportDescription);
@@ -3775,6 +3860,7 @@
       updateEditCurrentProject(project);
       updateEditDeptPicker();
       updateProgressCapHint();
+      updateScoreSummary();
     }
 
     function updateEditCurrentProject(project) {
@@ -3926,11 +4012,8 @@
       project.generality = clampNumber(valueOf("generalityInput"), 0, 5);
       project.timeSaving = clampNumber(valueOf("timeSavingInput"), 0, 5);
       project.addedValue = clampNumber(valueOf("addedValueInput"), 0, 5);
-      project.governance = clampNumber(valueOf("governanceInput"), 0, 100);
-      project.dataReadiness = clampNumber(valueOf("dataReadinessInput"), 0, 100);
-      project.validation = clampNumber(valueOf("validationInput"), 0, 100);
       project.supportStatus = valueOf("supportStatusInput");
-      project.supportType = project.supportStatus === "無" ? "無" : valueOf("supportTypeInput");
+      project.supportType = "無";
       project.supportDescription = textValue("supportDescriptionInput");
       project.currentProgress = textValue("currentProgressInput") || (allowsBlankTopic ? "" : "尚未填寫本週進度。");
       project.nextStep = textValue("nextStepInput") || (allowsBlankTopic ? "" : "待填寫下週進度 / Action。");
@@ -4108,6 +4191,9 @@
     });
     document.getElementById("benefitTimeInput").addEventListener("change", () => {
       updateBenefitManpowerFromTime();
+    });
+    ["necessityInput", "practicalityInput", "generalityInput", "timeSavingInput", "addedValueInput"].forEach(id => {
+      document.getElementById(id).addEventListener("change", updateScoreSummary);
     });
     document.getElementById("modeBtn").addEventListener("click", () => {
       document.body.classList.toggle("management-mode");
