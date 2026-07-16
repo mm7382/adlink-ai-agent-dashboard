@@ -2361,11 +2361,11 @@
             <div class="benefit-grid">
               <div class="field">
                 <label for="benefitTimeInput">節省時間</label>
-                <textarea id="benefitTimeInput"></textarea>
+                <select id="benefitTimeInput"></select>
               </div>
               <div class="field">
-                <label for="benefitManpowerInput">節省人力</label>
-                <textarea id="benefitManpowerInput"></textarea>
+                <label for="benefitManpowerInput">節省人力（自動換算）</label>
+                <input id="benefitManpowerInput" readonly>
               </div>
               <div class="field">
                 <label for="benefitRiskInput">降低風險</label>
@@ -2498,6 +2498,17 @@
     const agentTypeLabels = ["待評估", "自動化流程", "Agent 化中", "AI Agent"];
     const supportStatusLabels = ["無", "需注意", "需主管決策"];
     const supportTypeLabels = ["無", "資料權限", "跨部門協調", "資源人力", "試用者指定", "擴大導入決策", "其他"];
+    const monthlyWorkHours = 167;
+    const benefitTimeOptions = [
+      ["", "尚未評估"],
+      ["每月 5 小時以下", "每月 5 小時以下"],
+      ["每月 5-10 小時", "每月 5-10 小時"],
+      ["每月 10-20 小時", "每月 10-20 小時"],
+      ["每月 20-40 小時", "每月 20-40 小時"],
+      ["每月 40-80 小時", "每月 40-80 小時"],
+      ["每月 80-167 小時", "每月 80-167 小時"],
+      ["每月 167 小時以上", "每月 167 小時以上"]
+    ];
     const editDepartmentOrder = ["PEC-SE", "BEC", "PEC-EMC/RF", "PEC-ME", "PEC-Thermal", "DQAC", "SEC"];
     const legacyRoadmapStepNames = ["需求確認", "資料/權限", "架構設計", "Prototype", "Pilot 測試", "導入/擴展"];
     const roadmapStepNames = ["題目確認", "規則整理", "流程設計", "可用版本", "小範圍測試", "導入修正", "正式導入"];
@@ -3062,6 +3073,34 @@
       };
     }
 
+    function estimateManpowerFromTime(timeText) {
+      const estimates = {
+        "每月 5 小時以下": `約 0.03 人力/月以下（5 小時 ÷ 每月 ${monthlyWorkHours} 小時）`,
+        "每月 5-10 小時": `約 0.03-0.06 人力/月（5-10 小時 ÷ 每月 ${monthlyWorkHours} 小時）`,
+        "每月 10-20 小時": `約 0.06-0.12 人力/月（10-20 小時 ÷ 每月 ${monthlyWorkHours} 小時）`,
+        "每月 20-40 小時": `約 0.12-0.24 人力/月（20-40 小時 ÷ 每月 ${monthlyWorkHours} 小時）`,
+        "每月 40-80 小時": `約 0.24-0.48 人力/月（40-80 小時 ÷ 每月 ${monthlyWorkHours} 小時）`,
+        "每月 80-167 小時": `約 0.48-1.00 人力/月（80-167 小時 ÷ 每月 ${monthlyWorkHours} 小時）`,
+        "每月 167 小時以上": `約 1.00 人力/月以上（167 小時以上 ÷ 每月 ${monthlyWorkHours} 小時）`
+      };
+      return estimates[timeText] || "";
+    }
+
+    function setBenefitTimeValue(value) {
+      const select = document.getElementById("benefitTimeInput");
+      if (!select) return;
+      const cleanValue = value || "";
+      if (cleanValue && ![...select.options].some(option => option.value === cleanValue)) {
+        select.insertAdjacentHTML("beforeend", `<option value="${escapeHtml(cleanValue)}">既有：${escapeHtml(cleanValue)}</option>`);
+      }
+      select.value = cleanValue;
+    }
+
+    function updateBenefitManpowerFromTime(fallback = "") {
+      const timeValue = valueOf("benefitTimeInput");
+      setValue("benefitManpowerInput", estimateManpowerFromTime(timeValue) || fallback);
+    }
+
     function normalizeSlides(slides) {
       if (!Array.isArray(slides)) return [];
       return slides
@@ -3214,6 +3253,7 @@
       fillSelect("agentTypeInput", agentTypeLabels.map(value => [value, value]));
       fillSelect("supportStatusInput", supportStatusLabels.map(value => [value, value]));
       fillSelect("supportTypeInput", supportTypeLabels.map(value => [value, value]));
+      fillSelect("benefitTimeInput", benefitTimeOptions);
       renderEditDeptPicker();
     }
 
@@ -3713,8 +3753,8 @@
       setValue("scaleInput", project.scale);
       setValue("sizeInput", project.size);
       setValue("targetUsersInput", project.targetUsers);
-      setValue("benefitTimeInput", project.benefits?.time || "");
-      setValue("benefitManpowerInput", project.benefits?.manpower || "");
+      setBenefitTimeValue(project.benefits?.time || "");
+      updateBenefitManpowerFromTime(project.benefits?.manpower || "");
       setValue("benefitRiskInput", project.benefits?.risk || "");
       setValue("benefitScaleInput", project.benefits?.scale || "");
       setValue("slidesInput", (project.slides || []).map(slide => `${slide.name} | ${slide.url}`).join("\n"));
@@ -3875,8 +3915,8 @@
       project.targetUsers = clampNumber(valueOf("targetUsersInput"), 0, 9999);
       project.roadmap = readRoadmapEditor();
       project.benefits = {
-        time: textValue("benefitTimeInput"),
-        manpower: textValue("benefitManpowerInput"),
+        time: valueOf("benefitTimeInput"),
+        manpower: valueOf("benefitManpowerInput"),
         risk: textValue("benefitRiskInput"),
         scale: textValue("benefitScaleInput")
       };
@@ -4065,6 +4105,9 @@
     document.getElementById("projectSelect").addEventListener("change", loadForm);
     ["stageInput", "progressInput"].forEach(id => {
       document.getElementById(id).addEventListener("input", updateProgressCapHint);
+    });
+    document.getElementById("benefitTimeInput").addEventListener("change", () => {
+      updateBenefitManpowerFromTime();
     });
     document.getElementById("modeBtn").addEventListener("click", () => {
       document.body.classList.toggle("management-mode");
