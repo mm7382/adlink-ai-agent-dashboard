@@ -2416,7 +2416,7 @@
                 <input id="benefitTotalTimeInput" readonly>
               </div>
               <div class="field">
-                <label for="benefitManpowerInput">節省人力（自動換算）</label>
+                <label for="benefitManpowerInput">節省能力（自動換算）</label>
                 <input id="benefitManpowerInput" readonly>
               </div>
               <div class="field">
@@ -2681,7 +2681,7 @@
         roadmap: defaultTaskPlan("pec-se"),
         benefits: {
           time: "每月約節省 13-22 小時（以每週 10 件、每件節省 20-30 分鐘估算）。",
-          manpower: "約節省 0.08-0.13 人力/月（13-22 小時 ÷ 每月 167 小時）。",
+          manpower: "約 8%-13% 人力/月（13-22 小時 ÷ 每月 167 小時）。",
           risk: "減少欄位漏填、附件漏傳與資料複製錯誤。",
           scale: "可推進到 SIE/ME/Thermal 或跨 BU 料號申請流程。"
         },
@@ -3191,12 +3191,28 @@
       return `${Math.round(min)}-${Math.round(max)} ${unit}`;
     }
 
-    function formatManpowerRange(minHours, maxHours) {
-      const min = minHours / monthlyWorkHours;
-      const max = maxHours === null ? null : maxHours / monthlyWorkHours;
-      if (max === null) return `約 ${min.toFixed(2)} 人力/月以上`;
-      if (Math.abs(min - max) < 0.005) return `約 ${min.toFixed(2)} 人力/月`;
-      return `約 ${min.toFixed(2)}-${max.toFixed(2)} 人力/月`;
+    function formatPercent(value) {
+      const rounded = value >= 10 ? Math.round(value) : Math.round(value * 10) / 10;
+      return String(rounded).replace(/\.0$/, "");
+    }
+
+    function formatCapacityRange(minHours, maxHours) {
+      const min = minHours / monthlyWorkHours * 100;
+      const max = maxHours === null ? null : maxHours / monthlyWorkHours * 100;
+      if (max === null) return `約 ${formatPercent(min)}% 人力/月以上`;
+      if (Math.abs(min - max) < 0.5) return `約 ${formatPercent(min)}% 人力/月`;
+      return `約 ${formatPercent(min)}%-${formatPercent(max)}% 人力/月`;
+    }
+
+    function convertManpowerTextToCapacity(value) {
+      const text = String(value || "");
+      const match = text.match(/約(?:節省\s*)?(\d+(?:\.\d+)?)(?:\s*-\s*(\d+(?:\.\d+)?))?\s*人力\/月(以上)?/);
+      if (!match) return text;
+      const min = Number(match[1]) * 100;
+      const max = match[2] ? Number(match[2]) * 100 : null;
+      const suffix = match[3] ? "以上" : "";
+      if (max === null) return `約 ${formatPercent(min)}% 人力/月${suffix}（以每月 ${monthlyWorkHours} 小時計）`;
+      return `約 ${formatPercent(min)}%-${formatPercent(max)}% 人力/月（以每月 ${monthlyWorkHours} 小時計）`;
     }
 
     function calculateBenefitEstimate(timeValue, userValue) {
@@ -3210,8 +3226,14 @@
         : timeRange[1] * userRange[1];
       return {
         time: `${timeValue} × ${userValue} = 每月約 ${formatRange(minHours, maxHours, "小時")}`,
-        manpower: `${formatManpowerRange(minHours, maxHours)}（以每月 ${monthlyWorkHours} 小時計）`
+        manpower: `${formatCapacityRange(minHours, maxHours)}（以每月 ${monthlyWorkHours} 小時計）`
       };
+    }
+
+    function benefitCapacityText(benefits) {
+      const normalized = normalizeBenefits(benefits);
+      const estimate = calculateBenefitEstimate(normalized.perPersonTime, normalized.userCount);
+      return estimate.manpower || convertManpowerTextToCapacity(normalized.manpower);
     }
 
     function setSelectPreservingExisting(id, value) {
@@ -3753,7 +3775,7 @@
       const benefits = normalizeBenefits(project.benefits);
       const lines = [
         ["節省時間", benefits.time],
-        ["節省人力", benefits.manpower],
+        ["節省能力", benefitCapacityText(benefits)],
         ["降低風險", benefits.risk],
         ["擴展價值", benefits.scale]
       ].filter(([, value]) => value);
@@ -3765,7 +3787,7 @@
       const benefits = normalizeBenefits(project.benefits);
       const rows = [
         ["節省時間", benefits.time],
-        ["節省人力", benefits.manpower],
+        ["節省能力", benefitCapacityText(benefits)],
         ["降低風險", benefits.risk],
         ["擴展價值", benefits.scale]
       ];
@@ -3781,7 +3803,7 @@
       const benefits = normalizeBenefits(project.benefits);
       const rows = [
         ["節省時間", benefits.time],
-        ["節省人力", benefits.manpower],
+        ["節省能力", benefitCapacityText(benefits)],
         ["降低風險", benefits.risk],
         ["擴展價值", benefits.scale]
       ];
