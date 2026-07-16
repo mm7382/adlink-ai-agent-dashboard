@@ -2925,6 +2925,10 @@
       return mergeProjects(stored);
     }
 
+    function hasStoredProjects() {
+      return Array.isArray(readStoredProjects());
+    }
+
     function parseProjectPayload(parsed) {
       if (Array.isArray(parsed)) return parsed;
       if (parsed && Array.isArray(parsed.projects)) return parsed.projects;
@@ -2946,7 +2950,10 @@
 
     async function loadServerProjects() {
       if (!canUseServerSync()) return;
-      for (const endpoint of [SERVER_PROJECTS_ENDPOINT, STATIC_PROJECTS_ENDPOINT]) {
+      const endpoints = hasStoredProjects()
+        ? [SERVER_PROJECTS_ENDPOINT]
+        : [SERVER_PROJECTS_ENDPOINT, STATIC_PROJECTS_ENDPOINT];
+      for (const endpoint of endpoints) {
         try {
           const response = await fetch(`${endpoint}?t=${Date.now()}`, { cache: "no-store" });
           if (response.status === 404) continue;
@@ -3377,101 +3384,11 @@
     function openProjectDetail(projectId) {
       const project = projects.find(item => item.id === projectId);
       if (!project) return;
-      const completion = completionScore(project);
-      const currentTask = currentRoadmapTask(project);
-      const nextTask = nextRoadmapTask(project);
       setModalMaturity(project.stage);
 
-      document.getElementById("modalTitle").textContent = `${project.department} · ${project.title}`;
+      document.getElementById("modalTitle").textContent = `${project.department} · ${project.title || "尚未填寫 Agent 方向"}`;
       document.getElementById("modalHint").textContent = `部門負責人：${project.owner} · 研究中心：${project.center}${project.agentOwner ? ` · ${project.agentOwner}` : ""}`;
-      if (project.id === "pec-se") {
-        document.getElementById("modalList").innerHTML = renderPecSeDetail(project);
-        document.getElementById("detailModal").classList.add("open");
-        return;
-      }
-      document.getElementById("modalList").innerHTML = `
-        <div class="exec-detail">
-          <div class="exec-detail-hero">
-            <section class="exec-summary-box">
-              <div class="badge-stack" style="justify-content:flex-start">
-                ${stageBadge(project)}
-                <span class="badge ${agentTypeBadge(project.agentType)}">${escapeHtml(project.agentType)}</span>
-                <span class="badge">${completion}%</span>
-              </div>
-              <p class="exec-summary">${escapeHtml(executiveSummary(project))}</p>
-            </section>
-            <aside class="exec-support-card ${supportClass(project.supportStatus)}">
-              <span>主管協助</span>
-              <strong>${escapeHtml(project.supportStatus)}</strong>
-              <p>${escapeHtml(executiveSupportText(project))}</p>
-            </aside>
-          </div>
-
-          <div class="decision-grid two-col">
-            <div class="decision-card">
-              <span>本週進度</span>
-              <p class="decision-main">${escapeHtml(compactText(project.currentProgress || "尚未填寫本週進度。", 90))}</p>
-              <p>${escapeHtml(project.progressReason || "完成度由 Michael 手動判斷。")}</p>
-            </div>
-            <div class="decision-card">
-              <span>下一步</span>
-              <p class="decision-main">${escapeHtml(compactText(project.nextStep || "待填寫下週進度 / Action。", 90))}</p>
-              <p>${project.supportStatus === "無" ? "目前不需要主管介入。" : "若卡住，請主管協助推進此項目。"}</p>
-            </div>
-          </div>
-
-          <section class="exec-flow">
-            <div class="exec-section-label">Agent 流程</div>
-            ${renderFlow(project)}
-          </section>
-
-          <section class="supplement-list" aria-label="補充資料">
-            <details class="supplement-panel" open>
-              <summary>Task 進度</summary>
-              <div class="supplement-body">
-                <div class="task-snapshot">
-                  <div class="task-snapshot-card">
-                    <span>目前 Task</span>
-                    <strong>${escapeHtml(currentTask?.name || "尚未設定")}</strong>
-                    <small>${escapeHtml(taskDateText(currentTask))}</small>
-                  </div>
-                  <div class="task-snapshot-card">
-                    <span>下一個 Task</span>
-                    <strong>${escapeHtml(nextTask?.name || "尚未設定")}</strong>
-                    <small>${escapeHtml(taskDateText(nextTask))}</small>
-                  </div>
-                </div>
-                ${renderRoadmap(project)}
-              </div>
-            </details>
-            <details class="supplement-panel">
-              <summary>架構</summary>
-              <div class="supplement-body detail-grid">
-                <div class="detail-box">
-                  <strong>架構</strong>
-                  <div class="meta">${escapeHtml(project.architecture)}</div>
-                </div>
-              </div>
-            </details>
-            <details class="supplement-panel">
-              <summary>效益</summary>
-              <div class="supplement-body detail-grid">
-                ${renderBenefitBoxes(project)}
-              </div>
-            </details>
-            <details class="supplement-panel">
-              <summary>投影片 / 資料來源</summary>
-              <div class="supplement-body">
-                <div class="detail-box">
-                  <strong>資料來源</strong>
-                  <div class="meta">${escapeHtml(project.source || "尚未填寫")}</div>
-                  ${renderSlideLinks(project)}
-                </div>
-              </div>
-            </details>
-          </section>
-        </div>
-      `;
+      document.getElementById("modalList").innerHTML = renderPecSeDetail(project);
       document.getElementById("detailModal").classList.add("open");
     }
 
