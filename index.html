@@ -739,6 +739,10 @@
       gap: 12px;
     }
 
+    .benefit-grid .full {
+      grid-column: 1 / -1;
+    }
+
     .slide-link {
       display: inline-flex;
       align-items: center;
@@ -1620,6 +1624,179 @@
       font-variant-numeric: tabular-nums;
     }
 
+    .pec-template {
+      gap: 12px;
+    }
+
+    .task-focus-panel,
+    .benefit-list-panel {
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.045);
+      display: grid;
+      gap: 12px;
+    }
+
+    .task-focus-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .task-focus-head strong {
+      color: #fff;
+      font-size: 21px;
+      line-height: 1.3;
+      font-weight: 900;
+    }
+
+    .task-focus-head span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+      font-weight: 750;
+    }
+
+    .task-bars {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: task-step;
+    }
+
+    .task-bar {
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr) 104px 190px;
+      gap: 10px;
+      align-items: center;
+      min-height: 66px;
+      padding: 10px 12px;
+      border-radius: 7px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(90deg, rgba(111,211,255,.08), rgba(255,255,255,.035));
+    }
+
+    .task-bar.done {
+      border-color: rgba(40,194,143,.28);
+      background: linear-gradient(90deg, rgba(40,194,143,.12), rgba(255,255,255,.035));
+    }
+
+    .task-bar.active {
+      border-color: rgba(111,211,255,.42);
+      background: linear-gradient(90deg, rgba(111,211,255,.16), rgba(255,255,255,.045));
+    }
+
+    .task-bar.help {
+      border-color: rgba(244,185,66,.42);
+      background: linear-gradient(90deg, rgba(244,185,66,.13), rgba(255,255,255,.04));
+    }
+
+    .task-number {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: rgba(111,211,255,.18);
+      border: 1px solid rgba(111,211,255,.34);
+      font-size: 16px;
+      line-height: 1;
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .task-bar-main {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .task-bar-main strong {
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.28;
+      font-weight: 900;
+    }
+
+    .task-bar-main span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 750;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .task-bar-status {
+      justify-self: start;
+      padding: 5px 9px;
+      border-radius: 999px;
+      color: #dff5ff;
+      background: rgba(111,211,255,.12);
+      border: 1px solid rgba(111,211,255,.22);
+      font-size: 13px;
+      line-height: 1.2;
+      font-weight: 900;
+    }
+
+    .task-bar.done .task-bar-status {
+      color: #8cf0c6;
+      background: rgba(40,194,143,.12);
+      border-color: rgba(40,194,143,.28);
+    }
+
+    .task-bar.help .task-bar-status {
+      color: #ffe5a3;
+      background: rgba(244,185,66,.13);
+      border-color: rgba(244,185,66,.32);
+    }
+
+    .task-bar-date {
+      color: var(--soft);
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 750;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .benefit-list {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .benefit-list li {
+      display: grid;
+      grid-template-columns: 140px minmax(0, 1fr);
+      gap: 12px;
+      padding: 11px 12px;
+      border-radius: 7px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+    }
+
+    .benefit-list span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+      font-weight: 900;
+    }
+
+    .benefit-list strong {
+      color: #fff;
+      font-size: 17px;
+      line-height: 1.45;
+      font-weight: 750;
+    }
+
     .exec-flow {
       padding: 14px;
       display: grid;
@@ -1749,8 +1926,14 @@
       .task-snapshot,
       .roadmap-edit-row,
       .benefit-grid,
+      .benefit-list li,
+      .task-bar,
       .slide-card {
         grid-template-columns: 1fr;
+      }
+
+      .task-bar-date {
+        text-align: left;
       }
 
       .indicator-grid {
@@ -2110,6 +2293,10 @@
                 <label for="benefitScaleInput">擴展價值</label>
                 <textarea id="benefitScaleInput"></textarea>
               </div>
+              <div class="field full">
+                <label for="benefitReasonInput">估算原因 / 說明</label>
+                <textarea id="benefitReasonInput"></textarea>
+              </div>
             </div>
           </div>
           <div class="field full">
@@ -2197,7 +2384,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "adlink-ai-agent-dashboard-v11";
+    const STORAGE_KEY = "adlink-ai-agent-dashboard-v12";
     const SERVER_PROJECTS_ENDPOINT = "/api/projects";
     const STATIC_PROJECTS_ENDPOINT = "adlink-dashboard-data.json";
 
@@ -2299,10 +2486,11 @@
         progressReason: "已完成流程規劃並進入個人使用與跨部門測試，完成度由 Michael 手動判斷為 45%。",
         roadmap: defaultTaskPlan("pec-se"),
         benefits: {
-          time: "降低 Excel 資料搬移、PLM 欄位填寫、附件上傳與 Save 的人工時間。",
-          manpower: "讓工程師只保留資料確認與送簽判斷，減少重複操作人力。",
+          time: "每次料號申請約節省 20-30 分鐘；若每週 10 件，約節省 3-5 小時。",
+          manpower: "約等同每週 0.1-0.2 人力，可把重複填單時間移回資料確認與例外判斷。",
           risk: "減少欄位漏填、附件漏傳與資料複製錯誤。",
-          scale: "可推進到 SIE/ME/Thermal 或跨 BU 料號申請流程。"
+          scale: "可推進到 SIE/ME/Thermal 或跨 BU 料號申請流程。",
+          reason: "PLM 料號申請原本需要反覆搬移 Excel 資料、填寫欄位、上傳附件與建立 PN。Agent 接手固定操作後，工程師只保留資料確認、例外判斷與送簽，因此可直接節省重複操作時間。"
         },
         slides: [{ name: "PLM 申請料號 Agent 自動化流程", url: "slides/2026-07-09/PEC-SE-PLM-Part-Number-Agent.pptx" }],
         stage: 2,
@@ -2770,7 +2958,8 @@
         time: benefits?.time || "",
         manpower: benefits?.manpower || "",
         risk: benefits?.risk || "",
-        scale: benefits?.scale || ""
+        scale: benefits?.scale || "",
+        reason: benefits?.reason || ""
       };
     }
 
@@ -3075,6 +3264,11 @@
 
       document.getElementById("modalTitle").textContent = `${project.department} · ${project.title}`;
       document.getElementById("modalHint").textContent = `部門負責人：${project.owner} · 研究中心：${project.center}${project.agentOwner ? ` · Agent Owner：${project.agentOwner}` : ""}`;
+      if (project.id === "pec-se") {
+        document.getElementById("modalList").innerHTML = renderPecSeDetail(project);
+        document.getElementById("detailModal").classList.add("open");
+        return;
+      }
       document.getElementById("modalList").innerHTML = `
         <div class="exec-detail">
           <div class="exec-detail-hero">
@@ -3174,6 +3368,35 @@
       return `${type}${project.supportDescription || "需要補充主管協助內容。"}`;
     }
 
+    function renderPecSeDetail(project) {
+      const currentTask = currentRoadmapTask(project);
+      const nextTask = nextRoadmapTask(project);
+      return `
+        <div class="exec-detail pec-template">
+          <section class="task-focus-panel">
+            <div class="task-focus-head">
+              <div>
+                <div class="exec-section-label">Task 進度</div>
+                <strong>${escapeHtml(currentTask?.name || "尚未設定目前 Task")}</strong>
+              </div>
+              <span>下一個：${escapeHtml(nextTask?.name || "尚未設定")}</span>
+            </div>
+            ${renderRoadmapBars(project)}
+          </section>
+
+          <section class="benefit-list-panel">
+            <div class="exec-section-label">效益</div>
+            ${renderBenefitList(project)}
+          </section>
+
+          <section class="exec-flow">
+            <div class="exec-section-label">AI Agent 流程</div>
+            ${renderFlow(project)}
+          </section>
+        </div>
+      `;
+    }
+
     function compactText(value, maxLength = 60) {
       const text = String(value || "").replace(/\s+/g, " ").trim();
       if (text.length <= maxLength) return text;
@@ -3203,6 +3426,28 @@
       const start = step.startDate || "未填";
       const due = step.dueDate || "未填";
       return `開始 ${start} · 預計 ${due}`;
+    }
+
+    function renderRoadmapBars(project) {
+      const roadmap = normalizeRoadmap(project.roadmap, project);
+      if (!roadmap.length) {
+        return `<div class="empty-state">這個部門的 Agent 題目尚未確定，Task 先保留空白。</div>`;
+      }
+      return `
+        <ol class="task-bars" aria-label="${escapeHtml(project.department)} Task 橫條進度">
+          ${roadmap.map((step, index) => `
+            <li class="task-bar ${roadmapClass(step.status)}">
+              <div class="task-number">${index + 1}</div>
+              <div class="task-bar-main">
+                <strong>${escapeHtml(step.name)}</strong>
+                <span>${escapeHtml(taskDateText(step))}</span>
+              </div>
+              <div class="task-bar-status">${escapeHtml(step.status)}</div>
+              <div class="task-bar-date">${escapeHtml(step.startDate || "未填")} - ${escapeHtml(step.dueDate || "未填")}</div>
+            </li>
+          `).join("")}
+        </ol>
+      `;
     }
 
     function renderRoadmap(project) {
@@ -3274,6 +3519,27 @@
           <div class="meta">${escapeHtml(value || "尚未填寫")}</div>
         </div>
       `).join("");
+    }
+
+    function renderBenefitList(project) {
+      const benefits = normalizeBenefits(project.benefits);
+      const rows = [
+        ["節省時間", benefits.time],
+        ["節省人力", benefits.manpower],
+        ["估算原因", benefits.reason],
+        ["降低風險", benefits.risk],
+        ["擴展價值", benefits.scale]
+      ];
+      return `
+        <ul class="benefit-list">
+          ${rows.map(([label, value]) => `
+            <li>
+              <span>${escapeHtml(label)}</span>
+              <strong>${escapeHtml(value || "尚未填寫")}</strong>
+            </li>
+          `).join("")}
+        </ul>
+      `;
     }
 
     function renderSlideLinks(project) {
@@ -3409,6 +3675,7 @@
       setValue("benefitManpowerInput", project.benefits?.manpower || "");
       setValue("benefitRiskInput", project.benefits?.risk || "");
       setValue("benefitScaleInput", project.benefits?.scale || "");
+      setValue("benefitReasonInput", project.benefits?.reason || "");
       setValue("slidesInput", (project.slides || []).map(slide => `${slide.name} | ${slide.url}`).join("\n"));
       setValue("necessityInput", project.necessity);
       setValue("practicalityInput", project.practicality);
@@ -3553,7 +3820,8 @@
         time: textValue("benefitTimeInput"),
         manpower: textValue("benefitManpowerInput"),
         risk: textValue("benefitRiskInput"),
-        scale: textValue("benefitScaleInput")
+        scale: textValue("benefitScaleInput"),
+        reason: textValue("benefitReasonInput")
       };
       project.slides = parseSlides(textValue("slidesInput"));
       project.necessity = clampNumber(valueOf("necessityInput"), 0, 5);
