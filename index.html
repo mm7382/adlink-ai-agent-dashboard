@@ -1703,6 +1703,25 @@
       gap: 12px;
     }
 
+    .benefit-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .benefit-score-badge {
+      padding: 5px 9px;
+      border-radius: 7px;
+      border: 1px solid rgba(111,211,255,.24);
+      background: rgba(111,211,255,.1);
+      color: #fff;
+      font-size: 15px;
+      line-height: 1.2;
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+    }
+
     .task-focus-head {
       display: flex;
       align-items: end;
@@ -3614,7 +3633,7 @@
           </section>
 
           <section class="benefit-list-panel">
-            <div class="exec-section-label">效益</div>
+            ${renderBenefitHeading(project)}
             ${renderBenefitList(project)}
           </section>
 
@@ -3760,9 +3779,7 @@
 
     function renderBenefitList(project) {
       const benefits = normalizeBenefits(project.benefits);
-      const total = benefitScoreTotal(project);
       const rows = [
-        ["效益評分", `${total}/25 · ${benefitScoreDecision(total)}`],
         ["節省時間", benefits.time],
         ["節省人力", benefits.manpower],
         ["降低風險", benefits.risk],
@@ -3778,6 +3795,24 @@
           `).join("")}
         </ul>
       `;
+    }
+
+    function renderBenefitHeading(project) {
+      const total = benefitScoreTotal(project);
+      return `
+        <div class="benefit-heading">
+          <div class="exec-section-label">效益</div>
+          <div class="benefit-score-badge">${total}/25：${escapeHtml(benefitDecisionShort(total))}</div>
+        </div>
+      `;
+    }
+
+    function benefitDecisionShort(total) {
+      if (total <= 0) return "尚未評估";
+      if (total <= 10) return "不建議優先執行";
+      if (total <= 15) return "題目需收斂";
+      if (total <= 20) return "可執行題目";
+      return "高優先級";
     }
 
     function renderSlideLinks(project) {
