@@ -1334,56 +1334,10 @@
       grid-column: 1 / -1;
     }
 
-    .score-table-wrap {
-      overflow-x: auto;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.035);
-    }
-
-    .score-table {
-      width: 100%;
-      min-width: 860px;
-      border-collapse: collapse;
-    }
-
-    .score-table th,
-    .score-table td {
-      padding: 12px 13px;
-      border-bottom: 1px solid rgba(255,255,255,.07);
-      text-align: left;
-      vertical-align: top;
-    }
-
-    .score-table th {
-      color: var(--muted);
-      background: rgba(255,255,255,.035);
-      font-size: 13px;
-      line-height: 1.3;
-      font-weight: 950;
-    }
-
-    .score-table td {
-      color: var(--soft);
-      font-size: 15px;
-      line-height: 1.45;
-      font-weight: 700;
-    }
-
-    .score-table tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .score-table strong {
-      display: block;
-      color: #fff;
-      font-size: 16px;
-      line-height: 1.35;
-      font-weight: 950;
-    }
-
-    .score-table select {
-      min-width: 230px;
+    .score-inputs {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
     }
 
     .score-summary {
@@ -1495,7 +1449,8 @@
     }
 
     body.management-mode .filters.management-only,
-    body.management-mode .form-grid.management-only {
+    body.management-mode .form-grid.management-only,
+    body.management-mode .score-inputs.management-only {
       display: grid;
     }
 
@@ -2094,6 +2049,7 @@
       .kpis,
       .filters,
       .form-grid,
+      .score-inputs,
       .edit-dept-picker,
       .detail-grid,
       .track-metrics,
@@ -2479,43 +2435,27 @@
           </div>
           <div class="field full">
             <label>效益評分</label>
-            <div class="score-table-wrap">
-              <table class="score-table">
-                <thead>
-                  <tr>
-                    <th style="width: 150px;">評估面向</th>
-                    <th>0-5 分判斷標準</th>
-                    <th style="width: 260px;">自評分數</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>必要性</strong></td>
-                    <td>判斷這個題目本身是否值得做；從「可不做」到「非常必要，應優先處理」。</td>
-                    <td><select id="necessityInput"></select></td>
-                  </tr>
-                  <tr>
-                    <td><strong>使用頻率</strong></td>
-                    <td>依使用頻率評分：每月少於 1 次、每月 1-3 次、每週 1 次、每週 2-4 次、每天使用。</td>
-                    <td><select id="practicalityInput"></select></td>
-                  </tr>
-                  <tr>
-                    <td><strong>通用性</strong></td>
-                    <td>依擴散範圍評分：個人、小組、同部門、跨部門、跨中心 / 跨專案。</td>
-                    <td><select id="generalityInput"></select></td>
-                  </tr>
-                  <tr>
-                    <td><strong>節省時間</strong></td>
-                    <td>依每月節省總時數評分：5 小時以下、5-10 小時、10-20 小時、20-80 小時、80 小時以上。</td>
-                    <td><select id="timeSavingInput"></select></td>
-                  </tr>
-                  <tr>
-                    <td><strong>附加價值</strong></td>
-                    <td>評估是否能降低錯誤、保留經驗、協助新人、加快回覆或提升品質。</td>
-                    <td><select id="addedValueInput"></select></td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="score-inputs">
+              <div class="field">
+                <label for="necessityInput">必要性</label>
+                <select id="necessityInput"></select>
+              </div>
+              <div class="field">
+                <label for="practicalityInput">使用頻率</label>
+                <select id="practicalityInput"></select>
+              </div>
+              <div class="field">
+                <label for="generalityInput">通用性</label>
+                <select id="generalityInput"></select>
+              </div>
+              <div class="field">
+                <label for="timeSavingInput">節省時間</label>
+                <select id="timeSavingInput"></select>
+              </div>
+              <div class="field">
+                <label for="addedValueInput">附加價值</label>
+                <select id="addedValueInput"></select>
+              </div>
             </div>
             <div class="score-summary" id="scoreSummary">
               <span>尚未評分</span>
