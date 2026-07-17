@@ -3039,11 +3039,16 @@
 
     function mergeProjects(incomingProjects) {
       if (!Array.isArray(incomingProjects)) return structuredClone(defaultProjects);
-      return defaultProjects.map(defaultProject => {
+      const defaultIds = new Set(defaultProjects.map(project => project.id));
+      const mergedDefaults = defaultProjects.map(defaultProject => {
         const incoming = incomingProjects.find(project => project.id === defaultProject.id);
         if (!incoming) return structuredClone(defaultProject);
         return normalizeProject({ ...defaultProject, ...incoming });
       });
+      const extraProjects = incomingProjects
+        .filter(project => project && project.id && !defaultIds.has(project.id))
+        .map(project => normalizeProject(project));
+      return [...mergedDefaults, ...extraProjects];
     }
 
     function canUseServerSync() {
@@ -3444,13 +3449,18 @@
       return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
     }
 
+    function departmentSortIndex(department) {
+      const index = editDepartmentOrder.indexOf(department);
+      return index === -1 ? 999 : index;
+    }
+
     function departmentRankings(items) {
       return [...items].map(project => ({
         department: project.department,
         readiness: completionScore(project)
       })).sort((a, b) => {
         if (b.readiness !== a.readiness) return b.readiness - a.readiness;
-        return editDepartmentOrder.indexOf(a.department) - editDepartmentOrder.indexOf(b.department);
+        return departmentSortIndex(a.department) - departmentSortIndex(b.department);
       });
     }
 
@@ -3510,7 +3520,7 @@
     }
 
     function editOrderedProjects() {
-      return [...projects].sort((a, b) => editDepartmentOrder.indexOf(a.department) - editDepartmentOrder.indexOf(b.department));
+      return [...projects].sort((a, b) => departmentSortIndex(a.department) - departmentSortIndex(b.department));
     }
 
     function fillSelect(id, options) {
@@ -3665,11 +3675,7 @@
 
     function sortProjectsForDisplay(items) {
       return [...items].sort((a, b) => {
-        const aIndex = editDepartmentOrder.indexOf(a.department);
-        const bIndex = editDepartmentOrder.indexOf(b.department);
-        const safeA = aIndex === -1 ? 999 : aIndex;
-        const safeB = bIndex === -1 ? 999 : bIndex;
-        return safeA - safeB;
+        return departmentSortIndex(a.department) - departmentSortIndex(b.department);
       });
     }
 
