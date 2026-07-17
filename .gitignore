@@ -1,0 +1,5 @@
+.env
+.dev.vars
+.wrangler/
+dashboard-admin-token.txt
+node_modules/

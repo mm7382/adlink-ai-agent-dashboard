@@ -2503,7 +2503,9 @@
 
   <script>
     const STORAGE_KEY = "adlink-ai-agent-dashboard-v13";
+    const WRITE_TOKEN_KEY = "adlink-ai-agent-dashboard-write-token";
     const SERVER_PROJECTS_ENDPOINT = "/api/projects";
+    const REMOTE_PROJECTS_ENDPOINT = "https://adlink-dashboard-api.cl3kx7.workers.dev/api/projects";
     const STATIC_PROJECTS_ENDPOINT = "adlink-dashboard-data.json";
 
     const today = "2026-07-15";
@@ -3048,11 +3050,46 @@
       return window.location.protocol === "http:" || window.location.protocol === "https:";
     }
 
+    function projectsEndpoint() {
+      return window.location.hostname === "mm7382.github.io"
+        ? REMOTE_PROJECTS_ENDPOINT
+        : SERVER_PROJECTS_ENDPOINT;
+    }
+
+    function requiresWriteToken(endpoint) {
+      try {
+        return new URL(endpoint, window.location.href).origin !== window.location.origin;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function getDashboardWriteToken(forcePrompt = false) {
+      let token = "";
+      try {
+        token = window.localStorage ? window.localStorage.getItem(WRITE_TOKEN_KEY) || "" : "";
+      } catch (error) {
+        token = "";
+      }
+      if (token && !forcePrompt) return token;
+
+      const input = window.prompt("請輸入 Dashboard 管理金鑰。第一次輸入後會存在這個瀏覽器。", token);
+      if (!input) return "";
+      const cleanToken = input.trim();
+      try {
+        if (window.localStorage) window.localStorage.setItem(WRITE_TOKEN_KEY, cleanToken);
+      } catch (error) {
+        // If localStorage is unavailable, the token is only used for this save.
+      }
+      return cleanToken;
+    }
+
     async function loadServerProjects() {
       if (!canUseServerSync()) return;
+      const endpoint = projectsEndpoint();
       const endpoints = hasStoredProjects()
-        ? [SERVER_PROJECTS_ENDPOINT]
-        : [SERVER_PROJECTS_ENDPOINT, STATIC_PROJECTS_ENDPOINT];
+        ? [endpoint]
+        : [endpoint, STATIC_PROJECTS_ENDPOINT];
       for (const endpoint of endpoints) {
         try {
           const response = await fetch(`${endpoint}?t=${Date.now()}`, { cache: "no-store" });
@@ -3074,12 +3111,34 @@
 
     async function saveProjectsToServer() {
       if (!canUseServerSync()) return false;
+      const endpoint = projectsEndpoint();
+      const needsToken = requiresWriteToken(endpoint);
+      const headers = { "Content-Type": "application/json" };
+      if (needsToken) {
+        const token = getDashboardWriteToken();
+        if (!token) return false;
+        headers["X-Dashboard-Token"] = token;
+      }
       try {
-        const response = await fetch(SERVER_PROJECTS_ENDPOINT, {
+        let response = await fetch(endpoint, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({ savedAt: new Date().toISOString(), projects })
         });
+        if (response.status === 401 && needsToken) {
+          try {
+            if (window.localStorage) window.localStorage.removeItem(WRITE_TOKEN_KEY);
+          } catch (error) {
+            // Continue to prompt again.
+          }
+          const token = getDashboardWriteToken(true);
+          if (!token) return false;
+          response = await fetch(endpoint, {
+            method: "POST",
+            headers: { ...headers, "X-Dashboard-Token": token },
+            body: JSON.stringify({ savedAt: new Date().toISOString(), projects })
+          });
+        }
         return response.ok;
       } catch (error) {
         return false;

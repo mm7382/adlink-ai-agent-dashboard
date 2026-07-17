@@ -1,0 +1,12 @@
+{
+  "name": "adlink-ai-agent-dashboard",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy:api": "wrangler deploy",
+    "dev:api": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.111.0"
+  }
+}
