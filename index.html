@@ -1439,6 +1439,82 @@
       text-align: right;
     }
 
+    .dashboard-help {
+      margin-bottom: 16px;
+    }
+
+    .quick-guide {
+      margin: 0;
+      padding-left: 22px;
+      color: var(--soft);
+      font-size: 16px;
+      line-height: 1.65;
+      font-weight: 650;
+    }
+
+    .session-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(111,211,255,.18);
+      border-radius: 8px;
+      background: rgba(111,211,255,.06);
+      color: var(--soft);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .session-bar strong {
+      color: #fff;
+      font-weight: 950;
+    }
+
+    .auth-box {
+      width: min(520px, 100%);
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .auth-status {
+      min-height: 22px;
+      margin-top: 0;
+      text-align: left;
+    }
+
+    .audit-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .audit-item {
+      display: grid;
+      gap: 7px;
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px;
+      background: rgba(255,255,255,.045);
+    }
+
+    .audit-item strong {
+      color: #fff;
+      font-size: 17px;
+      line-height: 1.35;
+    }
+
+    .audit-item span {
+      color: var(--soft);
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
     .management-only,
     body:not(.management-mode) .management-only {
       display: none;
@@ -1457,6 +1533,10 @@
     body.management-mode label.management-only,
     body.management-mode button.management-only {
       display: inline-flex;
+    }
+
+    body.management-mode:not(.admin-session) .admin-only {
+      display: none;
     }
 
     .hidden-input {
@@ -2130,8 +2210,8 @@
         <div></div>
         <div class="toolbar">
           <button class="btn" id="modeBtn">管理模式</button>
-          <button class="btn management-only" id="exportBtn">下載資料</button>
-          <label class="btn management-only" for="importFile">匯入資料</label>
+          <button class="btn management-only admin-only" id="exportBtn">下載資料</button>
+          <label class="btn management-only admin-only" for="importFile">匯入資料</label>
           <input class="hidden-input" id="importFile" type="file" accept="application/json">
         </div>
       </div>
@@ -2245,7 +2325,8 @@
         <button class="tab active" data-view="overview">主管總覽</button>
         <button class="tab" data-view="departments">部門 Agent 進度</button>
         <button class="tab" data-view="slides">投影片</button>
-        <button class="tab" data-view="tracking">主管追蹤表</button>
+          <button class="tab" data-view="tracking">主管追蹤表</button>
+          <button class="tab management-only admin-only" data-view="audit">修改紀錄</button>
       </nav>
 
       <section class="filters management-only" aria-label="filters">
@@ -2265,6 +2346,22 @@
           <label for="searchInput">快速搜尋</label>
           <input id="searchInput" placeholder="部門、負責人、Agent 方向">
         </div>
+      </section>
+
+      <section class="panel dashboard-help" aria-label="dashboard 使用說明">
+        <div class="section-head">
+          <div>
+            <h2>如何登入與使用</h2>
+            <div class="hint">給部門 owner 與 Agent 執行者快速回填使用。</div>
+          </div>
+        </div>
+        <ul class="quick-guide">
+          <li>看 Dashboard：打開連結即可，不需要登入。</li>
+          <li>要修改：點「管理模式」，用 Teams 顯示名稱登入。</li>
+          <li>第一次登入：輸入邀請碼，設定自己的密碼。</li>
+          <li>登入後只會看到自己可修改的部門 Agent。</li>
+          <li>改完請按「儲存更新」，若出現版本衝突請重新整理後再改。</li>
+        </ul>
       </section>
 
       <section class="view active" id="view-overview">
@@ -2305,6 +2402,19 @@
             </div>
           </div>
           <div class="track-list" id="trackingCards"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-audit">
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <h2>修改紀錄</h2>
+              <div class="hint">Michael 專用：查看誰在什麼時間修改了哪一個部門。</div>
+            </div>
+            <button class="btn small" id="refreshAuditBtn" type="button">重新整理</button>
+          </div>
+          <div class="audit-list" id="auditList"></div>
         </section>
       </section>
 
@@ -2480,7 +2590,7 @@
           </div>
         </div>
         <div class="actions">
-          <button class="btn" id="resetBtn">清空回預設部門</button>
+          <button class="btn admin-only" id="resetBtn">清空回預設部門</button>
           <button class="btn primary" id="saveBtn">儲存更新</button>
         </div>
         <div class="save-status" id="saveStatus" aria-live="polite"></div>
@@ -2501,11 +2611,40 @@
     </div>
   </div>
 
+  <div class="modal" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal-box auth-box">
+      <div class="modal-head">
+        <div>
+          <h2 id="authTitle">管理模式登入</h2>
+          <div class="hint">請輸入 Teams 顯示名稱。第一次登入才需要邀請碼。</div>
+        </div>
+        <button class="btn small" id="authCancelBtn" type="button">取消</button>
+      </div>
+      <div class="auth-form">
+        <div class="field">
+          <label for="authNameInput">Teams 顯示名稱</label>
+          <input id="authNameInput" autocomplete="username" placeholder="例如 Andy PK Yang">
+        </div>
+        <div class="field">
+          <label for="authPasswordInput">密碼</label>
+          <input id="authPasswordInput" type="password" autocomplete="current-password">
+        </div>
+        <div class="field">
+          <label for="authInviteInput">邀請碼（第一次登入才填）</label>
+          <input id="authInviteInput" autocomplete="off">
+        </div>
+        <button class="btn primary" id="authSubmitBtn" type="button">登入 / 啟用</button>
+        <div class="save-status auth-status" id="authStatus" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const STORAGE_KEY = "adlink-ai-agent-dashboard-v13";
-    const WRITE_TOKEN_KEY = "adlink-ai-agent-dashboard-write-token";
-    const SERVER_PROJECTS_ENDPOINT = "/api/projects";
-    const REMOTE_PROJECTS_ENDPOINT = "https://adlink-dashboard-api.cl3kx7.workers.dev/api/projects";
+    const AUTH_TOKEN_KEY = "adlink-ai-agent-dashboard-session-token";
+    const AUTH_USER_KEY = "adlink-ai-agent-dashboard-session-user";
+    const SERVER_API_BASE = "/api";
+    const REMOTE_API_BASE = "https://adlink-dashboard-api.cl3kx7.workers.dev/api";
     const STATIC_PROJECTS_ENDPOINT = "adlink-dashboard-data.json";
 
     const today = "2026-07-15";
@@ -2883,6 +3022,9 @@
     ];
 
     let projects = loadProjects();
+    let serverRevision = 0;
+    let currentUser = readStoredSessionUser();
+    let authModalResolver = null;
 
     function task(name, status = "未開始", startDate = "", dueDate = "") {
       return { name, status, startDate, dueDate };
@@ -3055,38 +3197,83 @@
       return window.location.protocol === "http:" || window.location.protocol === "https:";
     }
 
+    function apiBase() {
+      if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+        return REMOTE_API_BASE;
+      }
+      return SERVER_API_BASE;
+    }
+
+    function apiEndpoint(path) {
+      return `${apiBase()}${path}`;
+    }
+
     function projectsEndpoint() {
-      return window.location.hostname === "mm7382.github.io"
-        ? REMOTE_PROJECTS_ENDPOINT
-        : SERVER_PROJECTS_ENDPOINT;
+      return apiEndpoint("/projects");
     }
 
-    function requiresWriteToken(endpoint) {
+    function readStoredSessionToken() {
       try {
-        return new URL(endpoint, window.location.href).origin !== window.location.origin;
+        return window.localStorage ? window.localStorage.getItem(AUTH_TOKEN_KEY) || "" : "";
       } catch (error) {
-        return false;
+        return "";
       }
     }
 
-    function getDashboardWriteToken(forcePrompt = false) {
-      let token = "";
+    function readStoredSessionUser() {
       try {
-        token = window.localStorage ? window.localStorage.getItem(WRITE_TOKEN_KEY) || "" : "";
+        const raw = window.localStorage ? window.localStorage.getItem(AUTH_USER_KEY) : null;
+        return raw ? JSON.parse(raw) : null;
       } catch (error) {
-        token = "";
+        return null;
       }
-      if (token && !forcePrompt) return token;
+    }
 
-      const input = window.prompt("請輸入 Dashboard 管理金鑰。第一次輸入後會存在這個瀏覽器。", token);
-      if (!input) return "";
-      const cleanToken = input.trim();
+    function storeSession(token, user) {
+      currentUser = user;
       try {
-        if (window.localStorage) window.localStorage.setItem(WRITE_TOKEN_KEY, cleanToken);
+        if (window.localStorage) {
+          window.localStorage.setItem(AUTH_TOKEN_KEY, token);
+          window.localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+        }
       } catch (error) {
-        // If localStorage is unavailable, the token is only used for this save.
+        // Session stays in memory when localStorage is unavailable.
       }
-      return cleanToken;
+      renderSessionState();
+    }
+
+    function clearSession() {
+      currentUser = null;
+      try {
+        if (window.localStorage) {
+          window.localStorage.removeItem(AUTH_TOKEN_KEY);
+          window.localStorage.removeItem(AUTH_USER_KEY);
+        }
+      } catch (error) {
+        // Ignore storage cleanup errors.
+      }
+      document.body.classList.remove("admin-session");
+      renderSessionState();
+    }
+
+    function authHeaders() {
+      const token = readStoredSessionToken();
+      return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+
+    function isAdminSession() {
+      return currentUser?.role === "admin";
+    }
+
+    function canEditProject(projectOrId) {
+      if (!currentUser || !["admin", "editor"].includes(currentUser.role)) return false;
+      const id = typeof projectOrId === "string" ? projectOrId : projectOrId?.id;
+      const scopes = currentUser.scopes || [];
+      return currentUser.role === "admin" || scopes.includes("*") || scopes.includes(id);
+    }
+
+    function editableProjects() {
+      return editOrderedProjects().filter(project => canEditProject(project));
     }
 
     async function loadServerProjects() {
@@ -3100,8 +3287,10 @@
           const response = await fetch(`${endpoint}?t=${Date.now()}`, { cache: "no-store" });
           if (response.status === 404) continue;
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          const incoming = parseProjectPayload(await response.json());
+          const payload = await response.json();
+          const incoming = parseProjectPayload(payload);
           if (!Array.isArray(incoming)) continue;
+          serverRevision = Number.isFinite(Number(payload.revision)) ? Number(payload.revision) : serverRevision;
           projects = mergeProjects(incoming);
           saveProjects();
           renderFilters();
@@ -3115,39 +3304,206 @@
     }
 
     async function saveProjectsToServer() {
-      if (!canUseServerSync()) return false;
+      if (!canUseServerSync()) return { ok: false, error: "server_sync_unavailable" };
       const endpoint = projectsEndpoint();
-      const needsToken = requiresWriteToken(endpoint);
-      const headers = { "Content-Type": "application/json" };
-      if (needsToken) {
-        const token = getDashboardWriteToken();
-        if (!token) return false;
-        headers["X-Dashboard-Token"] = token;
-      }
+      const headers = { "Content-Type": "application/json", ...authHeaders() };
       try {
-        let response = await fetch(endpoint, {
+        const response = await fetch(endpoint, {
           method: "POST",
           headers,
-          body: JSON.stringify({ savedAt: new Date().toISOString(), projects })
+          body: JSON.stringify({ savedAt: new Date().toISOString(), revision: serverRevision, projects })
         });
-        if (response.status === 401 && needsToken) {
-          try {
-            if (window.localStorage) window.localStorage.removeItem(WRITE_TOKEN_KEY);
-          } catch (error) {
-            // Continue to prompt again.
-          }
-          const token = getDashboardWriteToken(true);
-          if (!token) return false;
-          response = await fetch(endpoint, {
-            method: "POST",
-            headers: { ...headers, "X-Dashboard-Token": token },
-            body: JSON.stringify({ savedAt: new Date().toISOString(), projects })
-          });
+        const payload = await response.json().catch(() => ({}));
+        if (response.ok) {
+          serverRevision = Number.isFinite(Number(payload.revision)) ? Number(payload.revision) : serverRevision;
+          return { ok: true, ...payload };
         }
-        return response.ok;
+        return { ok: false, status: response.status, ...payload };
       } catch (error) {
+        return { ok: false, error: "network_error" };
+      }
+    }
+
+    async function apiJson(path, options = {}) {
+      try {
+        const response = await fetch(apiEndpoint(path), {
+          ...options,
+          headers: {
+            "Content-Type": "application/json",
+            ...(options.auth ? authHeaders() : {}),
+            ...(options.headers || {})
+          },
+          cache: "no-store"
+        });
+        const payload = await response.json().catch(() => ({}));
+        return { ok: response.ok, status: response.status, ...payload };
+      } catch (error) {
+        return { ok: false, error: "network_error" };
+      }
+    }
+
+    async function validateStoredSession() {
+      const token = readStoredSessionToken();
+      if (!token) {
+        clearSession();
         return false;
       }
+      const result = await apiJson("/auth/me", { method: "GET", auth: true });
+      if (!result.ok || !result.user || !["admin", "editor"].includes(result.user.role)) {
+        clearSession();
+        return false;
+      }
+      storeSession(token, result.user);
+      return true;
+    }
+
+    async function ensureManagementSession() {
+      if (currentUser && ["admin", "editor"].includes(currentUser.role)) return true;
+      if (await validateStoredSession()) return true;
+      return showAuthModal();
+    }
+
+    function showAuthModal() {
+      const modal = document.getElementById("authModal");
+      const status = document.getElementById("authStatus");
+      if (status) status.textContent = "";
+      modal.classList.add("open");
+      document.getElementById("authNameInput").focus();
+      return new Promise(resolve => {
+        authModalResolver = resolve;
+      });
+    }
+
+    function closeAuthModal(success = false) {
+      document.getElementById("authModal").classList.remove("open");
+      if (authModalResolver) {
+        authModalResolver(success);
+        authModalResolver = null;
+      }
+    }
+
+    async function submitAuthForm() {
+      const status = document.getElementById("authStatus");
+      const submit = document.getElementById("authSubmitBtn");
+      const name = textValue("authNameInput");
+      const password = valueOf("authPasswordInput");
+      const inviteCode = textValue("authInviteInput");
+      if (!name || !password) {
+        status.textContent = "請輸入 Teams 顯示名稱與密碼。";
+        return;
+      }
+      submit.disabled = true;
+      status.textContent = "登入中...";
+      const path = inviteCode ? "/auth/activate" : "/auth/login";
+      const result = await apiJson(path, {
+        method: "POST",
+        body: JSON.stringify({ name, password, inviteCode })
+      });
+      submit.disabled = false;
+      if (result.ok && result.token && result.user) {
+        storeSession(result.token, result.user);
+        status.textContent = "";
+        closeAuthModal(true);
+        return;
+      }
+      if (result.error === "activation_required") {
+        status.textContent = "第一次登入請填邀請碼，並用這組密碼完成啟用。";
+        document.getElementById("authInviteInput").focus();
+        return;
+      }
+      if (result.error === "no_management_access") {
+        status.textContent = "此姓名不在可修改白名單，或沒有管理權限。";
+        return;
+      }
+      if (result.error === "invalid_invite_code") {
+        status.textContent = "邀請碼錯誤。";
+        return;
+      }
+      status.textContent = "登入失敗，請確認姓名與密碼。";
+    }
+
+    function renderSessionState() {
+      document.body.classList.toggle("admin-session", isAdminSession());
+      const panel = document.getElementById("updatePanel");
+      if (!panel) return;
+      let bar = document.getElementById("sessionBar");
+      if (!bar) {
+        bar = document.createElement("div");
+        bar.id = "sessionBar";
+        bar.className = "session-bar management-only";
+        panel.insertBefore(bar, panel.firstElementChild);
+      }
+      if (!currentUser) {
+        bar.innerHTML = `<span>尚未登入管理模式。</span>`;
+        return;
+      }
+      const scopeText = isAdminSession()
+        ? "全部部門"
+        : editableProjects().map(project => project.department).join("、") || "尚未設定";
+      bar.innerHTML = `
+        <span>目前登入：<strong>${escapeHtml(currentUser.name)}</strong> · 可修改：${escapeHtml(scopeText)}</span>
+        <button class="btn small" id="logoutBtn" type="button">登出</button>
+      `;
+      document.getElementById("logoutBtn")?.addEventListener("click", () => {
+        clearSession();
+        closeManagementMode();
+      });
+    }
+
+    async function openManagementMode() {
+      const ok = await ensureManagementSession();
+      if (!ok) return;
+      document.body.classList.add("management-mode");
+      document.body.classList.toggle("admin-session", isAdminSession());
+      document.getElementById("modeBtn").textContent = "關閉管理模式";
+      renderFilters();
+      syncEditorWithFilters();
+      renderSessionState();
+    }
+
+    function closeManagementMode() {
+      document.body.classList.remove("management-mode");
+      document.getElementById("modeBtn").textContent = "管理模式";
+      resetViewFilters();
+      showView("overview");
+      renderFilters();
+      render();
+    }
+
+    function showSaveError(result) {
+      const status = document.getElementById("saveStatus");
+      const button = document.getElementById("saveBtn");
+      if (!status || !button) return;
+      if (result?.error === "revision_conflict") {
+        status.textContent = "儲存失敗：其他人已更新資料，請重新整理後再修改。";
+      } else if (result?.error === "project_scope_denied") {
+        status.textContent = "儲存失敗：你沒有權限修改這個部門。";
+      } else if (result?.status === 401 || result?.error === "not_authenticated") {
+        status.textContent = "儲存失敗：登入已失效，請重新登入。";
+        clearSession();
+      } else {
+        status.textContent = "儲存失敗：請稍後再試。";
+      }
+      button.textContent = "儲存更新";
+    }
+
+    async function renderAuditLog() {
+      const list = document.getElementById("auditList");
+      if (!list || !isAdminSession()) return;
+      list.innerHTML = `<div class="empty-state">讀取修改紀錄中...</div>`;
+      const result = await apiJson("/audit", { method: "GET", auth: true });
+      if (!result.ok) {
+        list.innerHTML = `<div class="empty-state">無法讀取修改紀錄。</div>`;
+        return;
+      }
+      const records = result.records || [];
+      list.innerHTML = records.length ? records.map(record => `
+        <article class="audit-item">
+          <strong>${escapeHtml(record.department || record.projectId)} · ${escapeHtml(record.actor || "Unknown")}</strong>
+          <span>${escapeHtml(new Date(record.changedAt).toLocaleString("zh-TW"))} · revision ${escapeHtml(record.beforeRevision)} -> ${escapeHtml(record.afterRevision)}</span>
+          <span>修改前：${escapeHtml(record.before?.title || "空白 / 新增")}；修改後：${escapeHtml(record.after?.title || "空白 / 刪除")}</span>
+        </article>
+      `).join("") : `<div class="empty-state">目前尚無修改紀錄。</div>`;
     }
 
     function normalizeProject(project) {
@@ -3434,8 +3790,9 @@
       const level = document.getElementById("levelFilter").value || "全部";
       const stage = document.getElementById("stageFilter").value || "全部";
       const query = (document.getElementById("searchInput").value || "").trim().toLowerCase();
+      const sourceProjects = document.body.classList.contains("management-mode") ? editableProjects() : projects;
 
-      return projects.filter(project => {
+      return sourceProjects.filter(project => {
         const text = `${project.center} ${project.department} ${project.owner} ${project.agentOwner} ${project.title} ${project.summary} ${project.source}`.toLowerCase();
         return (department === "全部" || project.department === department) &&
           (level === "全部" || project.scale === level) &&
@@ -3498,11 +3855,12 @@
     }
 
     function renderFilters() {
-      const departments = ["全部", ...editOrderedProjects().map(project => project.department)];
+      const sourceProjects = document.body.classList.contains("management-mode") ? editableProjects() : editOrderedProjects();
+      const departments = ["全部", ...sourceProjects.map(project => project.department)];
       fillSelect("centerFilter", departments.map(value => [value, value]));
       fillSelect("levelFilter", ["全部", ...scaleLabels].map(value => [value, value]));
       fillSelect("stageFilter", [["全部", "全部"], ...Object.entries(stageLabels).map(([value, label]) => [value, `${value} ${label}`])]);
-      fillSelect("projectSelect", editOrderedProjects().map(project => [project.id, `${project.department} - ${project.owner}`]));
+      fillSelect("projectSelect", sourceProjects.map(project => [project.id, `${project.department} - ${project.owner}`]));
       fillSelect("stageInput", Object.entries(stageLabels).map(([value, label]) => [value, `${value} ${label}`]));
       fillSelect("frequencyInput", frequencyLabels.map(value => [value, value]));
       fillSelect("scaleInput", scaleLabels.map(value => [value, value]));
@@ -3542,7 +3900,7 @@
 
     function syncEditorWithFilters() {
       if (!document.body.classList.contains("management-mode")) return;
-      const match = filteredProjects()[0] || editOrderedProjects()[0];
+      const match = filteredProjects()[0] || editableProjects()[0];
       const projectSelect = document.getElementById("projectSelect");
       if (!match || !projectSelect) {
         updateEditCurrentProject(null);
@@ -4010,8 +4368,12 @@
 
     function loadForm() {
       const id = document.getElementById("projectSelect").value;
-      const project = projects.find(item => item.id === id) || projects[0];
-      if (!project) return;
+      const fallbackProject = document.body.classList.contains("management-mode") ? editableProjects()[0] : projects[0];
+      const project = projects.find(item => item.id === id && (!document.body.classList.contains("management-mode") || canEditProject(item))) || fallbackProject;
+      if (!project) {
+        updateEditCurrentProject(null);
+        return;
+      }
 
       setValue("titleInput", project.title);
       setValue("ownerInput", project.owner);
@@ -4136,7 +4498,8 @@
     function renderEditDeptPicker() {
       const picker = document.getElementById("editDeptPicker");
       if (!picker) return;
-      picker.innerHTML = editOrderedProjects().map(project => `
+      const sourceProjects = document.body.classList.contains("management-mode") ? editableProjects() : editOrderedProjects();
+      picker.innerHTML = sourceProjects.map(project => `
         <button class="dept-pick" type="button" data-edit-project="${escapeHtml(project.id)}">
           ${escapeHtml(project.department)}
           <span>${escapeHtml(projectStatusLabel(project))} · ${completionScore(project)}%</span>
@@ -4163,6 +4526,11 @@
       const id = document.getElementById("projectSelect").value;
       const project = projects.find(item => item.id === id);
       if (!project) return;
+      if (!canEditProject(project)) {
+        showSaveError({ error: "project_scope_denied" });
+        return;
+      }
+      const originalProjects = structuredClone(projects);
       const allowsBlankTopic = id === "sec";
 
       project.title = textValue("titleInput") || (allowsBlankTopic ? "" : "待填寫 Agent 方向");
@@ -4210,20 +4578,34 @@
       project.nextStep = textValue("nextStepInput") || (allowsBlankTopic ? "" : "待填寫下週進度 / Action。");
       project.lastUpdate = new Date().toISOString().slice(0, 10);
 
-      saveProjects();
-      renderFilters();
-      document.getElementById("projectSelect").value = id;
-      resetViewFilters();
-      render();
-      document.getElementById("projectSelect").value = id;
-      loadForm();
       const maturityDetail = "完成度使用手動值";
-      showSavedStatus(project.department, maturityDetail);
+      const status = document.getElementById("saveStatus");
+      const button = document.getElementById("saveBtn");
+      if (status) status.textContent = `${project.department} 正在同步到分享網址...`;
+      if (button) button.textContent = "儲存中";
+
       const serverSynced = await saveProjectsToServer();
-      if (serverSynced) {
+      if (serverSynced.ok) {
+        saveProjects();
+        renderFilters();
+        document.getElementById("projectSelect").value = id;
+        resetViewFilters();
+        render();
+        document.getElementById("projectSelect").value = id;
+        loadForm();
         showSavedStatus(project.department, [maturityDetail, "已同步到分享網址"].filter(Boolean).join("；"));
-      } else if (canUseServerSync()) {
-        showSavedStatus(project.department, [maturityDetail, "已儲存在此瀏覽器，分享網址同步失敗"].filter(Boolean).join("；"));
+      } else {
+        projects = originalProjects;
+        saveProjects();
+        renderFilters();
+        document.getElementById("projectSelect").value = id;
+        render();
+        document.getElementById("projectSelect").value = id;
+        loadForm();
+        showSaveError(serverSynced);
+        if (serverSynced.error === "revision_conflict") {
+          await loadServerProjects();
+        }
       }
     }
 
@@ -4254,15 +4636,23 @@
 
     function importData(file) {
       const reader = new FileReader();
-      reader.onload = () => {
+      reader.onload = async () => {
         try {
           const parsed = JSON.parse(reader.result);
           const incoming = Array.isArray(parsed) ? parsed : parsed.projects;
           if (!Array.isArray(incoming)) throw new Error("missing projects");
+          const originalProjects = structuredClone(projects);
           projects = incoming.map(normalizeProject);
-          saveProjects();
-          renderFilters();
-          render();
+          const result = await saveProjectsToServer();
+          if (result.ok) {
+            saveProjects();
+            renderFilters();
+            render();
+            showSavedStatus("匯入資料", "已同步到分享網址");
+          } else {
+            projects = originalProjects;
+            showSaveError(result);
+          }
         } catch (error) {
           alert("匯入失敗：JSON 格式不符合 dashboard 資料。");
         }
@@ -4288,6 +4678,7 @@
       document.querySelectorAll("[data-view]").forEach(button => {
         button.classList.toggle("active", button.dataset.view === view);
       });
+      if (view === "audit") renderAuditLog();
     }
 
     function hasData(project) {
@@ -4362,7 +4753,12 @@
     }
 
     renderFilters();
+    renderSessionState();
     render();
+    validateStoredSession().then(() => {
+      renderFilters();
+      renderSessionState();
+    });
     loadServerProjects();
 
     ["centerFilter", "levelFilter", "stageFilter", "searchInput"].forEach(id => {
@@ -4386,31 +4782,48 @@
     ["necessityInput", "practicalityInput", "generalityInput", "timeSavingInput", "addedValueInput"].forEach(id => {
       document.getElementById(id).addEventListener("change", updateScoreSummary);
     });
-    document.getElementById("modeBtn").addEventListener("click", () => {
-      document.body.classList.toggle("management-mode");
-      const isManagementMode = document.body.classList.contains("management-mode");
-      document.getElementById("modeBtn").textContent = isManagementMode ? "關閉管理模式" : "管理模式";
-      if (!isManagementMode) {
-        resetViewFilters();
-        render();
+    document.getElementById("modeBtn").addEventListener("click", async () => {
+      if (document.body.classList.contains("management-mode")) {
+        closeManagementMode();
       } else {
-        syncEditorWithFilters();
+        await openManagementMode();
       }
     });
     document.getElementById("saveBtn").addEventListener("click", saveForm);
-    document.getElementById("resetBtn").addEventListener("click", () => {
+    document.getElementById("resetBtn").addEventListener("click", async () => {
+      if (!isAdminSession()) {
+        showSaveError({ error: "project_scope_denied" });
+        return;
+      }
       if (!confirm("確定清空回預設部門清單？")) return;
+      const originalProjects = structuredClone(projects);
       projects = structuredClone(defaultProjects);
-      saveProjects();
-      renderFilters();
-      render();
+      const result = await saveProjectsToServer();
+      if (result.ok) {
+        saveProjects();
+        renderFilters();
+        render();
+        showSavedStatus("全部部門", "已同步到分享網址");
+      } else {
+        projects = originalProjects;
+        showSaveError(result);
+      }
     });
     document.getElementById("exportBtn").addEventListener("click", exportData);
     document.getElementById("importFile").addEventListener("change", event => {
       const file = event.target.files && event.target.files[0];
-      if (file) importData(file);
+      if (file && isAdminSession()) importData(file);
+      if (file && !isAdminSession()) showSaveError({ error: "project_scope_denied" });
       event.target.value = "";
     });
+    document.getElementById("authSubmitBtn").addEventListener("click", submitAuthForm);
+    document.getElementById("authCancelBtn").addEventListener("click", () => closeAuthModal(false));
+    ["authNameInput", "authPasswordInput", "authInviteInput"].forEach(id => {
+      document.getElementById(id).addEventListener("keydown", event => {
+        if (event.key === "Enter") submitAuthForm();
+      });
+    });
+    document.getElementById("refreshAuditBtn").addEventListener("click", renderAuditLog);
     document.getElementById("closeModal").addEventListener("click", () => {
       document.getElementById("detailModal").classList.remove("open");
     });
