@@ -2769,6 +2769,7 @@
       ]
     };
     const editDepartmentOrder = ["PEC-SE", "BEC", "PEC-EMC/RF", "PEC-ME", "PEC-Thermal", "DQAC", "SEC"];
+    const visibleDashboardDepartments = new Set(editDepartmentOrder);
     const legacyRoadmapStepNames = ["需求確認", "資料/權限", "架構設計", "Prototype", "Pilot 測試", "導入/擴展"];
     const roadmapStepNames = ["題目確認", "規則整理", "流程設計", "可用版本", "小範圍測試", "導入修正", "正式導入"];
     const roadmapStatusLabels = ["未開始", "進行中", "已完成", "卡住"];
@@ -3843,7 +3844,7 @@
       const level = document.getElementById("levelFilter").value || "全部";
       const stage = document.getElementById("stageFilter").value || "全部";
       const query = (document.getElementById("searchInput").value || "").trim().toLowerCase();
-      const sourceProjects = document.body.classList.contains("management-mode") ? editableProjects() : projects;
+      const sourceProjects = document.body.classList.contains("management-mode") ? editableProjects() : dashboardProjects(projects);
 
       return sourceProjects.filter(project => {
         const text = `${project.center} ${project.department} ${project.owner} ${project.agentOwner} ${project.title} ${project.summary} ${project.source}`.toLowerCase();
@@ -3931,7 +3932,11 @@
     }
 
     function editOrderedProjects() {
-      return [...projects].sort((a, b) => departmentSortIndex(a.department) - departmentSortIndex(b.department));
+      return dashboardProjects(projects).sort((a, b) => departmentSortIndex(a.department) - departmentSortIndex(b.department));
+    }
+
+    function dashboardProjects(sourceProjects) {
+      return (sourceProjects || []).filter(project => visibleDashboardDepartments.has(project.department));
     }
 
     function fillSelect(id, options) {
