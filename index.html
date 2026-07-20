@@ -3401,6 +3401,10 @@
       });
       submit.disabled = false;
       if (result.ok && result.token && result.user) {
+        if (!["admin", "editor"].includes(result.user.role)) {
+          status.textContent = "此帳號可查看 Dashboard，但沒有管理修改權限。";
+          return;
+        }
         storeSession(result.token, result.user);
         status.textContent = "";
         closeAuthModal(true);

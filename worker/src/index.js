@@ -5,16 +5,18 @@ const SESSION_DAYS = 7;
 const HASH_ITERATIONS = 100000;
 
 const DEFAULT_USERS = [
-  { name: "Michael Chuang", role: "admin", scopes: ["*"], aliases: ["Michael"], initialPassword: "00000000" },
-  { name: "John Chien", role: "viewer", scopes: ["*"] },
-  { name: "Fencer Kao", role: "viewer", scopes: ["*"], aliases: ["Fencer"] },
-  { name: "Andy PK Yang", role: "editor", scopes: ["pec-se"], aliases: ["Andy Yang"] },
-  { name: "Frankie Chuang", role: "editor", scopes: ["pec-emc-rf"], aliases: ["Frankie"] },
-  { name: "Ray Hsu", role: "editor", scopes: ["pec-me"] },
-  { name: "Eric Lin", role: "editor", scopes: ["pec-thermal"], aliases: ["Eric"] },
-  { name: "Vincent Chu", role: "editor", scopes: ["dqac"], aliases: ["Vincent chu", "Vincent"] },
-  { name: "Miles Shih", role: "editor", scopes: ["bec"], aliases: ["Miles"] },
-  { name: "Chih-Fu Hsu", role: "editor", scopes: ["bec"] }
+  { name: "Michael Chuang", email: "michael.chuang@adlinktech.com", role: "admin", scopes: ["*"], aliases: ["Michael"], initialPassword: "00000000" },
+  { name: "John Chien", email: "john.chien@adlinktech.com", role: "viewer", scopes: ["*"] },
+  { name: "Diya Tseng", email: "diya.tseng@adlinktech.com", role: "editor", scopes: ["dqac"] },
+  { name: "Fencer Kao", email: "fencer.kao@adlinktech.com", role: "editor", scopes: ["sec"], aliases: ["Fencer"] },
+  { name: "Ray Hsu", email: "ray.hsu@adlinktech.com", role: "editor", scopes: ["pec-me"] },
+  { name: "Mars Chen", email: "mars.chen@adlinktech.com", role: "viewer", scopes: ["*"] },
+  { name: "Tyler Pei", email: "tyler.pei@adlinktech.com", role: "editor", scopes: ["pec-me"], aliases: ["Tyler"] },
+  { name: "Frankie Chuang", email: "frankie.chuang@adlinktech.com", role: "editor", scopes: ["pec-emc-rf"], aliases: ["Frankie"] },
+  { name: "Vincent Chu", email: "vincent.chu@adlinktech.com", role: "editor", scopes: ["dqac"], aliases: ["Vincent chu", "Vincent"] },
+  { name: "Miles Shih", email: "miles.shih@adlinktech.com", role: "editor", scopes: ["bec"], aliases: ["Miles"] },
+  { name: "Andy PK Yang", email: "andypk.yang@adlinktech.com", role: "editor", scopes: ["pec-se"], aliases: ["Andy Yang"] },
+  { name: "Eric YH1 Lin", email: "ericyh1.lin@adlinktech.com", role: "editor", scopes: ["pec-thermal"], aliases: ["Eric Lin", "Eric"] }
 ];
 
 const encoder = new TextEncoder();
@@ -77,6 +79,7 @@ function safeUser(user) {
   if (!user) return null;
   return {
     name: user.name,
+    email: user.email || "",
     role: user.role,
     scopes: Array.isArray(user.scopes) ? user.scopes : [],
     active: Boolean(user.passwordHash),
@@ -186,14 +189,17 @@ async function loadUsers(env) {
   }
 
   let changed = false;
+  const allowedNames = new Set(DEFAULT_USERS.map(user => user.name));
   for (const definition of DEFAULT_USERS) {
     const current = state.users[definition.name] || {};
     const nextRole = definition.role;
     const nextScopes = definition.scopes;
     const nextAliases = definition.aliases || [];
+    const nextEmail = definition.email || "";
     const merged = {
       ...current,
       name: definition.name,
+      email: nextEmail,
       role: nextRole,
       scopes: nextScopes,
       aliases: nextAliases,
@@ -205,11 +211,19 @@ async function loadUsers(env) {
     } else {
       state.users[definition.name] = merged;
       if (!current.name ||
+        current.email !== nextEmail ||
         current.role !== nextRole ||
         JSON.stringify(current.scopes || []) !== JSON.stringify(nextScopes) ||
         JSON.stringify(current.aliases || []) !== JSON.stringify(nextAliases)) {
         changed = true;
       }
+    }
+  }
+
+  for (const [name, user] of Object.entries(state.users)) {
+    if (!allowedNames.has(name) && !user.disabled) {
+      state.users[name] = { ...user, disabled: true };
+      changed = true;
     }
   }
 
@@ -230,8 +244,13 @@ function findUserByName(state, name) {
   const wanted = normalizeName(name);
   return Object.values(state.users || {}).find(user => {
     if (normalizeName(user.name) === wanted) return true;
+    if (normalizeName(user.email) === wanted) return true;
     return (user.aliases || []).some(alias => normalizeName(alias) === wanted);
   }) || null;
+}
+
+function userCanLogin(user) {
+  return user && !user.disabled && ["admin", "editor", "viewer"].includes(user.role);
 }
 
 async function verifyPassword(user, password, env) {
@@ -338,7 +357,7 @@ async function handleLogin(request, env) {
   }
   const state = await loadUsers(env);
   const user = findUserByName(state, body.name);
-  if (!user || user.disabled || !userCanManage(user)) {
+  if (!userCanLogin(user)) {
     return jsonResponse({ ok: false, error: "no_management_access" }, { status: 403 }, request, env);
   }
   if (!user.passwordHash) {
@@ -360,7 +379,7 @@ async function handleActivate(request, env) {
   }
   const state = await loadUsers(env);
   const user = findUserByName(state, body.name);
-  if (!user || user.disabled || !userCanManage(user)) {
+  if (!userCanLogin(user)) {
     return jsonResponse({ ok: false, error: "no_management_access" }, { status: 403 }, request, env);
   }
   state.users[user.name] = await setUserPassword(user, body.password, env);
