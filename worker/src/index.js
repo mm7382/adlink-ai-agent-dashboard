@@ -10,7 +10,7 @@ const DEFAULT_USERS = [
   { name: "Diya Tseng", email: "diya.tseng@adlinktech.com", role: "editor", scopes: ["dqac"] },
   { name: "Fencer Kao", email: "fencer.kao@adlinktech.com", role: "editor", scopes: ["sec"], aliases: ["Fencer"] },
   { name: "Ray Hsu", email: "ray.hsu@adlinktech.com", role: "editor", scopes: ["pec-me"] },
-  { name: "Mars Chen", email: "mars.chen@adlinktech.com", role: "viewer", scopes: ["*"] },
+  { name: "Mars Chen", email: "mars.chen@adlinktech.com", role: "editor", scopes: ["dqac"] },
   { name: "Tyler Pei", email: "tyler.pei@adlinktech.com", role: "editor", scopes: ["pec-me"], aliases: ["Tyler"] },
   { name: "Frankie Chuang", email: "frankie.chuang@adlinktech.com", role: "editor", scopes: ["pec-emc-rf"], aliases: ["Frankie"] },
   { name: "Vincent Chu", email: "vincent.chu@adlinktech.com", role: "editor", scopes: ["dqac"], aliases: ["Vincent chu", "Vincent"] },
