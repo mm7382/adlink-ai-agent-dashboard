@@ -1458,19 +1458,6 @@
       text-align: right;
     }
 
-    .dashboard-help {
-      margin-bottom: 16px;
-    }
-
-    .quick-guide {
-      margin: 0;
-      padding-left: 22px;
-      color: var(--soft);
-      font-size: 16px;
-      line-height: 1.65;
-      font-weight: 650;
-    }
-
     .session-bar {
       display: flex;
       align-items: center;
@@ -1556,6 +1543,23 @@
 
     body.management-mode:not(.admin-session) .admin-only {
       display: none;
+    }
+
+    .admin-view {
+      display: none !important;
+    }
+
+    body.admin-session button.admin-view {
+      display: inline-flex !important;
+    }
+
+    body.admin-session section.admin-view.active {
+      display: block !important;
+    }
+
+    body.audit-view .executive-hero,
+    body.audit-view #updatePanel {
+      display: none !important;
     }
 
     body.auth-locked #authCancelBtn {
@@ -2353,8 +2357,8 @@
         <button class="tab active" data-view="overview">主管總覽</button>
         <button class="tab" data-view="departments">部門 Agent 進度</button>
         <button class="tab" data-view="slides">投影片</button>
-          <button class="tab" data-view="tracking">主管追蹤表</button>
-          <button class="tab management-only admin-only" data-view="audit">修改紀錄</button>
+        <button class="tab" data-view="tracking">主管追蹤表</button>
+        <button class="tab admin-view" data-view="audit">修改紀錄</button>
       </nav>
 
       <section class="filters management-only" aria-label="filters">
@@ -2374,23 +2378,6 @@
           <label for="searchInput">快速搜尋</label>
           <input id="searchInput" placeholder="部門、負責人、Agent 方向">
         </div>
-      </section>
-
-      <section class="panel dashboard-help" aria-label="dashboard 使用說明">
-        <div class="section-head">
-          <div>
-            <h2>如何登入與使用</h2>
-            <div class="hint">給部門 owner 與 Agent 執行者快速回填使用。</div>
-          </div>
-        </div>
-        <ul class="quick-guide">
-          <li>看 Dashboard：打開連結後，先用 Teams 顯示名稱登入。</li>
-          <li>要修改：登入後點「管理模式」，只修改自己負責的部門 Agent。</li>
-          <li>第一次登入：輸入邀請碼，設定自己的密碼。</li>
-          <li>登入後只會看到自己可修改的部門 Agent。</li>
-          <li>主要要填好 Task 進度，並完成 Agent 效益評分。</li>
-          <li>改完請按「儲存更新」，若出現版本衝突請重新整理後再改。</li>
-        </ul>
       </section>
 
       <section class="view active" id="view-overview">
@@ -2434,7 +2421,7 @@
         </section>
       </section>
 
-      <section class="view" id="view-audit">
+      <section class="view admin-view" id="view-audit">
         <section class="panel">
           <div class="section-head">
             <div>
@@ -3282,7 +3269,7 @@
       } catch (error) {
         // Ignore storage cleanup errors.
       }
-      document.body.classList.remove("admin-session");
+      document.body.classList.remove("admin-session", "audit-view");
       renderSessionState();
     }
 
@@ -3494,7 +3481,7 @@
 
     function lockDashboard() {
       document.body.classList.add("auth-locked");
-      document.body.classList.remove("management-mode", "admin-session");
+      document.body.classList.remove("management-mode", "admin-session", "audit-view");
       document.getElementById("modeBtn").textContent = "管理模式";
       showAuthModal();
     }
@@ -3554,10 +3541,53 @@
       list.innerHTML = records.length ? records.map(record => `
         <article class="audit-item">
           <strong>${escapeHtml(record.department || record.projectId)} · ${escapeHtml(record.actor || "Unknown")}</strong>
-          <span>${escapeHtml(new Date(record.changedAt).toLocaleString("zh-TW"))} · revision ${escapeHtml(record.beforeRevision)} -> ${escapeHtml(record.afterRevision)}</span>
-          <span>修改前：${escapeHtml(record.before?.title || "空白 / 新增")}；修改後：${escapeHtml(record.after?.title || "空白 / 刪除")}</span>
+          <span>${escapeHtml(new Date(record.changedAt).toLocaleString("zh-TW"))}</span>
+          <span>修改內容：${escapeHtml(auditChangeSummary(record))}</span>
+          <span>資料版本：${escapeHtml(record.beforeRevision)} → ${escapeHtml(record.afterRevision)}</span>
         </article>
       `).join("") : `<div class="empty-state">目前尚無修改紀錄。</div>`;
+    }
+
+    function auditChangeSummary(record) {
+      const before = record.before || {};
+      const after = record.after || {};
+      if (!record.before) return "新增 Agent 資料";
+      if (!record.after) return "刪除 Agent 資料";
+
+      const labels = {
+        title: "Agent 題目",
+        owner: "部門負責人",
+        agentOwner: "Agent 負責人",
+        center: "研究中心",
+        stage: "目前階段",
+        progress: "完成度",
+        roadmap: "Task 與日期",
+        summary: "題目說明",
+        flow: "Agent 流程",
+        architecture: "架構說明",
+        necessity: "必要性評分",
+        practicality: "使用頻率評分",
+        generality: "通用性評分",
+        timeSaving: "節省時間評分",
+        addedValue: "附加價值評分",
+        benefits: "效益內容",
+        frequency: "使用頻率",
+        scale: "擴展層級",
+        activeUsers: "目前使用人數",
+        targetUsers: "目標使用人數",
+        weeklyUsers: "每週使用人數",
+        currentProgress: "本週進度",
+        nextStep: "下一步",
+        supportStatus: "主管協助狀態",
+        supportDescription: "主管協助說明",
+        source: "資料來源",
+        slides: "投影片"
+      };
+      const changed = [...new Set([...Object.keys(before), ...Object.keys(after)])]
+        .filter(key => JSON.stringify(before[key] ?? null) !== JSON.stringify(after[key] ?? null))
+        .filter(key => labels[key])
+        .map(key => labels[key]);
+      return changed.length ? changed.join("、") : "資料更新";
     }
 
     function normalizeProject(project) {
@@ -4730,6 +4760,8 @@
     }
 
     function showView(view) {
+      if (view === "audit" && !isAdminSession()) view = "overview";
+      document.body.classList.toggle("audit-view", view === "audit");
       document.querySelectorAll(".view").forEach(section => {
         section.classList.toggle("active", section.id === `view-${view}`);
       });
