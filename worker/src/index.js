@@ -435,6 +435,10 @@ async function handleAudit(request, env) {
 }
 
 async function handleGetProjects(request, env) {
+  const actor = await authenticate(request, env);
+  if (!userCanLogin(actor)) {
+    return jsonResponse({ ok: false, error: "not_authenticated" }, { status: 401 }, request, env);
+  }
   return jsonResponse(await loadProjectState(env), {}, request, env);
 }
 

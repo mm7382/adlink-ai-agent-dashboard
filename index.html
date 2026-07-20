@@ -56,6 +56,10 @@
       min-height: 100vh;
     }
 
+    body.auth-locked .app {
+      display: none;
+    }
+
     header {
       background: rgba(8, 13, 20, .95);
       border-bottom: 1px solid rgba(200,16,46,.72);
@@ -1554,6 +1558,14 @@
       display: none;
     }
 
+    body.auth-locked #authCancelBtn {
+      display: none;
+    }
+
+    body.auth-locked #siteLogoutBtn {
+      display: none;
+    }
+
     .hidden-input {
       display: none;
     }
@@ -2211,7 +2223,7 @@
     }
   </style>
 </head>
-<body>
+<body class="auth-locked">
   <div class="app">
     <header>
       <div class="topbar">
@@ -2225,6 +2237,7 @@
         <div></div>
         <div class="toolbar">
           <button class="btn" id="modeBtn">管理模式</button>
+          <button class="btn" id="siteLogoutBtn">登出</button>
           <button class="btn management-only admin-only" id="exportBtn">下載資料</button>
           <label class="btn management-only admin-only" for="importFile">匯入資料</label>
           <input class="hidden-input" id="importFile" type="file" accept="application/json">
@@ -2635,8 +2648,8 @@
     <div class="modal-box auth-box">
       <div class="modal-head">
         <div>
-          <h2 id="authTitle">管理模式登入</h2>
-          <div class="hint">請輸入 Teams 顯示名稱。第一次登入才需要邀請碼。</div>
+          <h2 id="authTitle">Dashboard 登入</h2>
+          <div class="hint">白名單成員才能查看。第一次登入請輸入邀請碼。</div>
         </div>
         <button class="btn small" id="authCancelBtn" type="button">取消</button>
       </div>
@@ -3299,12 +3312,14 @@
     async function loadServerProjects() {
       if (!canUseServerSync()) return;
       const endpoint = projectsEndpoint();
-      const endpoints = hasStoredProjects()
-        ? [endpoint]
-        : [endpoint, STATIC_PROJECTS_ENDPOINT];
+      const endpoints = [endpoint];
       for (const endpoint of endpoints) {
         try {
-          const response = await fetch(`${endpoint}?t=${Date.now()}`, { cache: "no-store" });
+          const response = await fetch(`${endpoint}?t=${Date.now()}`, { cache: "no-store", headers: authHeaders() });
+          if (response.status === 401 || response.status === 403) {
+            lockDashboard();
+            return;
+          }
           if (response.status === 404) continue;
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const payload = await response.json();
@@ -3369,7 +3384,7 @@
         return false;
       }
       const result = await apiJson("/auth/me", { method: "GET", auth: true });
-      if (!result.ok || !result.user || !["admin", "editor"].includes(result.user.role)) {
+      if (!result.ok || !result.user || !["admin", "editor", "viewer"].includes(result.user.role)) {
         clearSession();
         return false;
       }
@@ -3379,8 +3394,10 @@
 
     async function ensureManagementSession() {
       if (currentUser && ["admin", "editor"].includes(currentUser.role)) return true;
-      if (await validateStoredSession()) return true;
-      return showAuthModal();
+      if (!currentUser) await validateStoredSession();
+      if (currentUser && ["admin", "editor"].includes(currentUser.role)) return true;
+      alert("此帳號可以查看 Dashboard，但沒有管理修改權限。");
+      return false;
     }
 
     function showAuthModal() {
@@ -3421,13 +3438,10 @@
       });
       submit.disabled = false;
       if (result.ok && result.token && result.user) {
-        if (!["admin", "editor"].includes(result.user.role)) {
-          status.textContent = "此帳號可查看 Dashboard，但沒有管理修改權限。";
-          return;
-        }
         storeSession(result.token, result.user);
         status.textContent = "";
         closeAuthModal(true);
+        await unlockDashboard();
         return;
       }
       if (result.error === "activation_required") {
@@ -3436,7 +3450,7 @@
         return;
       }
       if (result.error === "no_management_access") {
-        status.textContent = "此姓名不在可修改白名單，或沒有管理權限。";
+        status.textContent = "此姓名不在白名單，無法查看 Dashboard。";
         return;
       }
       if (result.error === "invalid_invite_code") {
@@ -3469,9 +3483,28 @@
         <button class="btn small" id="logoutBtn" type="button">登出</button>
       `;
       document.getElementById("logoutBtn")?.addEventListener("click", () => {
-        clearSession();
-        closeManagementMode();
+        logoutDashboard();
       });
+    }
+
+    async function unlockDashboard() {
+      document.body.classList.remove("auth-locked");
+      renderFilters();
+      renderSessionState();
+      render();
+      await loadServerProjects();
+    }
+
+    function lockDashboard() {
+      document.body.classList.add("auth-locked");
+      document.body.classList.remove("management-mode", "admin-session");
+      document.getElementById("modeBtn").textContent = "管理模式";
+      showAuthModal();
+    }
+
+    function logoutDashboard() {
+      clearSession();
+      lockDashboard();
     }
 
     async function openManagementMode() {
@@ -4776,14 +4809,17 @@
         .replaceAll("'", "&#039;");
     }
 
-    renderFilters();
-    renderSessionState();
-    render();
-    validateStoredSession().then(() => {
-      renderFilters();
+    async function bootDashboard() {
       renderSessionState();
-    });
-    loadServerProjects();
+      const ok = await validateStoredSession();
+      if (ok) {
+        await unlockDashboard();
+      } else {
+        lockDashboard();
+      }
+    }
+
+    bootDashboard();
 
     ["centerFilter", "levelFilter", "stageFilter", "searchInput"].forEach(id => {
       document.getElementById(id).addEventListener("input", () => {
@@ -4813,6 +4849,7 @@
         await openManagementMode();
       }
     });
+    document.getElementById("siteLogoutBtn").addEventListener("click", logoutDashboard);
     document.getElementById("saveBtn").addEventListener("click", saveForm);
     document.getElementById("resetBtn").addEventListener("click", async () => {
       if (!isAdminSession()) {
