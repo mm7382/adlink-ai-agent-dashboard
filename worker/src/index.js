@@ -450,12 +450,65 @@ async function handleSaveProjects(request, env) {
   }
 
   const parsed = await request.json().catch(() => null);
+  const current = await loadProjectState(env);
+
+  if (parsed?.project && typeof parsed.project === "object" && parsed.project.id) {
+    const project = parsed.project;
+    if (!legacyAdmin && !hasProjectAccess(actor, project.id)) {
+      return jsonResponse({ ok: false, error: "project_scope_denied", denied: [project.id] }, { status: 403 }, request, env);
+    }
+
+    const currentProjects = projectMap(current.projects);
+    const currentProject = currentProjects.get(project.id) || null;
+    const hasBaseProject = Object.prototype.hasOwnProperty.call(parsed, "baseProject");
+    if (!legacyAdmin && !hasBaseProject) {
+      return jsonResponse({
+        ok: false,
+        error: "project_version_required",
+        currentRevision: current.revision
+      }, { status: 409 }, request, env);
+    }
+    if (hasBaseProject && JSON.stringify(parsed.baseProject || null) !== JSON.stringify(currentProject)) {
+      return jsonResponse({
+        ok: false,
+        error: "project_revision_conflict",
+        currentRevision: current.revision,
+        savedAt: current.savedAt
+      }, { status: 409 }, request, env);
+    }
+
+    if (JSON.stringify(currentProject) === JSON.stringify(project)) {
+      return jsonResponse({
+        ok: true,
+        savedAt: current.savedAt,
+        revision: current.revision,
+        project: currentProject
+      }, {}, request, env);
+    }
+
+    const nextProjects = current.projects.some(item => item.id === project.id)
+      ? current.projects.map(item => item.id === project.id ? project : item)
+      : [...current.projects, project];
+    const next = {
+      savedAt: new Date().toISOString(),
+      revision: current.revision + 1,
+      projects: nextProjects
+    };
+    await saveProjectState(env, next);
+    await writeAuditRecords(env, actor, current, next, [project.id], request);
+    return jsonResponse({
+      ok: true,
+      savedAt: next.savedAt,
+      revision: next.revision,
+      project
+    }, {}, request, env);
+  }
+
   const payload = parseProjectPayload(parsed);
   if (!payload) {
     return jsonResponse({ ok: false, error: "projects_must_be_array" }, { status: 400 }, request, env);
   }
 
-  const current = await loadProjectState(env);
   if (Number.isFinite(Number(parsed?.revision)) && Number(parsed.revision) !== current.revision) {
     return jsonResponse({
       ok: false,

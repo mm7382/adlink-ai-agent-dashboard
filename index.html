@@ -3085,6 +3085,7 @@
 
     let projects = loadProjects();
     let serverRevision = 0;
+    let serverProjectBaselines = new Map();
     let currentUser = readStoredSessionUser();
     let authModalResolver = null;
 
@@ -3355,6 +3356,9 @@
           const incoming = parseProjectPayload(payload);
           if (!Array.isArray(incoming)) continue;
           serverRevision = Number.isFinite(Number(payload.revision)) ? Number(payload.revision) : serverRevision;
+          serverProjectBaselines = new Map(incoming
+            .filter(project => project?.id)
+            .map(project => [project.id, structuredClone(project)]));
           projects = mergeProjects(incoming);
           saveProjects();
           renderFilters();
@@ -3380,6 +3384,35 @@
         const payload = await response.json().catch(() => ({}));
         if (response.ok) {
           serverRevision = Number.isFinite(Number(payload.revision)) ? Number(payload.revision) : serverRevision;
+          serverProjectBaselines = new Map(projects
+            .filter(project => project?.id)
+            .map(project => [project.id, structuredClone(project)]));
+          return { ok: true, ...payload };
+        }
+        return { ok: false, status: response.status, ...payload };
+      } catch (error) {
+        return { ok: false, error: "network_error" };
+      }
+    }
+
+    async function saveProjectToServer(project) {
+      if (!canUseServerSync()) return { ok: false, error: "server_sync_unavailable" };
+      const baseProject = serverProjectBaselines.get(project.id);
+      if (!baseProject) return { ok: false, error: "project_version_required" };
+      try {
+        const response = await fetch(projectsEndpoint(), {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...authHeaders() },
+          body: JSON.stringify({
+            revision: serverRevision,
+            project,
+            baseProject
+          })
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (response.ok) {
+          serverRevision = Number.isFinite(Number(payload.revision)) ? Number(payload.revision) : serverRevision;
+          serverProjectBaselines.set(project.id, structuredClone(payload.project || project));
           return { ok: true, ...payload };
         }
         return { ok: false, status: response.status, ...payload };
@@ -3580,6 +3613,10 @@
       if (!status || !button) return;
       if (result?.error === "revision_conflict") {
         status.textContent = "儲存失敗：其他人已更新資料，請重新整理後再修改。";
+      } else if (result?.error === "project_revision_conflict") {
+        status.textContent = "儲存失敗：這個部門剛被其他人更新，已重新載入最新資料，請再修改一次。";
+      } else if (result?.error === "project_version_required") {
+        status.textContent = "儲存失敗：尚未取得這個部門的最新版本，請重新整理後再試。";
       } else if (result?.error === "project_scope_denied") {
         status.textContent = "儲存失敗：你沒有權限修改這個部門。";
       } else if (result?.status === 401 || result?.error === "not_authenticated") {
@@ -4744,7 +4781,7 @@
       if (status) status.textContent = `${project.department} 正在同步到分享網址...`;
       if (button) button.textContent = "儲存中";
 
-      const serverSynced = await saveProjectsToServer();
+      const serverSynced = await saveProjectToServer(project);
       if (serverSynced.ok) {
         saveProjects();
         renderFilters();
@@ -4763,7 +4800,7 @@
         document.getElementById("projectSelect").value = id;
         loadForm();
         showSaveError(serverSynced);
-        if (serverSynced.error === "revision_conflict") {
+        if (["revision_conflict", "project_revision_conflict", "project_version_required"].includes(serverSynced.error)) {
           await loadServerProjects();
         }
       }
