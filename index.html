@@ -110,9 +110,34 @@
 
     .toolbar {
       display: flex;
+      align-items: center;
       gap: 10px;
       justify-content: flex-end;
       flex-wrap: wrap;
+    }
+
+    .header-user-info {
+      min-width: 230px;
+      padding: 8px 12px;
+      border-right: 1px solid rgba(157,175,196,.24);
+      display: grid;
+      gap: 2px;
+      justify-items: end;
+      text-align: right;
+    }
+
+    .header-user-info strong {
+      color: #fff;
+      font-size: 16px;
+      line-height: 1.3;
+      font-weight: 950;
+    }
+
+    .header-user-info span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 750;
     }
 
     .btn {
@@ -1499,6 +1524,14 @@
       gap: 10px;
     }
 
+    .audit-summary {
+      margin-bottom: 12px;
+      color: var(--soft);
+      font-size: 15px;
+      line-height: 1.45;
+      font-weight: 800;
+    }
+
     .audit-item {
       display: grid;
       gap: 7px;
@@ -2149,6 +2182,16 @@
         justify-content: flex-start;
       }
 
+      .header-user-info {
+        width: 100%;
+        min-width: 0;
+        padding: 8px 0 10px;
+        border-right: 0;
+        border-bottom: 1px solid rgba(157,175,196,.24);
+        justify-items: start;
+        text-align: left;
+      }
+
       main {
         padding: 18px 14px 36px;
       }
@@ -2236,6 +2279,7 @@
         </div>
         <div></div>
         <div class="toolbar">
+          <div class="header-user-info" id="headerUserInfo" hidden></div>
           <button class="btn" id="modeBtn">管理模式</button>
           <button class="btn" id="siteLogoutBtn">登出</button>
           <button class="btn management-only admin-only" id="exportBtn">下載資料</button>
@@ -2430,6 +2474,7 @@
             </div>
             <button class="btn small" id="refreshAuditBtn" type="button">重新整理</button>
           </div>
+          <div class="audit-summary" id="auditSummary"></div>
           <div class="audit-list" id="auditList"></div>
         </section>
       </section>
@@ -3446,6 +3491,24 @@
 
     function renderSessionState() {
       document.body.classList.toggle("admin-session", isAdminSession());
+      const headerUserInfo = document.getElementById("headerUserInfo");
+      if (headerUserInfo) {
+        headerUserInfo.hidden = !currentUser;
+        if (currentUser) {
+          const roleText = currentUser.role === "admin"
+            ? "系統管理員 · 可修改全部部門"
+            : currentUser.role === "editor"
+              ? `部門編輯者 · ${editableProjects().map(project => project.department).join("、") || "尚未設定部門"}`
+              : "主管查看者 · 僅可查看";
+          headerUserInfo.innerHTML = `
+            <strong>${escapeHtml(currentUser.name)}</strong>
+            <span>${escapeHtml(currentUser.email || roleText)}</span>
+            <span>${escapeHtml(roleText)}</span>
+          `;
+        } else {
+          headerUserInfo.innerHTML = "";
+        }
+      }
       const panel = document.getElementById("updatePanel");
       if (!panel) return;
       let bar = document.getElementById("sessionBar");
@@ -3530,14 +3593,23 @@
 
     async function renderAuditLog() {
       const list = document.getElementById("auditList");
+      const summary = document.getElementById("auditSummary");
       if (!list || !isAdminSession()) return;
       list.innerHTML = `<div class="empty-state">讀取修改紀錄中...</div>`;
+      if (summary) summary.textContent = "正在確認正式修改紀錄...";
       const result = await apiJson("/audit", { method: "GET", auth: true });
       if (!result.ok) {
         list.innerHTML = `<div class="empty-state">無法讀取修改紀錄。</div>`;
+        if (summary) summary.textContent = "";
         return;
       }
       const records = result.records || [];
+      if (summary) {
+        const actors = [...new Set(records.map(record => record.actor).filter(Boolean))];
+        summary.textContent = records.length
+          ? `目前保留 ${records.length} 筆正式紀錄 · 修改者：${actors.join("、")}`
+          : "目前尚無任何人儲存修改。";
+      }
       list.innerHTML = records.length ? records.map(record => `
         <article class="audit-item">
           <strong>${escapeHtml(record.department || record.projectId)} · ${escapeHtml(record.actor || "Unknown")}</strong>
