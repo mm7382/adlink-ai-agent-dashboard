@@ -2995,32 +2995,35 @@
       makeDepartment("dqac", "DQAC", "DQAC", "Vincent chu", {
         agentOwner: "待確認",
         title: "IEC-62443-4-2 Vulnerability Management Agent",
-        summary: "整合映像檔、版本與漏洞掃描資料，建立 IEC-62443-4-2 漏洞管理的 AI Agent，協助自動分析、追蹤與產出報告，降低人工 Excel 追蹤與報告彙整負擔。",
-        flow: ["Image Discovery", "Version Comparison", "Vulnerability Scan", "Tracking & Report", "Next Iteration"],
-        architecture: "映像檔發現 -> 版本比對 -> Trivy 漏洞掃描 -> 漏洞追蹤與報告/燃盡圖 -> 下一輪持續監控；將異質漏洞來源整合為單一事實來源，支援 IEC-62443-4-2 合規追蹤。",
+        summary: "建立 IEC-62443 漏洞管理 AI Agent，依映像檔更新週期自動掃描，產出可稽核 Check List、自動通報與 Solution 追蹤，降低人工檢查與持續追蹤負擔。",
+        flow: ["Agent 選用", "週期性掃描", "可稽核 Check List", "自動通報", "Solution 追蹤", "Dashboard V1.0"],
+        architecture: "選用 CLI / Desktop Agent -> 建立週期性掃描 Agent -> 產出可稽核 Check List -> 自動通報 -> Solution 追蹤 -> Dashboard Version 1.0。",
         agentType: "Agent 化中",
-        agentTypeNote: "目前已定義 AI Agent Pipeline 與五步驟工作流程，目標是 24/7 持續監測與自動報告；仍需確認資料源、掃描環境、追蹤資料模型與驗證閉環後，才算完整 AI Agent。",
-        progressReason: "已完成初版 proposal，包含痛點、商業價值與 workflow；尚未看到 prototype 或實際使用紀錄，因此先以 10% 呈現。",
+        agentTypeNote: "已完成 Agent 選用，正建立週期性掃描能力；後續依序補上可稽核 Check List、自動通報、Solution 追蹤與 Dashboard。",
+        progressReason: "提案列出六項任務；Task 1 已完成、Task 2 進行中，因此以 20% 呈現。",
         roadmap: defaultTaskPlan("dqac"),
         benefits: {
-          time: "以自動化分析與報告取代 80% 以上人工追蹤、Excel 記錄與報告彙整時間。",
-          manpower: "讓資安/合規專家從資料搬移與整理轉向風險判斷與修復決策。",
-          risk: "提升漏洞安全性可見度，降低資訊分散、手動追蹤疏漏與零日威脅反應落差。",
-          scale: "可成為 IEC-62443-4-2 合規追蹤與審計報告的共用漏洞管理流程。"
+          time: "每月約節省 15 小時（以自動化取代人工掃描、檢查與追蹤估算）。",
+          manpower: "約 9% 人力/月（每月節省 15 小時 / 167 小時）。",
+          risk: "建立可稽核 Check List 與一致檢查基準，降低人工檢查疏漏與合規追蹤風險。",
+          scale: "適用於所有 IEC-62443 相關工程技術人員；數位化資產可傳承，並可擴展為自動通報與 Solution 追蹤機制。"
         },
-        slides: [{ name: "IEC-62443-4-2 Vulnerability Management Agent", url: "slides/2026-07-14/DQAC-IEC-62443-Vulnerability-Management-Agent.pptx" }],
+        slides: [
+          { name: "IEC-62443-4-2 Vulnerability Management Agent", url: "slides/2026-07-14/DQAC-IEC-62443-Vulnerability-Management-Agent.pptx" },
+          { name: "IEC-62443 漏洞管理 AI Agent 提案：效益與時程預估", url: "documents/DQAC-IEC-62443-benefit-roadmap-2026-07-22.pdf" }
+        ],
         stage: 1,
-        progress: 10,
+        progress: 20,
         size: "L",
-        frequency: "尚未使用",
+        frequency: "每月",
         scale: "個人",
         weeklyUsers: 0,
         activeUsers: 0,
         targetUsers: 8,
-        necessity: 5,
-        practicality: 4,
+        necessity: 4,
+        practicality: 2,
         generality: 4,
-        timeSaving: 5,
+        timeSaving: 3,
         addedValue: 5,
         governance: 30,
         dataReadiness: 25,
@@ -3028,9 +3031,9 @@
         supportStatus: "需注意",
         supportType: "資料權限",
         supportDescription: "需要確認映像檔來源、版本資料、Trivy 掃描環境、歷史漏洞追蹤資料與 IEC-62443-4-2 合規報告所需欄位。",
-        currentProgress: "已完成 DQAC 題目初版簡報，定義痛點、商業價值與五步驟工作流程；本週行動仍待定。",
-        nextStep: "完成 AI Agent Pipeline 初版規劃，評估一個適合落地操作的 Agent 方案，並盤點資料源與掃描/報告串接方式。",
-        source: "iec62443_agent_tw_page.pptx"
+        currentProgress: "已完成 Agent 選用，正在建立週期性掃描 Agent，預計 8 月中完成。",
+        nextStep: "8 月底前建立可稽核 Check List，再依時程完成自動通報、Solution 追蹤與 Dashboard Version 1.0。",
+        source: "IEC_62443_漏洞管理_AI_Agent_提案_效益與時程預估.pdf"
       }),
       makeDepartment("bec", "BEC", "BEC", "Miles", {
         agentOwner: "Chih-Fu Hsu",
@@ -3138,12 +3141,12 @@
           task("用 3 個歷史案例驗證結果", "未開始", "2026/09/09", "2026/09/20")
         ],
         "dqac": [
-          task("整理 IEC-62443-4-2 報告欄位需求", "進行中", "2026/07/15", "2026/07/26"),
-          task("建立弱點資料與版本資料輸入格式", "未開始", "2026/07/29", "2026/08/09"),
-          task("定義合規判斷與缺口分類規則", "未開始", "2026/08/12", "2026/08/23"),
-          task("產生初版 Vulnerability Management 報告", "未開始", "2026/08/26", "2026/09/06"),
-          task("用一個產品案例驗證報告結果", "未開始", "2026/09/09", "2026/09/20"),
-          task("整理 DQAC 使用流程與交付格式", "未開始", "2026/09/23", "2026/10/04")
+          task("Agent 選用（CLI / Desktop）", "已完成", "2026/07/01", "2026/07/22"),
+          task("建立週期性掃描 Agent", "進行中", "2026/07/23", "2026/08/15"),
+          task("建立可稽核 Check List", "未開始", "2026/08/16", "2026/08/31"),
+          task("建立自動通報機制", "未開始", "2026/09/01", "2026/09/15"),
+          task("建立 Solution 追蹤機制", "未開始", "2026/09/16", "2026/09/30"),
+          task("完成 Dashboard Version 1.0", "未開始", "2026/10/01", "2026/10/31")
         ],
         "sec": []
       };
